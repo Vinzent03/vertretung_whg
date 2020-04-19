@@ -21,6 +21,7 @@ import 'logic/theme.dart';
 import 'logic/themedata.dart';
 
 void main() {
+  print("hallo");
   WidgetsFlutterBinding.ensureInitialized();
   Getter().getBool(Names.dark).then((isDark) {
     runApp(ChangeNotifierProvider<ThemeChanger>(
