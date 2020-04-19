@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 import 'pages/settings.dart';
 import 'pages/generalPage.dart';
 import 'logic/getter.dart';
@@ -22,7 +21,6 @@ import 'logic/theme.dart';
 import 'logic/themedata.dart';
 
 void main() {
-  print("hallo");
   WidgetsFlutterBinding.ensureInitialized();
   Getter().getBool(Names.dark).then((isDark) {
     runApp(ChangeNotifierProvider<ThemeChanger>(
