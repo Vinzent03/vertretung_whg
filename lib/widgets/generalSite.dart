@@ -6,7 +6,7 @@ class GeneralSite extends StatelessWidget {
   bool faecherOn;
   bool twoPages;
   bool horizontal;
-  int currentIndex; //the index of the bottomNavigationBar
+  int currentIndex;
   bool shouldShowBanner;
   String change;
   PageController controller;
