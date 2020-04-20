@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Getter{
+class LocalDatabase{
   Future<void> setBool(String st, b) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool(st, b);

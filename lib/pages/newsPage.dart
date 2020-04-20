@@ -1,6 +1,6 @@
-import 'package:Vertretung/logic/getter.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/services/manager.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
 
 class NewsPage extends StatefulWidget {
@@ -13,13 +13,13 @@ class _NewsPageState extends State<NewsPage> {
   @override
   void initState() {
     
-    Manager manager = Manager();
+    CloudDatabase manager = CloudDatabase();
 
       manager.getNews().then((onValue) {
         setState(() {
          newsList = onValue;
         });
-        Getter().setString(Names.newsAnzahl, newsList.length.toString());
+        LocalDatabase().setString(Names.newsAnzahl, newsList.length.toString());
       });   
     super.initState();
   }

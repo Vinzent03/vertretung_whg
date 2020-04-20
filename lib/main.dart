@@ -2,7 +2,7 @@ import 'package:Vertretung/pages/faecherPage.dart';
 import 'package:Vertretung/pages/helpPage.dart';
 import 'package:Vertretung/pages/introScreen.dart';
 import 'package:Vertretung/pages/newsPage.dart';
-import 'package:Vertretung/services/manager.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart';
@@ -14,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'pages/settings.dart';
 import 'pages/generalPage.dart';
-import 'logic/getter.dart';
+import 'logic/localDatabase.dart';
 import 'logic/filter.dart';
 import 'logic/names.dart';
 import 'logic/theme.dart';
@@ -22,7 +22,7 @@ import 'logic/themedata.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Getter().getBool(Names.dark).then((isDark) {
+  LocalDatabase().getBool(Names.dark).then((isDark) {
     runApp(ChangeNotifierProvider<ThemeChanger>(
       create: (_) => ThemeChanger(isDark ? darkTheme : lightTheme, isDark),
       child: MyAppSt(),
@@ -55,8 +55,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Manager manager;
-  Getter getter = Getter();
+  CloudDatabase manager;
+  LocalDatabase getter = LocalDatabase();
   int currentIndex = 0;
   int currentPage = 0;
   bool isNewsAvailable = false;
@@ -190,7 +190,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    manager = Manager();
+    manager = CloudDatabase();
     getter.getString(Names.stufe).then((onValue) {
       //zeigen des Onboarding
       if (onValue == "Nicht festgelegt")
@@ -199,8 +199,8 @@ class _MyAppState extends State<MyApp> {
             getter.setBool(Names.faecherOn, false);
             getter.setString(Names.newsAnzahl, 0.toString());
             getter.getString(Names.stufe).then((onValue) {
-              Manager().createDocument();
-              Manager().updateUserData(
+              CloudDatabase().createDocument();
+              CloudDatabase().updateUserData(
                   faecherOn: false,
                   stufe: onValue,
                   faecher: ["Nicht festgelegt"],

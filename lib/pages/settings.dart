@@ -1,12 +1,12 @@
 import 'package:Vertretung/logic/theme.dart';
-import 'package:Vertretung/services/manager.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/widgets/stufenList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:package_info/package_info.dart';
-import '../logic/getter.dart';
+import '../logic/localDatabase.dart';
 import '../logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  Manager manager;
+  CloudDatabase manager;
   bool dark = false;
   bool faecherOn = false;
   bool twoPages = false;
@@ -28,12 +28,10 @@ class _SettingsState extends State<Settings> {
   List<String> faecherList = [];
   List<String> faecherNotList = [];
   String version = "Laden";
-  Getter getter = Getter();
+  LocalDatabase getter = LocalDatabase();
 
   Future<String> createAlertDialog(
       BuildContext context, String situation, String message) {
-    TextEditingController customController = TextEditingController(
-        text: situation != "Nicht festgelegt" ? situation : null);
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -75,7 +73,7 @@ class _SettingsState extends State<Settings> {
 
   @override
   void initState() {
-    manager = Manager();
+    manager = CloudDatabase();
     bool pdark;
     bool phorizontal;
     bool pfaecherOn;

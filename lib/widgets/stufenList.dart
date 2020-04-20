@@ -1,7 +1,6 @@
-import 'package:Vertretung/logic/getter.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/services/manager.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -12,7 +11,7 @@ class StufenList extends StatefulWidget {
 }
 
 class _StufenListState extends State<StufenList> {
-  Getter getter = Getter();
+  LocalDatabase getter = LocalDatabase();
   String value = "";
   String stufe = "Wähle eine Stufe";
   String klasse = "Wähle eine Klasse";

@@ -1,5 +1,5 @@
-import 'package:Vertretung/logic/getter.dart';
-import 'package:Vertretung/services/manager.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/logic/names.dart';
@@ -150,7 +150,7 @@ class _FaecherListState extends State<FaecherList> {
     ];
     // wiederherstellen der custom fächer(ohne checken der kästchen, das passiert ein weiter unten)
     faecher.sort((a, b) => a.title.compareTo(b.title));
-    Getter().getStringList(names[1]).then((onValue) {
+    LocalDatabase().getStringList(names[1]).then((onValue) {
       for (String fach in onValue) {
         faecherCustom.insert(
             faecherCustom.length - 1,
@@ -161,7 +161,7 @@ class _FaecherListState extends State<FaecherList> {
       }
     });
     // wiederherstellen der schon gecheckten fächer
-    Getter().getStringList(names[0]).then((onValue) {
+    LocalDatabase().getStringList(names[0]).then((onValue) {
       setState(() {
         selectedFaecher = onValue;
         for (String fach in onValue) {
@@ -298,15 +298,15 @@ class _FaecherListState extends State<FaecherList> {
   @override
   void dispose() {
     List<String> _list = [];
-    Getter().setStringList(names[0], selectedFaecher);
+    LocalDatabase().setStringList(names[0], selectedFaecher);
     for (Item item in faecherCustom) {
       if (item.title != null) _list.add(item.title);
     }
-    Getter().setStringList(names[1], _list);
+    LocalDatabase().setStringList(names[1], _list);
     if (names[0] == Names.faecherList)
-      Manager().updateUserData(faecher: selectedFaecher);
+      CloudDatabase().updateUserData(faecher: selectedFaecher);
     else
-      Manager().updateUserData(faecherNot: selectedFaecher);
+      CloudDatabase().updateUserData(faecherNot: selectedFaecher);
     super.dispose();
   }
 }

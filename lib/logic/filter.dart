@@ -1,9 +1,9 @@
 
-import 'getter.dart';
+import 'localDatabase.dart';
 import 'names.dart';
 
 class Filter {
-  Getter getter = Getter();
+  LocalDatabase getter = LocalDatabase();
 
 
   Future<List<List<String>>> checker(String day) async {

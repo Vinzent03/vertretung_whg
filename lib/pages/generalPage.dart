@@ -1,4 +1,4 @@
-import 'package:Vertretung/services/manager.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/informationTile.dart';
@@ -40,7 +40,7 @@ class GeneralPage extends StatelessWidget {
                   subtitle: Text("Tippe um zum Download zu kommen"),
                   leading: Icon(Icons.warning),
                   onTap: (){
-                    Manager().getUpdateLink().then((onValue){
+                    CloudDatabase().getUpdateLink().then((onValue){
                       launch(onValue);
                     });
                   },

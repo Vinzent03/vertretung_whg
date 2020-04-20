@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/getter.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/logic/themedata.dart';
@@ -12,14 +12,14 @@ class ThemeChanger with ChangeNotifier {
 
   setDarkTheme() {
     isDark = true;
-    Getter().setBool(Names.dark, true);
+    LocalDatabase().setBool(Names.dark, true);
     _themeData = darkTheme;
     notifyListeners();
   }
 
   setLightTheme() {
     isDark= false;
-    Getter().setBool(Names.dark, false);
+    LocalDatabase().setBool(Names.dark, false);
     _themeData = lightTheme;
     notifyListeners();
   }
