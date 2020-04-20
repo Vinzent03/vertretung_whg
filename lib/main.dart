@@ -54,7 +54,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  CloudDatabase manager;
+  CloudDatabase cd;
   LocalDatabase getter = LocalDatabase();
   int currentIndex = 0;
   int currentPage = 0;
@@ -176,45 +176,26 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    manager = CloudDatabase();
-    getter.getString(Names.stufe).then((onValue) {
-      //zeigen des Onboarding
-      if (onValue == "Nicht festgelegt")
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          Navigator.of(context).pushNamed(Names.introScreen).then((onValue) {
-            getter.setBool(Names.faecherOn, false);
-            getter.setString(Names.newsAnzahl, 0.toString());
-            getter.getString(Names.stufe).then((onValue) {
-              CloudDatabase().createDocument();
-              CloudDatabase().updateUserData(
-                  faecherOn: false,
-                  stufe: onValue,
-                  faecher: ["Nicht festgelegt"],
-                  faecherNot: ["Nicht festgelegt"],
-                  notification: true);
-            });
-            refresh();
-          });
-        });
-    });
-// Push-Notification handling
+    cd = CloudDatabase();
+    // Show the onboarding on first start
+    showOnboarding(context).then((nothing)=> refresh());
+    // Push-Notification handling
     PushNotificationsManager push = PushNotificationsManager();
     push.init();
 
     //news handling
-    manager.getIsNewsAvailable().then((onValue) {
+    cd.getIsNewsAvailable().then((onValue) {
       setState(() {
         isNewsAvailable = onValue;
       });
     });
 
     //update Message handling
-
-    showUpdateDialog(context).then((showBanner){
+    showUpdateDialog(context).then((showBanner){//method of functionsForMain.dart to show a needed banner to the user
       setState(() {
         shouldShowBanner = showBanner;
       });
-    });//method of functionsForMain.dart to show a needed banner to the user
+    });
     reload();
     refresh();
     super.initState();
@@ -270,7 +251,6 @@ class _MyAppState extends State<MyApp> {
                   getter.getBool(Names.horizontal).then((onValue) {
                     if (mounted) {
                       setState(() {
-                        controller.jumpToPage(0);
                         horizontal = onValue;
                       });
                     }

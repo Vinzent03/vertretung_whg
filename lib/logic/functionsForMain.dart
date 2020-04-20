@@ -1,10 +1,12 @@
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart';
 import 'package:html/parser.dart'; // Contains HTML parsers to generate a Document object
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
-
+import 'names.dart';
+import 'localDatabase.dart';
 Future<String> getData() async {
   print("Anfang des webscrapen");
   var client = Client();
@@ -51,5 +53,24 @@ Future<bool> showUpdateDialog(context) async{
       );
     }else
       return false;
+}
+Future<void> showOnboarding(context) async{
+  LocalDatabase ld = LocalDatabase();
+  String stufe = await ld.getString(Names.stufe);
+    if (stufe == "Nicht festgelegt")
+      SchedulerBinding.instance.addPostFrameCallback((_) async {
+        await Navigator.of(context).pushNamed(Names.introScreen);
+          ld.setString(Names.newsAnzahl, 0.toString());
+          ld.getString(Names.stufe).then((onValue) {
+            CloudDatabase().createDocument();
+            CloudDatabase().updateUserData(
+                faecherOn: false,
+                stufe: onValue,
+                faecher: ["Nicht festgelegt"],
+                faecherNot: ["Nicht festgelegt"],
+                notification: true);
+          });
+
+      });
 
 }
