@@ -7,7 +7,7 @@ class Names{
   static const String faecherPage = "/faecherPage";
   static const String newsPage ="newsPage";
 
-//variablen
+  //variables
   static const String stufe = "stufe";
   static const String faecherOn = "faecherOn";
   static const String dark = "isDark";
