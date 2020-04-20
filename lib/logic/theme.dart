@@ -11,6 +11,7 @@ class ThemeChanger with ChangeNotifier {
 
 
   setDarkTheme() {
+    print("hallo");
     isDark = true;
     LocalDatabase().setBool(Names.dark, true);
     _themeData = darkTheme;
