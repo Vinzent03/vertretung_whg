@@ -10,15 +10,18 @@ class ThemeChanger with ChangeNotifier {
   getIsDark() => isDark;
 
 
+
   setDarkTheme() {
-    print("hallo");
+    print("hallofgh");
     isDark = true;
     LocalDatabase().setBool(Names.dark, true);
     _themeData = darkTheme;
     notifyListeners();
   }
 
+
   setLightTheme() {
+    print("hallo ich bins Vinzent");
     isDark= false;
     LocalDatabase().setBool(Names.dark, false);
     _themeData = lightTheme;
