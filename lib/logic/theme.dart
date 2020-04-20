@@ -9,16 +9,12 @@ class ThemeChanger with ChangeNotifier {
   getTheme() => _themeData;
   getIsDark() => isDark;
 
-
-
   setDarkTheme() {
-    print("hallofgh");
     isDark = true;
     LocalDatabase().setBool(Names.dark, true);
     _themeData = darkTheme;
     notifyListeners();
   }
-
 
   setLightTheme() {
     print("hallo ich bins Vinzent");
@@ -27,6 +23,5 @@ class ThemeChanger with ChangeNotifier {
     _themeData = lightTheme;
     notifyListeners();
   }
-
 
 }

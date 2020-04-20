@@ -226,18 +226,15 @@ class _MyAppState extends State<MyApp> {
       Scaffold.of(context).showSnackBar(snackbar);
     });
 
-
     //news handling
-    manager.getIsNewsAvailable().then((onValue){
+    manager.getIsNewsAvailable().then((onValue) {
       setState(() {
         isNewsAvailable = onValue;
       });
     });
 
-
-
     //update Message handling
-    
+
     manager.getUpdate().then((onValue) async {
       if (onValue == "updateAvaible") {
         setState(() {
@@ -293,15 +290,14 @@ class _MyAppState extends State<MyApp> {
                     left: 15,
                     child: Icon(
                       Icons.brightness_1,
-                      size:
-                      isNewsAvailable ?
-                       10: 0,
+                      size: isNewsAvailable ? 10 : 0,
                       color: Colors.red,
                     ),
                   ),
                 ],
               ),
-              onPressed: () => Navigator.pushNamed(context, Names.newsPage).then((onValue){
+              onPressed: () =>
+                  Navigator.pushNamed(context, Names.newsPage).then((onValue) {
                 setState(() {
                   isNewsAvailable = false;
                 });
