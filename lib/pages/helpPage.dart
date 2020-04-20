@@ -14,17 +14,18 @@ class _HelpPageState extends State<HelpPage> {
     MyItem(
       header: "Woher kommen die Daten?",
       body:
-          "Die Daten kommen von der DSB Website und werden aus dem html code gefiltert",
+          "Die Daten werden aus dem DSBmobile HTML code gefiltert (siehe Ursprung: https/www.dsbmobile.de)
+",
     ),
     MyItem(
       header: "Was ist personalisierte Vertretung?",
       body:
-          "Wenn du in den Einstellunen personalisierte Vertretung einschaltest, kannst du deine Fächer, bzw. die Fächer die du nicht hast eintragen. Anschließend ist in der App ein privater Bereich zu sehen, dort siehst du dann nur für dich relevante Vertretung",
+          "Wenn in den Einstellungen die personalisierte Vertretung eingestellt ist, kannst du in den Einstellungen Fächer die du hast bzw. nicht hast blacklisten / whitelisten. Anschließend ist eine personalisierte Seite sichtbar, wo für dich relevante Vertretungen zu sehen sind.",
     ),
     MyItem(
       header: "Wie funktionieren die Benachrichtigungen?",
       body:
-          "Es wird mehrmals die Stunde eine Funktion in der Cloud aufgerufen, die dann jeden Benutzer durchgeht und schaut ob er/sie neue Vertretung hat. Dabei wird aber nur die heutige Vertretung beachtet. Wenn personalisierte Fächer an ist, wird man nur bei privaten Änderungen benachrichtigt. Da die Benachrichtigung von der Cloud aus kommt, schaut nicht euer Handy durchgehend nach neuer Vertretung. Man kann die App also auch schließen, die Benachrichtigung kommt trotzdem an. xD",
+          "Die Cloud schaut mehrmals stündlich bei jedem individuellem Nutzer, ob neue Vertretungen verfügbar sind. Dabei werden nur Vertretungen für den aktuellen Zag berücksichtigt. Wenn personalisierte Fächer eingeschaltet sind, wird man nur bei relevanten Äußerungen benachrichtigt. Da die Benachrichtigung nicht lokal erzeigt wird, erhält man auch Benachrichtigungen wenn die Anwendung geschlossen ist.",
     ),
   ];
 
