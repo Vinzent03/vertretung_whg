@@ -1,32 +1,37 @@
 import 'package:Vertretung/logic/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:Vertretung/logic/myItem.dart';
 import 'package:provider/provider.dart';
 
+class helpItem{
+  bool isExpanded;
+  final String header;
+  final String body;
 
+  helpItem({this.isExpanded: false, this.header, this.body});
+}
 class HelpPage extends StatefulWidget {
   @override
   _HelpPageState createState() => _HelpPageState();
 }
 
 class _HelpPageState extends State<HelpPage> {
-  List<MyItem> _items = <MyItem>[
-    MyItem(
+  List<helpItem> _items = <helpItem>[
+    helpItem(
       header: "Woher kommen die Daten?",
       body:
           "Die Daten werden aus dem DSBmobile HTML code gefiltert (siehe Ursprung: https/www.dsbmobile.de)"
     ),
-    MyItem(
+    helpItem(
       header: "Was ist personalisierte Vertretung?",
       body:
           "Wenn in den Einstellungen die personalisierte Vertretung eingestellt ist, kannst du in den Einstellungen Fächer die du hast bzw. nicht hast blacklisten / whitelisten. Anschließend ist eine personalisierte Seite sichtbar, wo für dich relevante Vertretungen zu sehen sind.",
     ),
-    MyItem(
+    helpItem(
       header: "Wie funktionieren die Benachrichtigungen?",
       body:
           "Die Cloud schaut mehrmals stündlich bei jedem individuellem Nutzer, ob neue Vertretungen verfügbar sind. Dabei werden nur Vertretungen für den aktuellen Tag berücksichtigt. Wenn personalisierte Fächer eingeschaltet sind, wird man nur bei relevanten Äußerungen benachrichtigt. Da die Benachrichtigung nicht lokal erzeigt wird, erhält man auch Benachrichtigungen wenn die Anwendung geschlossen ist.",
     ),
-    MyItem(
+    helpItem(
     header: "Datenschutz",
       body: "Wenn Benachrichtigungen eingeschaltet sind, erhälts du einen Individuellen Benachrichtigungstoken, der genutzt wird, um dir Individuelle Benachrichtigungen betrefflich deiner eingetragenen Fächer zu senden. wenn du in den Einstellungen \"Benachrichtigungen\" ausschaltest, werden deine Einstellungen  aus der Cloud gelöscht",
     ),
@@ -51,7 +56,7 @@ class _HelpPageState extends State<HelpPage> {
                       _items[index].isExpanded = !_items[index].isExpanded;
                     });
                   },
-                  children: _items.map((MyItem item) {
+                  children: _items.map((helpItem item) {
                     return ExpansionPanel(
                         canTapOnHeader: true,
                         headerBuilder: (BuildContext context, bool isExpanded) {
