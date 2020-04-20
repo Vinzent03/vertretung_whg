@@ -4,6 +4,7 @@ import 'package:Vertretung/pages/introScreen.dart';
 import 'package:Vertretung/pages/newsPage.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
+import 'package:Vertretung/widgets/generalSite.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +15,6 @@ import 'logic/names.dart';
 import 'logic/theme.dart';
 import 'logic/themedata.dart';
 import 'pages/settingsPage.dart';
-import 'widgets/generalBlueprint.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +51,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final controller = PageController(initialPage: 0);
   CloudDatabase cd;
   LocalDatabase getter = LocalDatabase();
   int currentIndex = 0;
@@ -257,105 +258,21 @@ class _MyAppState extends State<MyApp> {
             ),
           ],
         ),
-        body: _faecherOn
-            ? twoPages
-                //// mit faecher und zwei seiten
-                ? PageView(
-                    physics: ScrollPhysics(),
-                    scrollDirection:
-                        horizontal ? Axis.horizontal : Axis.vertical,
-                    controller: controller,
-                    children: <Widget>[
-                      currentIndex == 0
-                          ? GeneralBlueprint(
-                              today: true,
-                              list: myListToday,
-                              change: change,
-                              isMy: true,
-                              updateAvaible: shouldShowBanner,
-                            )
-                          : GeneralBlueprint(
-                              today: false,
-                              list: myListTomorrow,
-                              change: change,
-                              isMy: true,
-                            ),
-                      currentIndex == 0
-                          ? GeneralBlueprint(
-                              today: true,
-                              list: listToday,
-                              change: change,
-                              isMy: false,
-                            )
-                          : GeneralBlueprint(
-                              today: false,
-                              list: listTomorrow,
-                              change: change,
-                              isMy: false,
-                            ),
-                    ],
-                    onPageChanged: (value) {
-                      currentPage = value;
-                    },
-                  )
-                // mit fächer aber mit nut  einer Seite
-                : ListView(
-                    children: <Widget>[
-                      currentIndex == 0
-                          ? GeneralBlueprint(
-                              today: true,
-                              list: myListToday,
-                              change: change,
-                              isMy: true,
-                              onlyOnePage: true,
-                              updateAvaible: shouldShowBanner,
-                            )
-                          : GeneralBlueprint(
-                              today: false,
-                              list: myListTomorrow,
-                              change: change,
-                              isMy: true,
-                              onlyOnePage: true,
-                            ),
-                      Divider(
-                        thickness: 8,
-                        indent: 5,
-                        endIndent: 5,
-                      ),
-                      currentIndex == 0
-                          ? GeneralBlueprint(
-                              today: true,
-                              list: listToday,
-                              change: change,
-                              isMy: false,
-                              onlyOnePage: true,
-                            )
-                          : GeneralBlueprint(
-                              today: false,
-                              list: listTomorrow,
-                              change: change,
-                              isMy: false,
-                              onlyOnePage: true,
-                            ),
-                    ],
-                  )
-            // ohne fächer
-            : currentIndex == 0
-                ? GeneralBlueprint(
-                    today: true,
-                    list: listToday,
-                    change: change,
-                    isMy: false,
-                    onlyOnePage: _faecherOn ? true : null,
-                    updateAvaible: shouldShowBanner,
-                  )
-                : GeneralBlueprint(
-                    today: false,
-                    list: listTomorrow,
-                    change: change,
-                    isMy: false,
-                    onlyOnePage: _faecherOn ? true : null,
-                  ),
+        body: GeneralSite(
+          controller: controller,
+          change: change,
+          currentIndex: currentIndex,
+          faecherOn: _faecherOn,
+          horizontal: horizontal,
+          shouldShowBanner: shouldShowBanner,
+          twoPages: twoPages,
+          listToday: listToday,
+          listTomorrow: listTomorrow,
+          myListToday: myListToday,
+          myListTomorrow: myListTomorrow,
+        ),
+
+
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             setState(() {
@@ -383,7 +300,7 @@ class _MyAppState extends State<MyApp> {
             onTap: (index) {
               if (currentIndex == index && twoPages) {
                 // Beim tab wechseln soll nicht immer die page gewechselt werden
-                controller.animateToPage(currentPage == 0 ? 1 : 0,
+                controller.animateToPage(controller.page == 0 ? 1 : 0,
                     duration: Duration(seconds: 1),
                     curve: Curves.fastLinearToSlowEaseIn);
               }
