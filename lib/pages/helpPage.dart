@@ -14,8 +14,7 @@ class _HelpPageState extends State<HelpPage> {
     MyItem(
       header: "Woher kommen die Daten?",
       body:
-          "Die Daten werden aus dem DSBmobile HTML code gefiltert (siehe Ursprung: https/www.dsbmobile.de)
-",
+          "Die Daten werden aus dem DSBmobile HTML code gefiltert (siehe Ursprung: https/www.dsbmobile.de)"
     ),
     MyItem(
       header: "Was ist personalisierte Vertretung?",
@@ -25,11 +24,11 @@ class _HelpPageState extends State<HelpPage> {
     MyItem(
       header: "Wie funktionieren die Benachrichtigungen?",
       body:
-          "Die Cloud schaut mehrmals stündlich bei jedem individuellem Nutzer, ob neue Vertretungen verfügbar sind. Dabei werden nur Vertretungen für den aktuellen Zag berücksichtigt. Wenn personalisierte Fächer eingeschaltet sind, wird man nur bei relevanten Äußerungen benachrichtigt. Da die Benachrichtigung nicht lokal erzeigt wird, erhält man auch Benachrichtigungen wenn die Anwendung geschlossen ist.",
+          "Die Cloud schaut mehrmals stündlich bei jedem individuellem Nutzer, ob neue Vertretungen verfügbar sind. Dabei werden nur Vertretungen für den aktuellen Tag berücksichtigt. Wenn personalisierte Fächer eingeschaltet sind, wird man nur bei relevanten Äußerungen benachrichtigt. Da die Benachrichtigung nicht lokal erzeigt wird, erhält man auch Benachrichtigungen wenn die Anwendung geschlossen ist.",
     ),
     MyItem(
     header: "Datenschutz",
-      body: "Wenn Benachrichtigungen eingeschaltet sind, erhälts du einen Individuellen Benachrichtigungstoken, der genutzt wird, um dir Individuelle Benachrichtigungen betrefflich deiner eingetragenen Fächer zu senden. wenn du in den Einstellungen \Bbenachrichtigungen\" ausschaltest, wird dein Token auch aus der Cloud gelöscht",
+      body: "Wenn Benachrichtigungen eingeschaltet sind, erhälts du einen Individuellen Benachrichtigungstoken, der genutzt wird, um dir Individuelle Benachrichtigungen betrefflich deiner eingetragenen Fächer zu senden. wenn du in den Einstellungen \"Benachrichtigungen\" ausschaltest, werden deine Einstellungen  aus der Cloud gelöscht",
     ),
   ];
 
