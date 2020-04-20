@@ -34,9 +34,6 @@ class PushNotificationsManager {
       _initialized = true;
     }
   }
-FirebaseMessaging getmessaging(){
-    return _firebaseMessaging;
-}
   void subTopic(String topic) {
     _firebaseMessaging.subscribeToTopic(topic);
   }

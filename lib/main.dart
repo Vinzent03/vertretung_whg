@@ -5,9 +5,7 @@ import 'package:Vertretung/pages/newsPage.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:http/http.dart';
-import 'package:html/parser.dart'; // Contains HTML parsers to generate a Document object
-import 'package:html/dom.dart' as dom;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,9 +17,9 @@ import 'logic/filter.dart';
 import 'logic/names.dart';
 import 'logic/theme.dart';
 import 'logic/themedata.dart';
+import 'logic/functionsForMain.dart';
 
 void main() {
-  print("hallo");
   WidgetsFlutterBinding.ensureInitialized();
   LocalDatabase().getBool(Names.dark).then((isDark) {
     runApp(ChangeNotifierProvider<ThemeChanger>(
@@ -118,20 +116,7 @@ class _MyAppState extends State<MyApp> {
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
 
-  Future<String> getData() async {
-    print("Anfang des webscrapen");
-    var client = Client();
-    try {
-      Response response = await client.get(
-          "https://app.dsbcontrol.de/data/748a002d-3b4b-44ce-8311-232ed983711d/f3e9a6da-7e76-4949-816c-58c7ee05abc8/f3e9a6da-7e76-4949-816c-58c7ee05abc8.html");
-      print("Der web Zugriff ist abgeschlossen");
-      var document = parse(response.body);
-      List<dom.Element> links = document.querySelectorAll('h2');
-      return links.first.text.substring(18);
-    } catch (e) {
-      return "Fehler";
-    }
-  }
+
 
   void reload() {
     setState(() {
@@ -212,19 +197,9 @@ class _MyAppState extends State<MyApp> {
           });
         });
     });
-
+// Push-Notification handling
     PushNotificationsManager push = PushNotificationsManager();
-    // Push-Notification handling
     push.init();
-    push.getmessaging().configure(
-        onMessage: (Map<String, dynamic> message) async {
-      print("$message ist gekommen");
-      final SnackBar snackbar = SnackBar(
-        content: Text("Neue Inhalte"),
-        behavior: SnackBarBehavior.floating,
-      );
-      Scaffold.of(context).showSnackBar(snackbar);
-    });
 
     //news handling
     manager.getIsNewsAvailable().then((onValue) {
@@ -235,35 +210,11 @@ class _MyAppState extends State<MyApp> {
 
     //update Message handling
 
-    manager.getUpdate().then((onValue) async {
-      if (onValue == "updateAvaible") {
-        setState(() {
-          shouldShowBanner = true;
-        });
-      } else if (onValue == "forceUpdate") {
-        String link = await manager.getUpdateLink();
-        List<dynamic> message = await manager.getUpdateMessage();
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return WillPopScope(
-              onWillPop: () {},
-              child: AlertDialog(
-                title: Text(message[0]),
-                content: Text(message[1]),
-                actions: <Widget>[
-                  RaisedButton(
-                    child: Text("Update"),
-                    onPressed: () => launch(link),
-                  )
-                ],
-              ),
-            );
-          },
-        );
-      }
-    });
+    showUpdateDialog(context).then((showBanner){
+      setState(() {
+        shouldShowBanner = showBanner;
+      });
+    });//method of functionsForMain.dart to show a needed banner to the user
     reload();
     refresh();
     super.initState();
