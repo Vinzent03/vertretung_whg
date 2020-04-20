@@ -4,20 +4,17 @@ import 'package:Vertretung/pages/introScreen.dart';
 import 'package:Vertretung/pages/newsPage.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
-import 'package:flutter/scheduler.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import 'pages/settingsPage.dart';
-import 'widgets/generalBlueprint.dart';
-import 'logic/localDatabase.dart';
 import 'logic/filter.dart';
+import 'logic/functionsForMain.dart';
+import 'logic/localDatabase.dart';
 import 'logic/names.dart';
 import 'logic/theme.dart';
 import 'logic/themedata.dart';
-import 'logic/functionsForMain.dart';
+import 'pages/settingsPage.dart';
+import 'widgets/generalBlueprint.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,8 +60,9 @@ class _MyAppState extends State<MyApp> {
   bool horizontal = true;
   bool twoPages = false;
   bool shouldShowBanner = false;
-  final controller = PageController(initialPage: 0);
   List<String> listWithoutClasses = [""];
+
+  //initialize these list, because to load faecher from localDatabase takes time, and the UI have to be build
   List<List<String>> myListToday = [
     [""],
     [""]
@@ -116,13 +114,11 @@ class _MyAppState extends State<MyApp> {
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
 
-
-
   void reload() {
     setState(() {
       change = "Loading";
     });
-    /*getData().then((st) {
+    /*getData().then((st) { //Now in functionsForMain.dart But have to called here however
       setState(() {
         change = st;
       });
@@ -177,13 +173,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     cd = CloudDatabase();
-    // Show the onboarding on first start
-    showOnboarding(context).then((nothing)=> refresh());
-    // Push-Notification handling
-    PushNotificationsManager push = PushNotificationsManager();
-    push.init();
 
-    //news handling
+    // Show the onboarding on first start
+    showOnboarding(context).then((nothing) => refresh());
+
+    // Push-Notification handling
+    PushNotificationsManager().init();
+
+    //news badge on inbox icon handling
     cd.getIsNewsAvailable().then((onValue) {
       setState(() {
         isNewsAvailable = onValue;
@@ -191,7 +188,7 @@ class _MyAppState extends State<MyApp> {
     });
 
     //update Message handling
-    showUpdateDialog(context).then((showBanner){//method of functionsForMain.dart to show a needed banner to the user
+    showUpdateDialog(context).then((showBanner) {
       setState(() {
         shouldShowBanner = showBanner;
       });
