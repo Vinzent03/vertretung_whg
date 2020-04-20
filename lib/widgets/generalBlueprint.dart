@@ -1,17 +1,17 @@
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../widgets/informationTile.dart';
-import '../widgets/vertretungTile.dart';
+import 'informationTile.dart';
+import 'vertretungTile.dart';
 
-class GeneralPage extends StatelessWidget {
+class GeneralBlueprint extends StatelessWidget {
   final bool today;
   final isMy;
   final List<List<String>> list;
   final String change;
   final bool onlyOnePage;
   bool updateAvaible = false;
-  GeneralPage(
+  GeneralBlueprint(
       {Key key,
       @required this.today,
       @required this.list,
