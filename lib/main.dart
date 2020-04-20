@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'pages/settingsPage.dart';
-import 'pages/generalPage.dart';
+import 'widgets/generalBlueprint.dart';
 import 'logic/localDatabase.dart';
 import 'logic/filter.dart';
 import 'logic/names.dart';
@@ -124,7 +124,7 @@ class _MyAppState extends State<MyApp> {
     try {
       Response response = await client.get(
           "https://app.dsbcontrol.de/data/748a002d-3b4b-44ce-8311-232ed983711d/f3e9a6da-7e76-4949-816c-58c7ee05abc8/f3e9a6da-7e76-4949-816c-58c7ee05abc8.html");
-      print("Der web Zugriff sit abgeschlossen");
+      print("Der web Zugriff ist abgeschlossen");
       var document = parse(response.body);
       List<dom.Element> links = document.querySelectorAll('h2');
       return links.first.text.substring(18);
@@ -343,27 +343,27 @@ class _MyAppState extends State<MyApp> {
                     controller: controller,
                     children: <Widget>[
                       currentIndex == 0
-                          ? GeneralPage(
+                          ? GeneralBlueprint(
                               today: true,
                               list: myListToday,
                               change: change,
                               isMy: true,
                               updateAvaible: shouldShowBanner,
                             )
-                          : GeneralPage(
+                          : GeneralBlueprint(
                               today: false,
                               list: myListTomorrow,
                               change: change,
                               isMy: true,
                             ),
                       currentIndex == 0
-                          ? GeneralPage(
+                          ? GeneralBlueprint(
                               today: true,
                               list: listToday,
                               change: change,
                               isMy: false,
                             )
-                          : GeneralPage(
+                          : GeneralBlueprint(
                               today: false,
                               list: listTomorrow,
                               change: change,
@@ -378,7 +378,7 @@ class _MyAppState extends State<MyApp> {
                 : ListView(
                     children: <Widget>[
                       currentIndex == 0
-                          ? GeneralPage(
+                          ? GeneralBlueprint(
                               today: true,
                               list: myListToday,
                               change: change,
@@ -386,7 +386,7 @@ class _MyAppState extends State<MyApp> {
                               onlyOnePage: true,
                               updateAvaible: shouldShowBanner,
                             )
-                          : GeneralPage(
+                          : GeneralBlueprint(
                               today: false,
                               list: myListTomorrow,
                               change: change,
@@ -399,14 +399,14 @@ class _MyAppState extends State<MyApp> {
                         endIndent: 5,
                       ),
                       currentIndex == 0
-                          ? GeneralPage(
+                          ? GeneralBlueprint(
                               today: true,
                               list: listToday,
                               change: change,
                               isMy: false,
                               onlyOnePage: true,
                             )
-                          : GeneralPage(
+                          : GeneralBlueprint(
                               today: false,
                               list: listTomorrow,
                               change: change,
@@ -417,7 +417,7 @@ class _MyAppState extends State<MyApp> {
                   )
             // ohne fächer
             : currentIndex == 0
-                ? GeneralPage(
+                ? GeneralBlueprint(
                     today: true,
                     list: listToday,
                     change: change,
@@ -425,7 +425,7 @@ class _MyAppState extends State<MyApp> {
                     onlyOnePage: _faecherOn ? true : null,
                     updateAvaible: shouldShowBanner,
                   )
-                : GeneralPage(
+                : GeneralBlueprint(
                     today: false,
                     list: listTomorrow,
                     change: change,
