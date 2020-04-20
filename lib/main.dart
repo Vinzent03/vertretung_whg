@@ -54,13 +54,14 @@ class _MyAppState extends State<MyApp> {
   final controller = PageController(initialPage: 0);
   CloudDatabase cd;
   LocalDatabase getter = LocalDatabase();
-  int currentIndex = 0;
+  int currentIndex = 0;//the index of the bottomNavigationBar(heute/morgen)
   int currentPage = 0;
   bool isNewsAvailable = false;
-  bool _faecherOn = false;
-  bool horizontal = true;
+  bool faecherOn = false;//of personalisierte Vertretung is enabled
+  bool horizontal = true;//how to swipe
   bool twoPages = false;
-  bool shouldShowBanner = false;
+  bool shouldShowBanner = false;//the banner if a update is recommended
+  String change = "Loading";// The last tine the data on dsb mobile changed
   List<String> listWithoutClasses = [""];
 
   //initialize these list, because to load faecher from localDatabase takes time, and the UI have to be build
@@ -80,7 +81,7 @@ class _MyAppState extends State<MyApp> {
     [""],
     [""]
   ];
-  String change;
+
   List<String> rawListToday = [
     "6a",
     "4. Std. BI bei MK im Raum H024 ",
@@ -132,7 +133,7 @@ class _MyAppState extends State<MyApp> {
     getter.getBool(Names.faecherOn).then((onValue) {
       if (mounted) {
         setState(() {
-          _faecherOn = onValue;
+          faecherOn = onValue;
         });
       }
     });
@@ -228,10 +229,10 @@ class _MyAppState extends State<MyApp> {
               ),
               onPressed: () =>
                   Navigator.pushNamed(context, Names.newsPage).then((onValue) {
-                setState(() {
-                  isNewsAvailable = false;
-                });
-              }),
+                    setState(() {
+                      isNewsAvailable = false;
+                    });
+                  }),
             ),
             IconButton(
               icon: Icon(Icons.settings),
@@ -242,7 +243,7 @@ class _MyAppState extends State<MyApp> {
                   getter.getBool(Names.faecherOn).then((onValue) {
                     if (mounted) {
                       setState(() {
-                        _faecherOn = onValue;
+                        faecherOn = onValue;
                       });
                     }
                   });
@@ -262,7 +263,7 @@ class _MyAppState extends State<MyApp> {
           controller: controller,
           change: change,
           currentIndex: currentIndex,
-          faecherOn: _faecherOn,
+          faecherOn: faecherOn,
           horizontal: horizontal,
           shouldShowBanner: shouldShowBanner,
           twoPages: twoPages,
@@ -274,41 +275,37 @@ class _MyAppState extends State<MyApp> {
 
 
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              reload();
-            });
-          },
+          onPressed: () =>
+              reload(),
           child: Icon(
-            Icons.refresh,
-          ),
+          Icons.refresh,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: theme.getIsDark() ? Colors.black : Colors.white,
-            elevation: 10,
-            currentIndex: currentIndex,
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today),
-                title: Text("Heute"),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.today),
-                title: Text("Morgen"),
-              ),
-            ],
-            onTap: (index) {
-              if (currentIndex == index && twoPages) {
-                // Beim tab wechseln soll nicht immer die page gewechselt werden
-                controller.animateToPage(controller.page == 0 ? 1 : 0,
-                    duration: Duration(seconds: 1),
-                    curve: Curves.fastLinearToSlowEaseIn);
-              }
-              setState(() {
-                currentIndex = index;
-              });
-            }),
       ),
-    );
+      bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: theme.getIsDark() ? Colors.black : Colors.white,
+          elevation: 10,
+          currentIndex: currentIndex,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today),
+              title: Text("Heute"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.today),
+              title: Text("Morgen"),
+            ),
+          ],
+          onTap: (index) {
+            if (currentIndex == index && twoPages) {
+              // Beim tab wechseln soll nicht immer die page gewechselt werden
+              controller.animateToPage(controller.page == 0 ? 1 : 0,
+                  duration: Duration(seconds: 1),
+                  curve: Curves.fastLinearToSlowEaseIn);
+            }
+            setState(() {
+              currentIndex = index;
+            });
+          }),
+    ),);
   }
 }
