@@ -1,12 +1,12 @@
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/logic/theme.dart';
-import 'package:Vertretung/services/manager.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/widgets/stufenList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
-import '../logic/getter.dart';
+import '../logic/localDatabase.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 

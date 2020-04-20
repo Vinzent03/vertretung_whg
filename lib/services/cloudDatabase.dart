@@ -1,10 +1,10 @@
-import 'package:Vertretung/logic/getter.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:package_info/package_info.dart';
 
-class Manager {
+class CloudDatabase {
   final Firestore ref = Firestore.instance;
 
   void updateUserData(
@@ -96,7 +96,7 @@ class Manager {
   }
 
   Future<bool> getIsNewsAvailable() async {
-    int localNewsAnzahl = int.parse(await Getter().getString(Names.newsAnzahl));
+    int localNewsAnzahl = int.parse(await LocalDatabase().getString(Names.newsAnzahl));
  
     DocumentSnapshot doc = await ref.collection("details").document("news").get();
 
