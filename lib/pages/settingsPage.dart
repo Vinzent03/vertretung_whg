@@ -11,12 +11,12 @@ import '../logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
 
-class Settings extends StatefulWidget {
+class SettingsPage extends StatefulWidget {
   @override
-  _SettingsState createState() => _SettingsState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsPageState extends State<SettingsPage> {
   CloudDatabase manager;
   bool dark = false;
   bool faecherOn = false;

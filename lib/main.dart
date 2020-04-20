@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'pages/settings.dart';
+import 'pages/settingsPage.dart';
 import 'pages/generalPage.dart';
 import 'logic/localDatabase.dart';
 import 'logic/filter.dart';
@@ -39,7 +39,7 @@ class MyAppSt extends StatelessWidget {
       initialRoute: "/",
       routes: {
         Names.homePage: (context) => MyApp(),
-        Names.settingsPage: (context) => Settings(),
+        Names.settingsPage: (context) => SettingsPage(),
         Names.helpPage: (context) => HelpPage(),
         Names.introScreen: (context) => IntroScreen(),
         Names.faecherPage: (context) => FaecherPage(),
