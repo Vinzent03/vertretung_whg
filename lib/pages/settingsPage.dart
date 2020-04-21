@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String stufe = "Nicht Geladen";
   List<String> faecherList = [];
   List<String> faecherNotList = [];
-  String version = "Laden";
+
   LocalDatabase getter = LocalDatabase();
 
   Future<String> createAlertDialog(
@@ -82,12 +82,6 @@ class _SettingsPageState extends State<SettingsPage> {
     String pstufe;
     List<String> pfaecherList;
     String pVersion;
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      pVersion = packageInfo.version;
-      setState(() {
-        version = pVersion;
-      });
-    });
     getter.getBool(Names.dark).then((bool b) {
       pdark = b;
     });
@@ -316,10 +310,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
               ),
+              Card(
+                elevation: 3,
+                child: ListTile(
+                  title: Text(
+                    "Über Uns"
+                  ),
+                  leading: Icon(
+                    Icons.info
+                  ),
+                  onTap: ()=> Navigator.pushNamed(context, Names.aboutPage),
+                ),
+              )
             ],
           ),
         ),
-        bottomSheet: Builder(
+        /*bottomSheet: Builder(
           builder: (context) {
             return Container(
                 color: _themeChanger.getIsDark() ? Colors.black : Colors.white,
@@ -347,7 +353,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ));
           },
-        ),
+        ),*/
       ),
     );
   }

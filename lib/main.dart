@@ -1,3 +1,4 @@
+import 'package:Vertretung/pages/aboutPage.dart';
 import 'package:Vertretung/pages/faecherPage.dart';
 import 'package:Vertretung/pages/helpPage.dart';
 import 'package:Vertretung/pages/introScreen.dart';
@@ -32,7 +33,7 @@ class MyAppSt extends StatelessWidget {
     final theme = Provider.of<ThemeChanger>(context);
     return MaterialApp(
       theme: theme.getTheme(),
-      initialRoute: "/",
+      initialRoute: Names.homePage,
       routes: {
         Names.homePage: (context) => MyApp(),
         Names.settingsPage: (context) => SettingsPage(),
@@ -40,6 +41,7 @@ class MyAppSt extends StatelessWidget {
         Names.introScreen: (context) => IntroScreen(),
         Names.faecherPage: (context) => FaecherPage(),
         Names.newsPage: (context) => NewsPage(),
+        Names.aboutPage: (context) => AboutPage(),
       },
     );
   }
