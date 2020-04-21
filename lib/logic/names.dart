@@ -6,6 +6,7 @@ class Names{
   static const String introScreen = "/introScreen";
   static const String faecherPage = "/faecherPage";
   static const String newsPage ="newsPage";
+  static const String aboutPage ="aboutPage";
 
   //variables
   static const String stufe = "stufe";
