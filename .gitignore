@@ -35,5 +35,6 @@ lib/generated_plugin_registrant.dart
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
-#For safety because our api code shouldnt be public
+
+#For safety because our api key code shouldnt be public
 android/app/google-services.json

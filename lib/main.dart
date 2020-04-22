@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
   int currentIndex = 0;//the index of the bottomNavigationBar(heute/morgen)
   int currentPage = 0;
   bool isNewsAvailable = false;
-  bool faecherOn = false;//of personalisierte Vertretung is enabled
+  bool faecherOn = false;//if personalisierte Vertretung is enabled
   bool horizontal = true;//how to swipe
   bool twoPages = false;
   bool shouldShowBanner = false;//the banner if a update is recommended
