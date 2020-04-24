@@ -9,73 +9,42 @@ class GeneralBlueprint extends StatelessWidget {
   final isMy;
   final List<List<String>> list;
   final String change;
-  final bool onlyOnePage;
-  bool updateAvaible = false;
   GeneralBlueprint(
       {Key key,
       @required this.today,
       @required this.list,
       @required this.change,
-      this.isMy,
-      this.onlyOnePage,
-      this.updateAvaible})
+      this.isMy,})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if(updateAvaible== null)
-      updateAvaible =false;
+    if(list[0].isNotEmpty)
     return ListView(
       //doppelte listview sonst kann man nicht scrollen
       shrinkWrap: true,
       physics: ScrollPhysics(),
       children: <Widget>[
-        Column(
-          children: <Widget>[
-            if(updateAvaible)
-              Card(
-                color: Colors.red,
-                child: ListTile(
-                  title: Text("Es ist ein Update ausstehend!"),
-                  subtitle: Text("Tippe um zum Download zu kommen"),
-                  leading: Icon(Icons.warning),
-                  onTap: (){
-                    CloudDatabase().getUpdateLink().then((onValue){
-                      launch(onValue);
-                    });
-                  },
-                ),
-              ),
-            InformationTile(
-              change: change,
-              day: today ? "Heute" : "Morgen",
-              isMy: isMy,
-            ),
-            list[0].isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: list[0].length,
-                    physics: ScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return VertretungTile(
-                        dense: list[0].length >7 ? true:false,
-                        list: list,
-                        index: index,
-                      );
-                    })
-                : Container(
-              margin: onlyOnePage==null ? EdgeInsets.only(top: 140): null,
-                    child: Icon(
-                      Icons.business_center,
-                      color: Colors.blue,
-                      size: onlyOnePage == null
-                          ? 200
-                          : 100, // Wenn onlyOnePage soll das Icon kleiner machen
-                    ),
-                  ),
-          ],//mainAxisSize: MainAxisSize.min,
-        ),
+        ListView.builder(
+                shrinkWrap: true,
+                itemCount: list[0].length,
+                physics: ScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return VertretungTile(
+                    dense: list[0].length >7 ? true:false,
+                    list: list,
+                    index: index,
+                  );
+                })
       ],
     );
+    else
+      return Center(
+        child: Icon(
+          Icons.business_center,
+          color: Colors.blue,
+          size: 200, // Wenn onlyOnePage soll das Icon kleiner machen
+        ),
+      );
   }
 }

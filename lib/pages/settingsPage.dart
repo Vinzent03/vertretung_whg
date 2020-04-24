@@ -1,4 +1,5 @@
 import 'package:Vertretung/logic/theme.dart';
+import 'package:Vertretung/services/auth.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/widgets/stufenList.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +21,7 @@ class _SettingsPageState extends State<SettingsPage> {
   CloudDatabase manager;
   bool dark = false;
   bool faecherOn = false;
-  bool twoPages = false;
   bool refresh = false;
-  bool horizontal = false;
   bool notification = false;
   String stufe = "Nicht Geladen";
   List<String> faecherList = [];
@@ -65,7 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void updateUserdata() {
     manager.updateUserData(
         faecherOn: faecherOn,
-        stufe: stufe.toLowerCase(),
+        stufe: stufe,
         faecher: faecherList,
         faecherNot: faecherNotList,
         notification: notification);
@@ -75,24 +74,15 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     manager = CloudDatabase();
     bool pdark;
-    bool phorizontal;
     bool pfaecherOn;
-    bool pOnlyOnePage;
     bool pnotification;
     String pstufe;
     List<String> pfaecherList;
-    String pVersion;
     getter.getBool(Names.dark).then((bool b) {
       pdark = b;
     });
-    getter.getBool(Names.horizontal).then((bool b) {
-      phorizontal = b;
-    });
     getter.getBool(Names.faecherOn).then((bool b) {
       pfaecherOn = b;
-    });
-    getter.getBool(Names.twoPages).then((bool b) {
-      pOnlyOnePage = b;
     });
     getter.getBool(Names.notification).then((bool b) {
       pnotification = b;
@@ -107,9 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
       setState(() {
         faecherNotList = st;
         dark = pdark;
-        horizontal = phorizontal;
         faecherOn = pfaecherOn;
-        twoPages = pOnlyOnePage;
         notification = pnotification;
         stufe = pstufe;
         faecherList = pfaecherList;
@@ -126,6 +114,14 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Einstellungen"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: ()async{
+                await AuthService().signOut();
+              },
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -145,22 +141,17 @@ class _SettingsPageState extends State<SettingsPage> {
                         stufe,
                         style: TextStyle(fontSize: 17),
                       ),
-                      onPressed: () {
-                        PushNotificationsManager push =
-                            PushNotificationsManager();
+                      onPressed: () async{
+                        PushNotificationsManager push = PushNotificationsManager();
                         if (!stufe.contains(" "))
-                          push.unsubTopic(
-                              stufe); //Beim ersten starten ist die stufe "nicht festgelegt" und das geht nicht
-                        createAlertDialog(context, "stufe",
-                                "Bitte wähle deine Stufe/Klasse")
-                            .then((nichts) {
+                          push.unsubTopic(stufe); //Beim ersten starten ist die stufe "nicht festgelegt" und das geht nicht
+                        await createAlertDialog(context, "stufe", "Bitte wähle deine Stufe/Klasse");
                           getter.getString(Names.stufe).then((onValue) {
                             setState(() {
                               stufe = onValue;
                             });
-                            manager.updateUserData(stufe: onValue);
+                            updateUserdata();
                           });
-                        });
                       },
                     ),
                   )),
@@ -179,32 +170,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         });
                         updateUserdata();
                       },
-                    ),
-                    SwitchListTile(
-                      title: Text("Privat und Gruppen Ansicht trennen"),
-                      value: twoPages,
-                      secondary: Icon(Icons.list),
-                      onChanged: faecherOn
-                          ? (bool b) {
-                              getter.setBool(Names.twoPages, b);
-                              setState(() {
-                                twoPages = b;
-                              });
-                            }
-                          : null,
-                    ),
-                    SwitchListTile(
-                      title: Text("Horizontales Wischen zum Modus wechsel"),
-                      value: horizontal,
-                      secondary: Icon(Icons.swap_horiz),
-                      onChanged: (faecherOn && twoPages)
-                          ? (bool b) {
-                              getter.setBool(Names.horizontal, b);
-                              setState(() {
-                                horizontal = b;
-                              });
-                            }
-                          : null,
                     ),
                     ListTile(
                       title: Text("Deine Fächer(Whitelist)"),
@@ -229,6 +194,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     setState(() {
                                       faecherList = onValue;
                                     });
+                                    updateUserdata();
                                   });
                                 }),
                     ),
@@ -255,6 +221,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     setState(() {
                                       faecherNotList = onValue;
                                     });
+                                    updateUserdata();
                                   });
                                 }),
                     )
@@ -295,7 +262,6 @@ class _SettingsPageState extends State<SettingsPage> {
                             notification = b;
                           });
                           if (notification) {
-                            manager.createDocument();
                             updateUserdata();
                           } else {
                             manager.deleteDocument();

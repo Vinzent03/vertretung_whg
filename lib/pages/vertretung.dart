@@ -6,16 +6,17 @@ import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/logic/theme.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
-import 'package:Vertretung/widgets/generalSite.dart';
+import 'package:Vertretung/widgets/generalBlueprint.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Home extends StatefulWidget {
+class Vertretung extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _VertretungState createState() => _VertretungState();
 }
 
-class _HomeState extends State<Home> {
+class _VertretungState extends State<Vertretung> {
   final controller = PageController(initialPage: 0);
   CloudDatabase cd;
   LocalDatabase getter = LocalDatabase();
@@ -24,7 +25,6 @@ class _HomeState extends State<Home> {
   bool isNewsAvailable = false;
   bool faecherOn = false; //if personalisierte Vertretung is enabled
   bool horizontal = true; //how to swipe
-  bool twoPages = false;
   bool shouldShowBanner = false; //the banner if a update is recommended
   String change = "Loading"; // The last tine the data on dsb mobile changed
   List<String> listWithoutClasses = [""];
@@ -80,7 +80,11 @@ class _HomeState extends State<Home> {
     "Q2",
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
-
+  int getWeekNumber() {
+    DateTime date = DateTime.now();
+    int dayOfYear = int.parse(DateFormat("D").format(date));
+    return ((dayOfYear - date.weekday + 10) / 7).floor();
+  }
   void reload() {
     setState(() {
       change = "Loading";
@@ -99,13 +103,6 @@ class _HomeState extends State<Home> {
       if (mounted) {
         setState(() {
           faecherOn = onValue;
-        });
-      }
-    });
-    getter.getBool(Names.twoPages).then((onValue) {
-      if (mounted) {
-        setState(() {
-          twoPages = onValue;
         });
       }
     });
@@ -133,27 +130,6 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    cd = CloudDatabase();
-
-    // Show the onboarding on first start
-    showOnboarding(context).then((nothing) => refresh());
-
-    // Push-Notification handling
-    PushNotificationsManager().init();
-
-    //news badge on inbox icon handling
-    cd.getIsNewsAvailable().then((onValue) {
-      setState(() {
-        isNewsAvailable = onValue;
-      });
-    });
-
-    //update Message handling
-    showUpdateDialog(context).then((showBanner) {
-      setState(() {
-        shouldShowBanner = showBanner;
-      });
-    });
     reload();
     refresh();
     super.initState();
@@ -164,102 +140,89 @@ class _HomeState extends State<Home> {
     final theme = Provider.of<ThemeChanger>(context);
     return MaterialApp(
       theme: theme.getTheme(),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Vertretung"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.help_outline),
-              onPressed: () => Navigator.pushNamed(context, Names.helpPage),
-            ),
-            IconButton(
-              icon: Stack(
-                children: <Widget>[
-                  Icon(Icons.inbox),
-                  Positioned(
-                    left: 15,
-                    child: Icon(
-                      Icons.brightness_1,
-                      size: isNewsAvailable ? 10 : 0,
-                      color: Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-              onPressed: () =>
-                  Navigator.pushNamed(context, Names.newsPage).then((onValue) {
-                setState(() {
-                  isNewsAvailable = false;
-                });
-              }),
-            ),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                Navigator.pushNamed(context, Names.settingsPage)
-                    .then((onValue) {
-                  refresh();
-                  getter.getBool(Names.faecherOn).then((onValue) {
-                    if (mounted) {
-                      setState(() {
-                        faecherOn = onValue;
-                      });
-                    }
-                  });
-                });
-              },
-            ),
-          ],
-        ),
-        body: Builder(
-          builder: (context){
-            return currentIndex <=1 ?GeneralSite(
-              controller: controller,
-              change: change,
-              currentIndex: currentIndex,
-              faecherOn: faecherOn,
-              shouldShowBanner: shouldShowBanner,
-              twoPages: twoPages,
-              listToday: listToday,
-              listTomorrow: listTomorrow,
-              myListToday: myListToday,
-              myListTomorrow: myListTomorrow,
-            ):Friends();
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => reload(),
-          child: Icon(
-            Icons.refresh,
-          ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: theme.getIsDark() ? Colors.black : Colors.white,
-            elevation: 10,
-            currentIndex: currentIndex,
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today),
-                title: Text("Heute"),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.today),
-                title: Text("Morgen"),
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.group), title: Text("Freunde"))
+      home: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Vertretung $change  W:${getWeekNumber()}"),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: ()=>Navigator.pushNamed(context, Names.settingsPage),
+              )
             ],
-            onTap: (index) {
-              if (currentIndex == index && twoPages) {
-                // Beim tab wechseln soll nicht immer die page gewechselt werden
-                controller.animateToPage(controller.page == 0 ? 1 : 0,
-                    duration: Duration(seconds: 1),
-                    curve: Curves.fastLinearToSlowEaseIn);
-              }
-              setState(() {
-                currentIndex = index;
-              });
-            }),
+            bottom: TabBar(
+              isScrollable: true,
+              tabs: <Widget>[
+                Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(Icons.person),
+                      Text("Heute")
+                    ],
+                  ),
+                ),
+                Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(Icons.person),
+                      Text("Morgen")
+                    ],
+                  ),
+                ),
+                Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(Icons.group),
+                      Text("Heute")
+                    ],
+                  ),
+                ),
+                Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(Icons.group),
+                      Text("Morgen")
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            physics: ScrollPhysics(),
+            children: <Widget>[
+              GeneralBlueprint(
+                change: change,
+                list: myListToday,
+                today: true,
+                isMy: true,
+              ),
+              GeneralBlueprint(
+                change: change,
+                list: myListTomorrow,
+                today: false,
+                isMy: true,
+              ),
+              GeneralBlueprint(
+                change: change,
+                list: listToday,
+                today: true,
+                isMy: false,
+              ),
+              GeneralBlueprint(
+                change: change,
+                list: listTomorrow,
+                today: false,
+                isMy: false,
+              ),
+            ],
+          )
+        ),
       ),
     );
   }
