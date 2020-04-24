@@ -5,18 +5,18 @@ class Names{
   static const String helpPage = "/helpPage";
   static const String introScreen = "/introScreen";
   static const String faecherPage = "/faecherPage";
-  static const String newsPage ="newsPage";
-  static const String aboutPage ="aboutPage";
+  static const String newsPage ="/newsPage";
+  static const String aboutPage ="/aboutPage";
+  static const String friendRequests ="/friendRequests";
+  static const String friendsList ="/friendsList";
 
   //variables
   static const String stufe = "stufe";
   static const String faecherOn = "faecherOn";
   static const String dark = "isDark";
-  static const String horizontal = "vertical";
   static const String faecherListCustom = "faecherListCustom";
   static const String faecherNotListCustom = "faecherNotListCustom";
   static const String faecherNot = "faecherNot";
-  static const String twoPages = "twoPages";
   static const String lessonsToday = "lessonsToday";
   static const String lessonsTomorrow = "lessonsTomorrow";
   static const String faecherList = "faecherList";
