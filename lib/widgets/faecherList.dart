@@ -304,9 +304,9 @@ class _FaecherListState extends State<FaecherList> {
     }
     LocalDatabase().setStringList(names[1], _list);
     if (names[0] == Names.faecherList)
-      CloudDatabase().updateUserData(faecher: selectedFaecher);
+      CloudDatabase().updateFaecher(list: selectedFaecher,isWhitelist: true);
     else
-      CloudDatabase().updateUserData(faecherNot: selectedFaecher);
+      CloudDatabase().updateFaecher(list: selectedFaecher,isWhitelist: false);
     super.dispose();
   }
 }

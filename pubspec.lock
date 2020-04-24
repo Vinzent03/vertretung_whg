@@ -43,6 +43,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.11"
+  cloud_functions:
+    dependency: "direct dev"
+    description:
+      name: cloud_functions
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.2+3"
+  cloud_functions_platform_interface:
+    dependency: transitive
+    description:
+      name: cloud_functions_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  cloud_functions_web:
+    dependency: transitive
+    description:
+      name: cloud_functions_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   collection:
     dependency: transitive
     description:
@@ -114,7 +135,7 @@ packages:
     source: hosted
     version: "0.1.2"
   firebase_core:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: firebase_core
       url: "https://pub.dartlang.org"

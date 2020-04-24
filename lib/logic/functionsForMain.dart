@@ -62,7 +62,6 @@ Future<void> showOnboarding(context) async{
         await Navigator.of(context).pushNamed(Names.introScreen);
           ld.setString(Names.newsAnzahl, 0.toString());
           ld.getString(Names.stufe).then((onValue) {
-            CloudDatabase().createDocument();
             CloudDatabase().updateUserData(
                 faecherOn: false,
                 stufe: onValue,
