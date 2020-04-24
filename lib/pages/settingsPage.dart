@@ -24,6 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool refresh = false;
   bool notification = false;
   String stufe = "Nicht Geladen";
+  String name = "Nicht Geladen";
   List<String> faecherList = [];
   List<String> faecherNotList = [];
 
@@ -41,12 +42,6 @@ class _SettingsPageState extends State<SettingsPage> {
             title: Text(message),
             content: StufenList(),
             actions: <Widget>[
-/*              FlatButton(
-                child: Text("abbrechen"),
-                onPressed: () {
-                  Navigator.of(context).pop(situation);
-                },
-              ),*/
               FlatButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(7))),
@@ -63,11 +58,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void updateUserdata() {
     manager.updateUserData(
-        faecherOn: faecherOn,
-        stufe: stufe,
-        faecher: faecherList,
-        faecherNot: faecherNotList,
-        notification: notification);
+      faecherOn: faecherOn,
+      stufe: stufe,
+      faecher: faecherList,
+      faecherNot: faecherNotList,
+      notification: notification,
+      name: name,
+    );
   }
 
   @override
@@ -77,6 +74,7 @@ class _SettingsPageState extends State<SettingsPage> {
     bool pfaecherOn;
     bool pnotification;
     String pstufe;
+    String pname;
     List<String> pfaecherList;
     getter.getBool(Names.dark).then((bool b) {
       pdark = b;
@@ -90,6 +88,9 @@ class _SettingsPageState extends State<SettingsPage> {
     getter.getString(Names.stufe).then((String st) {
       pstufe = st;
     });
+    getter.getString(Names.name).then((String st) {
+      pname = st;
+    });
     getter.getStringList(Names.faecherList).then((List<String> st) {
       pfaecherList = st;
     });
@@ -100,6 +101,7 @@ class _SettingsPageState extends State<SettingsPage> {
         faecherOn = pfaecherOn;
         notification = pnotification;
         stufe = pstufe;
+        name = pname;
         faecherList = pfaecherList;
       });
     });
@@ -117,7 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.exit_to_app),
-              onPressed: ()async{
+              onPressed: () async {
                 await AuthService().signOut();
               },
             )
@@ -141,17 +143,20 @@ class _SettingsPageState extends State<SettingsPage> {
                         stufe,
                         style: TextStyle(fontSize: 17),
                       ),
-                      onPressed: () async{
-                        PushNotificationsManager push = PushNotificationsManager();
+                      onPressed: () async {
+                        PushNotificationsManager push =
+                            PushNotificationsManager();
                         if (!stufe.contains(" "))
-                          push.unsubTopic(stufe); //Beim ersten starten ist die stufe "nicht festgelegt" und das geht nicht
-                        await createAlertDialog(context, "stufe", "Bitte wähle deine Stufe/Klasse");
-                          getter.getString(Names.stufe).then((onValue) {
-                            setState(() {
-                              stufe = onValue;
-                            });
-                            updateUserdata();
+                          push.unsubTopic(
+                              stufe); //Beim ersten starten ist die stufe "nicht festgelegt" und das geht nicht
+                        await createAlertDialog(
+                            context, "stufe", "Bitte wähle deine Stufe/Klasse");
+                        getter.getString(Names.stufe).then((onValue) {
+                          setState(() {
+                            stufe = onValue;
                           });
+                          updateUserdata();
+                        });
                       },
                     ),
                   )),
@@ -279,13 +284,9 @@ class _SettingsPageState extends State<SettingsPage> {
               Card(
                 elevation: 3,
                 child: ListTile(
-                  title: Text(
-                    "Über Uns"
-                  ),
-                  leading: Icon(
-                    Icons.info
-                  ),
-                  onTap: ()=> Navigator.pushNamed(context, Names.aboutPage),
+                  title: Text("Über Uns"),
+                  leading: Icon(Icons.info),
+                  onTap: () => Navigator.pushNamed(context, Names.aboutPage),
                 ),
               )
             ],

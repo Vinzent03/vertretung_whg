@@ -30,4 +30,16 @@ class Functions{
       "frienduid": frienduid,
     });
   }
+  void callDeclineFriendRequest(String frienduid)async{
+    CloudFunctions cf = CloudFunctions(app: FirebaseApp.instance,region: "europe-west3");
+    final HttpsCallable  call = cf.getHttpsCallable(functionName: "declineFriendRequest");
+    AuthService _auth = AuthService();
+    print(frienduid);
+    String uid = await _auth.getUserId();
+    print(uid);
+    call.call(<String, dynamic>{
+      "uid": uid,
+      "frienduid": frienduid,
+    });
+  }
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:Vertretung/pages/newsPage.dart';
 import 'package:Vertretung/pages/vertretung.dart';
 import 'package:flutter/material.dart';
+import 'package:Vertretung/logic/functionsForMain.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,7 +15,11 @@ class _HomeState extends State<Home> {
   Widget usedPage = Vertretung();
 
   int currentIndex = 0;
-
+  @override
+  void initState() {
+    showUpdateDialog(context);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

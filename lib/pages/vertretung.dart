@@ -1,11 +1,8 @@
-import 'package:Vertretung/friends/friends.dart';
 import 'package:Vertretung/logic/filter.dart';
-import 'package:Vertretung/logic/functionsForMain.dart';
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/logic/theme.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:Vertretung/services/push_notifications.dart';
 import 'package:Vertretung/widgets/generalBlueprint.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';

@@ -1,3 +1,4 @@
+import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -13,6 +14,7 @@ class Friends extends StatefulWidget {
 class _FriendsState extends State<Friends> {
   final TextEditingController controller = TextEditingController();
   int friendsCount = 0;
+  String name = "Lade...";
   @override
   void initState() {
       CloudDatabase().getFriendsList().then((anz){
@@ -20,10 +22,15 @@ class _FriendsState extends State<Friends> {
           friendsCount = anz.length;
         });
       });
+      LocalDatabase().getString(Names.name).then((newName){
+        setState(() {
+          name = newName;
+        });
+      });
     super.initState();
   }
 
-  createAlertDialog() {
+  addFriendAlert() {
     showDialog(
         context: context,
         builder: (context) {
@@ -41,6 +48,34 @@ class _FriendsState extends State<Friends> {
                   child: Text("Bestätigen"),
                   onPressed: () {
                     Functions().callFriendRequest(controller.text);
+                    Navigator.pop(context);
+                  }),
+            ],
+          );
+        });
+  }
+  changeNameAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Gib deinen neuen Namen ein"),
+            content: TextField(
+              controller: controller,
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("abbrechen"),
+                onPressed: () => Navigator.pop(context),
+              ),
+              RaisedButton(
+                  child: Text("Bestätigen"),
+                  onPressed: () {
+                    LocalDatabase().setString(Names.name, controller.text);
+                    setState(() {
+                      name = controller.text;
+                    });
+                    CloudDatabase().updateName(controller.text);
                     Navigator.pop(context);
                   }),
             ],
@@ -80,7 +115,7 @@ class _FriendsState extends State<Friends> {
                   ),
                   IconButton(
                     icon: Icon(Icons.add),
-                    onPressed: () => createAlertDialog(),
+                    onPressed: () => addFriendAlert(),
                   ),
                   IconButton(
                     icon: Icon(Icons.inbox),
@@ -89,11 +124,22 @@ class _FriendsState extends State<Friends> {
                 ],
               ),
             ),
+            ListTile(
+              title: Text(
+                "Dein Name: $name"
+              ),
+              trailing: FlatButton(
+                child: Text(
+                  "Ändern"
+                ),
+                onPressed: ()=> changeNameAlert(),
+              ),
+            ),
             ListView(
               shrinkWrap: true,
               children: <Widget>[
                 ListTile(
-                  title: Text("Darstellung noch nicht festgelegt"),
+                  title: Text("Darstellung noch nicht festgelegt bzw. keine Idee"),
                   leading: CircleAvatar(
                     child: Text("KA"),
                   ),

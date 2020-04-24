@@ -7,6 +7,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 import 'names.dart';
 import 'localDatabase.dart';
+
 Future<String> getData() async {
   print("Anfang des webscrapen");
   var client = Client();
@@ -22,54 +23,78 @@ Future<String> getData() async {
   }
 }
 
-Future<bool> showUpdateDialog(context) async{
+Future<void> showUpdateDialog(context) async {
   CloudDatabase cd = CloudDatabase();
 
   String updateSituation = await cd.getUpdate();
+  bool force = false;
+  String link;
+  List<dynamic> message;
   // ignore: missing_return
-    if (updateSituation == "updateAvaible") {
-      return true;
-    } else if (updateSituation == "forceUpdate") {
-      String link = await cd.getUpdateLink();
-      List<dynamic> message = await cd.getUpdateMessage();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return WillPopScope(
-            onWillPop: () {},
-            child: AlertDialog(
-              title: Text(message[0]),
-              content: Text(message[1]),
-              actions: <Widget>[
-                RaisedButton(
-                  child: Text("Update"),
-                  onPressed: () => launch(link),
-                )
-              ],
+  if (updateSituation == "updateAvaible") {
+    force = false;
+  } else if (updateSituation == "forceUpdate") {
+    force = true;
+  }
+  link = await cd.getUpdateLink();
+  message = await cd.getUpdateMessage();
+  if (force)
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () {},
+          child: AlertDialog(
+            title: Text(message[0]),
+            content: Text(message[1]),
+            actions: <Widget>[
+              RaisedButton(
+                child: Text("Update"),
+                onPressed: () => launch(link),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  else
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(message[0]),
+          content: Text(message[1]),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("abbrechen"),
+              onPressed: () => Navigator.pop(context),
             ),
-          );
-        },
-      );
-    }else
-      return false;
+            RaisedButton(
+              child: Text("Update"),
+              onPressed: () => launch(link),
+            )
+          ],
+        );
+      },
+    );
 }
-Future<void> showOnboarding(context) async{
+
+Future<void> showOnboarding(context) async {
   LocalDatabase ld = LocalDatabase();
   String stufe = await ld.getString(Names.stufe);
-    if (stufe == "Nicht festgelegt")
-      SchedulerBinding.instance.addPostFrameCallback((_) async {
-        await Navigator.of(context).pushNamed(Names.introScreen);
-          ld.setString(Names.newsAnzahl, 0.toString());
-          ld.getString(Names.stufe).then((onValue) {
-            CloudDatabase().updateUserData(
-                faecherOn: false,
-                stufe: onValue,
-                faecher: ["Nicht festgelegt"],
-                faecherNot: ["Nicht festgelegt"],
-                notification: true);
-          });
-
+  if (stufe == "Nicht festgelegt")
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await Navigator.of(context).pushNamed(Names.introScreen);
+      ld.setString(Names.newsAnzahl, 0.toString());
+      ld.getString(Names.stufe).then((onValue) {
+        CloudDatabase().updateUserData(
+            faecherOn: false,
+            stufe: onValue,
+            faecher: ["Nicht festgelegt"],
+            faecherNot: ["Nicht festgelegt"],
+            notification: true);
       });
-
+    });
 }

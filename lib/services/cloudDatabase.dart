@@ -11,7 +11,7 @@ class CloudDatabase {
 
   ////////////UserData
   void updateUserData(
-      {faecherOn, stufe, faecher, faecherNot, notification}) async {
+      {faecherOn, stufe, faecher, faecherNot, notification,name}) async {
     AuthService _auth = AuthService();
     String token = await PushNotificationsManager().getToken();
     print("data wurde gesettet");
@@ -24,7 +24,7 @@ class CloudDatabase {
       "notification": notification,
       "stufe": stufe,
       "token": token,
-      "name": "Tom"
+      "name": name,
     });
   }
 
@@ -40,6 +40,15 @@ class CloudDatabase {
       doc.updateData({
         "faecherNot": list,
       });
+  }
+
+  void updateName(String newName) async {
+    AuthService _auth = AuthService();
+    DocumentReference doc =
+        ref.collection("userdata").document(await _auth.getUserId());
+    doc.updateData({
+      "name": newName,
+    });
   }
 
   void deleteDocument() async {
@@ -82,7 +91,7 @@ class CloudDatabase {
   }
 
   ///////  News
-  Future<bool> getIsNewsAvailable() async {
+  Future<bool> getIsNewAvailable() async {
     int localNewsAnzahl =
         int.parse(await LocalDatabase().getString(Names.newsAnzahl));
 

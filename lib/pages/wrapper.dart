@@ -1,4 +1,4 @@
-import 'package:Vertretung/pages/vertretung.dart';
+import 'package:Vertretung/logic/functionsForMain.dart';
 import 'package:Vertretung/pages/introScreen.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,7 @@ class Wrapper extends StatelessWidget{
     // Push-Notification handling
     PushNotificationsManager().init();
   }
+
   @override
   Widget build(BuildContext context){
     final user = Provider.of<FirebaseUser>(context);

@@ -8,11 +8,13 @@ class FriendRequests extends StatefulWidget {
 }
 
 class _FriendRequestsState extends State<FriendRequests> {
-  List<dynamic> list = [{"name":""}];
+  List<dynamic> list = [
+    {"name": ""}
+  ];
 
   @override
-  void initState(){
-    CloudDatabase().getFriendRequests().then((newList){
+  void initState() {
+    CloudDatabase().getFriendRequests().then((newList) {
       setState(() {
         list = newList;
         print(list);
@@ -33,14 +35,29 @@ class _FriendRequestsState extends State<FriendRequests> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(list[index]["name"]),
-            trailing: RaisedButton(
-              child: Text("annhemen"),
-              onPressed: () {
-                Functions().callAcceptFriendRequest(list[index]["frienduid"]);
-                setState(() {
-                  list.remove(list[index]);
-                });
-              },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                FlatButton(
+                    child: Text("ablehnen"),
+                    onPressed: () {
+                      Functions()
+                          .callDeclineFriendRequest(list[index]["frienduid"]);
+                      setState(() {
+                        list.remove(list[index]);
+                      });
+                    }),
+                RaisedButton(
+                  child: Text("annhemen"),
+                  onPressed: () {
+                    Functions()
+                        .callAcceptFriendRequest(list[index]["frienduid"]);
+                    setState(() {
+                      list.remove(list[index]);
+                    });
+                  },
+                ),
+              ],
             ),
           );
         },
