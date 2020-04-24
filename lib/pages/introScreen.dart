@@ -1,7 +1,7 @@
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/logic/theme.dart';
 import 'package:Vertretung/logic/themedata.dart';
-import 'package:Vertretung/services/auth.dart';
+import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/widgets/stufenList.dart';
 import 'package:flutter/material.dart';
