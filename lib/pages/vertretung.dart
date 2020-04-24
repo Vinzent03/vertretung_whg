@@ -140,7 +140,7 @@ class _VertretungState extends State<Vertretung> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     final theme = Provider.of<ThemeChanger>(context);
     return MaterialApp(
       theme: theme.getTheme(),
@@ -150,6 +150,10 @@ class _VertretungState extends State<Vertretung> {
           appBar: AppBar(
             title: Text("Vertretung $change  Woche:${getWeekNumber()}"),
             actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.help_outline),
+                onPressed: ()=>Navigator.pushNamed(context, Names.helpPage),
+              ),
               IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: ()=>Navigator.pushNamed(context, Names.settingsPage),

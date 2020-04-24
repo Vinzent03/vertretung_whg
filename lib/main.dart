@@ -6,7 +6,7 @@ import 'package:Vertretung/pages/helpPage.dart';
 import 'package:Vertretung/pages/introScreen.dart';
 import 'package:Vertretung/pages/newsPage.dart';
 import 'package:Vertretung/pages/wrapper.dart';
-import 'package:Vertretung/services/auth.dart';
+import 'package:Vertretung/services/authService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +43,6 @@ class MyAppSt extends StatelessWidget {
           Names.introScreen: (context) => IntroScreen(),
           Names.faecherPage: (context) => FaecherPage(),
           Names.newsPage: (context) => NewsPage(),
-          Names.aboutPage: (context) => AboutPage(),
           Names.aboutPage: (context) => AboutPage(),
           Names.friendRequests: (context) => FriendRequests(),
           Names.friendsList: (context) => FriendsList(),

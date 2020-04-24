@@ -1,5 +1,5 @@
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/services/auth.dart';
+import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/material.dart';
