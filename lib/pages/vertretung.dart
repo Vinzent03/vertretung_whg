@@ -10,7 +10,7 @@ import 'package:Vertretung/widgets/generalBlueprint.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 class Vertretung extends StatefulWidget {
   @override
   _VertretungState createState() => _VertretungState();
@@ -80,6 +80,9 @@ class _VertretungState extends State<Vertretung> {
     "Q2",
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
+
+  RefreshController _refreshController =
+    RefreshController(initialRefresh: false);
   int getWeekNumber() {
     DateTime date = DateTime.now();
     int dayOfYear = int.parse(DateFormat("D").format(date));
@@ -89,6 +92,7 @@ class _VertretungState extends State<Vertretung> {
     setState(() {
       change = "Loading";
     });
+    _refreshController.refreshCompleted();
     /*getData().then((st) { //Now in functionsForMain.dart But have to called here however
       setState(() {
         change = st;
@@ -144,7 +148,7 @@ class _VertretungState extends State<Vertretung> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Vertretung $change  W:${getWeekNumber()}"),
+            title: Text("Vertretung $change  Woche:${getWeekNumber()}"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.settings),
@@ -193,34 +197,40 @@ class _VertretungState extends State<Vertretung> {
               ],
             ),
           ),
-          body: TabBarView(
-            physics: ScrollPhysics(),
-            children: <Widget>[
-              GeneralBlueprint(
-                change: change,
-                list: myListToday,
-                today: true,
-                isMy: true,
-              ),
-              GeneralBlueprint(
-                change: change,
-                list: myListTomorrow,
-                today: false,
-                isMy: true,
-              ),
-              GeneralBlueprint(
-                change: change,
-                list: listToday,
-                today: true,
-                isMy: false,
-              ),
-              GeneralBlueprint(
-                change: change,
-                list: listTomorrow,
-                today: false,
-                isMy: false,
-              ),
-            ],
+          body: SmartRefresher(
+            enablePullDown: true,
+            header: WaterDropHeader(),
+            controller: _refreshController,
+            onRefresh: reload,
+            child: TabBarView(
+              physics: ScrollPhysics(),
+              children: <Widget>[
+                GeneralBlueprint(
+                  change: change,
+                  list: myListToday,
+                  today: true,
+                  isMy: true,
+                ),
+                GeneralBlueprint(
+                  change: change,
+                  list: myListTomorrow,
+                  today: false,
+                  isMy: true,
+                ),
+                GeneralBlueprint(
+                  change: change,
+                  list: listToday,
+                  today: true,
+                  isMy: false,
+                ),
+                GeneralBlueprint(
+                  change: change,
+                  list: listTomorrow,
+                  today: false,
+                  isMy: false,
+                ),
+              ],
+            ),
           )
         ),
       ),
