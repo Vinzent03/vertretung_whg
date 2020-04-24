@@ -1,4 +1,5 @@
 import 'package:Vertretung/services/cloudDatabase.dart';
+import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/material.dart';
 
 class FriendRequests extends StatefulWidget {
@@ -7,13 +8,14 @@ class FriendRequests extends StatefulWidget {
 }
 
 class _FriendRequestsState extends State<FriendRequests> {
-  List<String> list = [""];
+  List<dynamic> list = [{"name":""}];
 
   @override
   void initState(){
     CloudDatabase().getFriendRequests().then((newList){
       setState(() {
         list = newList;
+        print(list);
       });
     });
     super.initState();
@@ -30,11 +32,11 @@ class _FriendRequestsState extends State<FriendRequests> {
         itemCount: list.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(list[index]),
+            title: Text(list[index]["name"]),
             trailing: RaisedButton(
               child: Text("annhemen"),
               onPressed: () {
-                CloudDatabase().addFriend(list[index]);
+                Functions().callAcceptFriendRequest(list[index]["frienduid"]);
                 setState(() {
                   list.remove(list[index]);
                 });

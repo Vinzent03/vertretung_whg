@@ -25,9 +25,6 @@ class AuthService{
   Stream<FirebaseUser> get user {
     return _auth.onAuthStateChanged;
   }
-  // sign in with email
-
-  //register with anon
 
   //sign out
 Future signOut()async{
