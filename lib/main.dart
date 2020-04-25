@@ -7,7 +7,7 @@ import 'package:Vertretung/pages/introScreen.dart';
 import 'package:Vertretung/pages/newsPage.dart';
 import 'package:Vertretung/pages/accountPage.dart';
 import 'package:Vertretung/pages/wrapper.dart';
-import 'package:Vertretung/services/auth.dart';
+import 'package:Vertretung/services/authService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
