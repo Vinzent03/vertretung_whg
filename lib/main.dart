@@ -5,6 +5,7 @@ import 'package:Vertretung/pages/faecherPage.dart';
 import 'package:Vertretung/pages/helpPage.dart';
 import 'package:Vertretung/pages/introScreen.dart';
 import 'package:Vertretung/pages/newsPage.dart';
+import 'package:Vertretung/pages/accountPage.dart';
 import 'package:Vertretung/pages/wrapper.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,6 +45,7 @@ class MyAppSt extends StatelessWidget {
           Names.faecherPage: (context) => FaecherPage(),
           Names.newsPage: (context) => NewsPage(),
           Names.aboutPage: (context) => AboutPage(),
+          Names.accountPage: (context) => AccountPage(),
           Names.friendRequests: (context) => FriendRequests(),
           Names.friendsList: (context) => FriendsList(),
         },

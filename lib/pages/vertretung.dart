@@ -25,6 +25,7 @@ class _VertretungState extends State<Vertretung> {
   bool shouldShowBanner = false; //the banner if a update is recommended
   String change = "Loading"; // The last tine the data on dsb mobile changed
   List<String> listWithoutClasses = [""];
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   //initialize these list, because to load faecher from localDatabase takes time, and the UI have to be build
   List<List<String>> myListToday = [
@@ -78,8 +79,7 @@ class _VertretungState extends State<Vertretung> {
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
 
-  RefreshController _refreshController =
-    RefreshController(initialRefresh: false);
+
   int getWeekNumber() {
     DateTime date = DateTime.now();
     int dayOfYear = int.parse(DateFormat("D").format(date));
