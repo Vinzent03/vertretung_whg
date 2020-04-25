@@ -7,12 +7,13 @@ class FriendsList extends StatefulWidget {
 }
 
 class _FriendsListState extends State<FriendsList> {
-  List<String> list = [""];
+  List<dynamic> list = [{"name":""}];
   @override
   void initState() {
     CloudDatabase().getFriendsList().then((newList){
       setState(() {
         list = newList;
+        print(list);
       });
     });
     super.initState();
@@ -24,15 +25,16 @@ class _FriendsListState extends State<FriendsList> {
         title: Text("Freundes Liste"),
       ),
       body: ListView.builder(
+        shrinkWrap: true,
         itemCount: list.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(list[index]),
+            title: Text(list[index]["name"]),
             trailing: IconButton(
               icon: Icon(Icons.delete),
               onPressed: (){
                 setState(() {
-                  CloudDatabase().removeFriend(list[index]);
+                  CloudDatabase().removeFriend(list[index]["frienduid"]);
                   list.remove(list[index]);
                 });
               },
