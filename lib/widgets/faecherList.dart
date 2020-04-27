@@ -169,7 +169,6 @@ class _FaecherListState extends State<FaecherList> {
             for (Item item in teil.children) {
               for (Item kurs in item.children) {
                 if (kurs.title == fach) {
-                  print(kurs.title);
                   kurs.isChecked = true;
                 }
               }
@@ -194,7 +193,6 @@ class _FaecherListState extends State<FaecherList> {
     } else {
       selectedFaecher.add(root.title);
     }
-    print(selectedFaecher);
     selectedFaecher.sort();
     setState(() {
       root.isChecked = isChecked;

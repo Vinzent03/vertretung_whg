@@ -9,7 +9,6 @@ import 'home.dart';
 
 class Wrapper extends StatelessWidget{
   Wrapper(){
-    // Push-Notification handling
     PushNotificationsManager().init();
   }
 

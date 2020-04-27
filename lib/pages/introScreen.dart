@@ -48,10 +48,10 @@ class _IntroScreenState extends State<IntroScreen> {
               padding: EdgeInsets.all(20),
               child: Text(
                 "-Personalisierte Vertretung\n"
-                "\n-Du bekommst SINNVOLLE Benachrichtigungen\n"
-                "\n-Kein lästiges Reinzoomen in der Dsb-Mobile App\n"
-                "\n-Durchgehender Dark/Light Mode\n"
-                "\n-Anzeige der aktuellen Wochennummer",
+                    "\n-Du bekommst SINNVOLLE Benachrichtigungen\n"
+                    "\n-Kein lästiges Reinzoomen in der Dsb-Mobile App\n"
+                    "\n-Durchgehender Dark/Light Mode\n"
+                    "\n-Anzeige der aktuellen Wochennummer",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -94,9 +94,16 @@ class _IntroScreenState extends State<IntroScreen> {
         isShowSkipBtn: false,
         colorDot: Colors.white,
         colorActiveDot: Colors.blue[900],
-        onDonePress: () {
-          //Provider.of<ThemeChanger>(context, listen: false).setDarkTheme();
-          AuthService().signInAnon();
+        onDonePress: () async {
+          await AuthService().signInAnon();
+          CloudDatabase().updateUserData(
+            faecher: [],
+            faecherNot: [],
+            stufe: await LocalDatabase().getString(Names.stufe),
+            faecherOn: false,
+            name: "Nicht festgelegt",
+            notification: true,
+          );
         },
       ),
     );

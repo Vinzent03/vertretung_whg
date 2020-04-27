@@ -145,7 +145,7 @@ class _VertretungState extends State<Vertretung> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Vertretung $change  Woche:${getWeekNumber()}"),
+            title: Text("$change  Woche:${getWeekNumber()}"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.help_outline),

@@ -1,4 +1,4 @@
-package com.example.dsbmobile_apcha
+package com.whg.vertretung.vertretung
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

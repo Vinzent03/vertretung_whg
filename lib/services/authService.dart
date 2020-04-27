@@ -1,5 +1,8 @@
-import 'package:Vertretung/services/cloudDatabase.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/names.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'cloudFunctions.dart';
 
 class AuthService{
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -9,7 +12,7 @@ class AuthService{
       AuthResult result = await _auth.signInAnonymously();
       FirebaseUser user = result.user;
       UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
-      userUpdateInfo.displayName = "Tom";
+      userUpdateInfo.displayName = "in den update profile gesetzt";
       user.updateProfile(userUpdateInfo);
       return user;
 
@@ -35,8 +38,18 @@ Future signOut()async{
     var user = await _auth.currentUser();
     try{
       if(user.isAnonymous){
-        CloudDatabase().deleteDocument();
         user.delete();
+        LocalDatabase local = LocalDatabase();
+        local.setString(Names.stufe, "Nicht festgelegt");
+        local.setString(Names.name, "Nicht festgelegt");
+        local.setString(Names.newsAnzahl, "0");
+        local.setStringList(Names.faecherList, []);
+        local.setStringList(Names.faecherNotList, []);
+        local.setStringList(Names.faecherListCustom, []);
+        local.setStringList(Names.faecherNotListCustom, []);
+        local.setBool(Names.faecherOn, false);
+        local.setBool(Names.dark, true);
+        local.setBool(Names.notification, true);
       }
 
       return await _auth.signOut();

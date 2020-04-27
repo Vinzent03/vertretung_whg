@@ -1,12 +1,13 @@
 import 'package:Vertretung/logic/theme.dart';
-import 'package:Vertretung/services/authService.dart';
+import 'dart:convert';
 import 'package:Vertretung/services/cloudDatabase.dart';
+import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:Vertretung/widgets/stufenList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
+import 'package:github/github.dart';
 import 'package:flutter/widgets.dart';
-import 'package:package_info/package_info.dart';
+import 'package:http/http.dart';
 import '../logic/localDatabase.dart';
 import '../logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
@@ -57,6 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void updateUserdata() {
+    print(faecherList);
     manager.updateUserData(
       faecherOn: faecherOn,
       stufe: stufe,
@@ -119,8 +121,28 @@ class _SettingsPageState extends State<SettingsPage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.exit_to_app),
-              onPressed: () async {
-                await AuthService().signOut();
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(
+                            "Möchtest du dich wirklich abmelden? Dadurch wird dein Konto gelöscht!"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("abbrechen"),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          RaisedButton(
+                            child: Text("Bestätigen"),
+                            onPressed: () async {
+                              await Functions().callDeleteProfile();
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      );
+                    });
               },
             )
           ],
@@ -193,13 +215,17 @@ class _SettingsPageState extends State<SettingsPage> {
                                     Names.faecherList,
                                     Names.faecherListCustom
                                   ]);
-                                  getter
-                                      .getStringList(Names.faecherList)
-                                      .then((onValue) {
-                                    setState(() {
-                                      faecherList = onValue;
+                                  Future.delayed(Duration(seconds: 2), () {
+                                    //Man muss noch auf das abspeicher in der faecherList warten, ohne extra warte Zeit, würde man noch die alten daten bekommen, weil der Schreibvorgang noch nicht fertig ist.
+                                    getter
+                                        .getStringList(Names.faecherList)
+                                        .then((onValue) {
+                                      setState(() {
+                                        faecherList = onValue;
+                                      });
+                                      print("hallo bin fächer mit $onValue");
+                                      updateUserdata();
                                     });
-                                    updateUserdata();
                                   });
                                 }),
                     ),
@@ -283,44 +309,71 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               Card(
                 elevation: 3,
-                child: ListTile(
-                  title: Text("Über Uns"),
-                  leading: Icon(Icons.info),
-                  onTap: () => Navigator.pushNamed(context, Names.aboutPage),
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      title: Text("Über Uns"),
+                      leading: Icon(Icons.info),
+                      onTap: () =>
+                          Navigator.pushNamed(context, Names.aboutPage),
+                    ),
+                    ListTile(
+                      title: Text("Fehler melden"),
+                      leading: Icon(Icons.error_outline),
+                      onTap: () {
+                        TextEditingController controller =
+                            TextEditingController();
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: SingleChildScrollView(//damit man beim schreiben nicht nur 3 Zeilen sieht
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text(
+                                        "Hier kannst du deinen Fehler/Verbesserungsvorschlag eingeben. Dein Fehler wird automatisch auf GitHub als Issue erstellt, er ist also öffentlich einsehbar!",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      TextField(
+                                        controller: controller,
+                                        maxLines: null,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text("abbrechen"),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                  RaisedButton(
+                                    child: Text("abschicken"),
+                                    onPressed: () async {
+                                      print("abschicken");
+                                      GitHub github = GitHub(
+                                          auth: Authentication.withToken(
+                                              "45dd9fc3f80a5b49baf31b187d8941c2db861050"));
+                                      github.issues.create(
+                                          RepositorySlug(
+                                              "Vinzent03", "vertretung_whg"),
+                                          IssueRequest(
+                                              title: "Feedback aus der App",
+                                              body: controller.text,
+                                              labels: ["Aus der App"]));
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              );
+                            });
+                      },
+                    )
+                  ],
                 ),
               )
             ],
           ),
         ),
-        /*bottomSheet: Builder(
-          builder: (context) {
-            return Container(
-                color: _themeChanger.getIsDark() ? Colors.black : Colors.white,
-                height: 11,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        "Version: $version",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      onPressed: () {
-                        final SnackBar snack = SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            content: Text(
-                                "Benachrichtigungstoken wurde zur Zwischenablage hinzugefügt"),
-                            backgroundColor: Colors.red);
-                        Scaffold.of(context).showSnackBar(snack);
-                        PushNotificationsManager().getToken().then((onValue) {
-                          Clipboard.setData(ClipboardData(text: onValue));
-                        });
-                      },
-                    ),
-                  ],
-                ));
-          },
-        ),*/
       ),
     );
   }

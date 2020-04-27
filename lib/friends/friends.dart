@@ -47,7 +47,7 @@ class _FriendsState extends State<Friends> {
               RaisedButton(
                   child: Text("Bestätigen"),
                   onPressed: () {
-                    Functions().callFriendRequest(controller.text);
+                    Functions().callAddFriendRequest(controller.text);
                     Navigator.pop(context);
                   }),
             ],

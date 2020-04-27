@@ -4,7 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 class Functions{
-  void callFriendRequest(String frienduid)async{
+  void callAddFriendRequest(String frienduid)async{
     CloudFunctions cf = CloudFunctions(app: FirebaseApp.instance,region: "europe-west3");
     final HttpsCallable  call = cf.getHttpsCallable(functionName: "addFriendRequest");
     AuthService _auth = AuthService();
@@ -13,7 +13,6 @@ class Functions{
     print(uid);
 
     call.call(<String, dynamic>{
-      "uid": uid,
       "frienduid": frienduid,
     });
   }
@@ -26,7 +25,6 @@ class Functions{
     print(uid);
 
     call.call(<String, dynamic>{
-      "uid": uid,
       "frienduid": frienduid,
     });
   }
@@ -35,11 +33,18 @@ class Functions{
     final HttpsCallable  call = cf.getHttpsCallable(functionName: "declineFriendRequest");
     AuthService _auth = AuthService();
     print(frienduid);
-    String uid = await _auth.getUserId();
-    print(uid);
     call.call(<String, dynamic>{
-      "uid": uid,
       "frienduid": frienduid,
     });
+  }
+  Future<void> callDeleteProfile()async{
+    CloudFunctions cf = CloudFunctions(app: FirebaseApp.instance,region: "europe-west3");
+    final HttpsCallable  call = cf.getHttpsCallable(functionName: "deleteProfile");
+    AuthService _auth = AuthService();
+    call.call().whenComplete((){
+      print("Konto gelöscht");
+      AuthService().signOut();
+    });
+    return;
   }
 }
