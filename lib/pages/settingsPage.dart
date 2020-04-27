@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:github/github.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart';
+import 'package:Vertretung/services/authService.dart';
 import '../logic/localDatabase.dart';
 import '../logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
