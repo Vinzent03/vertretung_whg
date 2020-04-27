@@ -104,7 +104,14 @@ class _AboutPageState extends State<AboutPage> {
                           scale: 9,
                         ),
                         title: Text("Johannes"),
-                      )
+                      ),
+                      ListTile(
+                        leading: Image.asset(
+                          "assets/images/Rairosu-Icon.png",
+                          scale: 5,
+                        ),
+                        title: Text("Rairosu"),
+                      ),
                     ],
                   ),
                 )

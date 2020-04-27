@@ -7,6 +7,7 @@ class Names{
   static const String faecherPage = "/faecherPage";
   static const String newsPage ="/newsPage";
   static const String aboutPage ="/aboutPage";
+  static const String accountPage ="/accountPage";
   static const String friendRequests ="/friendRequests";
   static const String friendsList ="/friendsList";
 

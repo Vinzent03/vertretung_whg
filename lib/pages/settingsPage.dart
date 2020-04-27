@@ -28,6 +28,8 @@ class _SettingsPageState extends State<SettingsPage> {
   String name = "Nicht Geladen";
   List<String> faecherList = [];
   List<String> faecherNotList = [];
+  AuthService _authService = AuthService();
+
 
   LocalDatabase getter = LocalDatabase();
 
@@ -151,6 +153,16 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Card(
+                elevation: 3,
+                child: ListTile(
+                  title: Text(
+                    "Dein Account",
+                  ),
+                  leading: Icon(Icons.donut_large),
+                  onTap: ()=> Navigator.pushNamed(context, Names.accountPage),
+                )
+              ),
               Card(
                   elevation: 3,
                   color: Colors.blue[500],
