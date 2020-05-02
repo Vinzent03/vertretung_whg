@@ -11,7 +11,7 @@ class CloudDatabase {
 
   ////////////UserData
   void updateUserData(
-      {faecherOn, stufe, faecher, faecherNot, notification,name}) async {
+      {faecherOn, stufe, faecher, faecherNot, notification, name}) async {
     AuthService _auth = AuthService();
     String token = await PushNotificationsManager().getToken();
     print("data wurde gesettet");
@@ -54,6 +54,20 @@ class CloudDatabase {
   void deleteDocument() async {
     AuthService _auth = AuthService();
     await ref.collection("userdata").document(await _auth.getUserId()).delete();
+  }
+
+  void restoreAccount() async {
+    String uid = await AuthService().getUserId();
+    DocumentSnapshot snap =
+        await ref.collection("userdata").document(uid).get();
+    LocalDatabase local = LocalDatabase();
+    local.setString(Names.stufe,snap.data["stufe"]);
+    local.setString(Names.name, snap.data["name"]);
+    local.setString(Names.newsAnzahl, "0");
+    local.setStringList(Names.faecherList, snap.data["faecher"]);
+    local.setStringList(Names.faecherNotList, snap.data["faecherNot"]);
+    local.setBool(Names.faecherOn, snap.data["faecherOn"]);
+    local.setBool(Names.notification, snap.data["notification"]);
   }
 
   /////// Upddates
@@ -152,12 +166,15 @@ class CloudDatabase {
         .document(uid)
         .collection("friends")
         .getDocuments();
-    snap.documents.forEach((doc) => {
-          list.add({
-            "name": doc.data["name"],
-            "frienduid": doc.documentID,
-          })
-        });
+    for (DocumentSnapshot doc in snap.documents) {
+      DocumentSnapshot snap1 =
+          await ref.collection("userdata").document(doc.documentID).get();
+      String st = snap1.data["name"];
+      list.add({
+        "name": st,
+        "frienduid": doc.documentID,
+      });
+    }
     return list;
   }
 }

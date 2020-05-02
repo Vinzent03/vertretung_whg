@@ -13,7 +13,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 
 class IntroScreen extends StatefulWidget {
-  //List<String> stufen = ["5", "6", "7", "8", "9", "EF", "Q1", "Q2"];
   @override
   _IntroScreenState createState() => _IntroScreenState();
 }
@@ -50,6 +49,8 @@ class _IntroScreenState extends State<IntroScreen> {
                 "-Personalisierte Vertretung\n"
                     "\n-Du bekommst SINNVOLLE Benachrichtigungen\n"
                     "\n-Kein lästiges Reinzoomen in der Dsb-Mobile App\n"
+                    "\n-Du siehst immer was deine Freunde für Vertretung haben\n"
+                    "\n-Verteilung von Nachrichten direkt über die App\n"
                     "\n-Durchgehender Dark/Light Mode\n"
                     "\n-Anzeige der aktuellen Wochennummer",
                 style: TextStyle(
@@ -76,12 +77,12 @@ class _IntroScreenState extends State<IntroScreen> {
               widgetDescription: Column(
                 children: <Widget>[
                   Text(
-                    "Den Rest der Einstellungen, wie deine Fächer, sowie Hilfe, zu verschiedenen Themen findest du oben rechts.\nFalls du in der Unterstufe bist, bzw. keine personalisierte Vertretung willst, musst du diese manuell ausschalten!\n\n\n",
+                    "Den Rest der Einstellungen, wie deine Fächer, sowie Hilfe, zu verschiedenen Themen findest du unter Vertretung oben rechts.\n\n\n",
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   InkWell(
                     child: Text(
-                      "Außerdem bist du damit einverstanden, dass deine Einstellungen in der Cloud(https://firebase.google.com/) landen zur Bereitstellung der Benachrichtigungen. Falls du das nicht willst, musst du diese deaktivieren!",
+                      "Außerdem bist du damit einverstanden, dass deine Einstellungen in der Cloud(https://firebase.google.com/) gespeichert werde. Dies ist für die  Bereitstellung der Benachrichtigungen und des Freundes Feature nötig.",
                       style: TextStyle(color: Colors.white),
                     ),
                     onTap: () {
@@ -91,9 +92,10 @@ class _IntroScreenState extends State<IntroScreen> {
                 ],
               )),
         ],
-        isShowSkipBtn: false,
         colorDot: Colors.white,
         colorActiveDot: Colors.blue[900],
+        nameSkipBtn: "Anmelden",
+        onSkipPress: ()=> Navigator.pushNamed(context, Names.logInPage,arguments: false),
         onDonePress: () async {
           await AuthService().signInAnon();
           CloudDatabase().updateUserData(

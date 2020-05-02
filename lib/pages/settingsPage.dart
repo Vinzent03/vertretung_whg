@@ -1,7 +1,8 @@
+import 'package:Vertretung/logic/gitHubToken.dart';
 import 'package:Vertretung/logic/theme.dart';
 import 'dart:convert';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:Vertretung/services/cloudFunctions.dart';
+import 'package:share/share.dart';
 import 'package:Vertretung/widgets/stufenList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -122,29 +123,11 @@ class _SettingsPageState extends State<SettingsPage> {
           title: Text("Einstellungen"),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(
-                            "Möchtest du dich wirklich abmelden? Dadurch wird dein Konto gelöscht!"),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text("abbrechen"),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          RaisedButton(
-                            child: Text("Bestätigen"),
-                            onPressed: () async {
-                              await Functions().callDeleteProfile();
-                              Navigator.pop(context);
-                            },
-                          )
-                        ],
-                      );
-                    });
+              icon: Icon(Icons.share),
+              onPressed: ()async{
+                String link = await CloudDatabase().getUpdateLink();
+                //Share.share("Hier ist der Link für die Vertretungsapp: $link");
+                Share.share("https://vertretung.page.link/group");
               },
             )
           ],
@@ -155,7 +138,8 @@ class _SettingsPageState extends State<SettingsPage> {
             children: <Widget>[
               Card(
                 elevation: 3,
-                child: ListTile(
+                  color: Colors.blue[500],
+                  child: ListTile(
                   title: Text(
                     "Dein Account",
                   ),
@@ -165,7 +149,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               Card(
                   elevation: 3,
-                  color: Colors.blue[500],
                   child: ListTile(
                     leading: Icon(Icons.school),
                     title: Text(
@@ -304,11 +287,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           setState(() {
                             notification = b;
                           });
-                          if (notification) {
                             updateUserdata();
-                          } else {
-                            manager.deleteDocument();
-                          }
                         });
                       },
                       title: Text(
@@ -362,9 +341,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     child: Text("abschicken"),
                                     onPressed: () async {
                                       print("abschicken");
-                                      GitHub github = GitHub(
-                                          auth: Authentication.withToken(
-                                              "45dd9fc3f80a5b49baf31b187d8941c2db861050"));
+                                      GitHub github = GitHub(auth: Authentication.withToken(GitHubToken.token));
                                       github.issues.create(
                                           RepositorySlug(
                                               "Vinzent03", "vertretung_whg"),

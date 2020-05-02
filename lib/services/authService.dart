@@ -4,40 +4,38 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'cloudFunctions.dart';
 
-class AuthService{
+class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   //sign in anon
-  Future signInAnon()async{
-    try{
+  Future signInAnon() async {
+    try {
       AuthResult result = await _auth.signInAnonymously();
       FirebaseUser user = result.user;
       UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
       userUpdateInfo.displayName = "in den update profile gesetzt";
       user.updateProfile(userUpdateInfo);
       return user;
-
-    }catch(e){
+    } catch (e) {
       print(e.toString());
       return null;
     }
   }
 
-  Future<String> getUserId()async{
+  Future<String> getUserId() async {
     FirebaseUser user = await _auth.currentUser();
     return user.uid;
   }
-  void check(){
-  }
 
-  Stream<FirebaseUser> get user{
+  Stream<FirebaseUser> get user {
     return _auth.onAuthStateChanged;
   }
 
   //sign out
-Future signOut()async{
+  Future signOut() async {
     var user = await _auth.currentUser();
-    try{
-      if(user.isAnonymous){
+    try {
+      if (user.isAnonymous) {
         user.delete();
         LocalDatabase local = LocalDatabase();
         local.setString(Names.stufe, "Nicht festgelegt");
@@ -53,10 +51,126 @@ Future signOut()async{
       }
 
       return await _auth.signOut();
-    }catch(e){
+    } catch (e) {
       print("Couldnt log out");
       return null;
     }
-}
+  }
 
+  Future<bool> isAnon() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user.isAnonymous;
+  }
+
+  Future<String> signUp({email, password}) async {
+    FirebaseUser user = await _auth.currentUser();
+    AuthCredential credential =
+        EmailAuthProvider.getCredential(email: email, password: password);
+    try {
+      AuthResult res = await user.linkWithCredential(credential);
+    } catch (e) {
+      return e.code;
+    }
+  }
+
+  Future<String> getEmail() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user.email;
+  }
+
+  Future<String> signInEmail({email, password}) async {
+    try {
+      AuthResult res = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+    } catch (e) {
+      switch (e.code) {
+        case "ERROR_INVALID_EMAIL":
+          return "Dies scheint keine richte E-Mail zu sein.";
+          break;
+        case "ERROR_WRONG_PASSWORD":
+          return "Falsches Passwort";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          return "Kein Konto mit der Email gefundend";
+          break;
+        case "ERRreturn OR_USER_DISABLED":
+          return "Dieses Konto wurde deaktiviert";
+          break;
+        case "ERROR_TOO_MANY_REQUESTS":
+          return "ZU viele Anfragen, versuche es später erneut";
+          break;
+        case "ERROR_OPERATION_NOT_ALLOWED":
+          return "Diese Methode ist nicht aktiviert";
+          break;
+        default:
+          return "An undefined Error happened.";
+      }
+    }
+  }
+
+  Future<String> changePassword({oldPassword, newPassword}) async {
+    FirebaseUser user = await _auth.currentUser();
+    AuthCredential credential = EmailAuthProvider.getCredential(
+        email: user.email, password: oldPassword);
+    try {
+      AuthResult res = await user.reauthenticateWithCredential(credential);
+    } catch (e) {
+      switch (e.code) {
+        case "ERROR_INVALID_CREDENTIAL":
+          return "Deine Anmeldung ist ausgelaufen";
+          break;
+        case "ERROR_WRONG_PASSWORD":
+          return "Falsches Passwort";
+          break;
+        case "ERROR_USER_DISABLED":
+          return "Dieser Account wurde deaktiviert";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          return "Dieses Konto wurde gelöscht";
+          break;
+        case "ERROR_OPERATION_NOT_ALLOWED":
+          return "Das geht leider nicht, melde dich bei den Entwicklern";
+          break;
+        default:
+          return "An undefined Error happened.";
+      }
+    }
+    try {
+      await user.updatePassword(newPassword);
+    } catch (e) {
+      switch (e.code) {
+        case "ERROR_WEAK_PASSWORD":
+          return "Das Passwort ist nicht stark genug";
+          break;
+        case "ERROR_USER_DISABLED":
+          return "Dieser Account wurde deaktiviert";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          return "Dieses Konto wurde gelöscht";
+          break;
+        case "ERROR_OPERATION_NOT_ALLOWED":
+          return "Das geht leider nicht, melde dich bei den Entwicklern";
+          break;
+        default:
+          return "An undefined Error happened.";
+      }
+    }
+  }
+
+  Future<String> resetPassword(String email) async {
+    try{
+      await _auth.sendPasswordResetEmail(email: email);
+    }catch (e){
+      switch (e.code) {
+        case "ERROR_INVALID_EMAIL":
+          return "Dies scheint keine richte E-Mail zu sein.";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          return "Dieses Konto wurde gelöscht";
+          break;
+        default:
+          return "An undefined Error happened.";
+      }
+    }
+  }
 }

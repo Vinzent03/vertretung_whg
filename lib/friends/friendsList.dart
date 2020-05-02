@@ -13,7 +13,6 @@ class _FriendsListState extends State<FriendsList> {
     CloudDatabase().getFriendsList().then((newList){
       setState(() {
         list = newList;
-        print(list);
       });
     });
     super.initState();

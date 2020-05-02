@@ -1,17 +1,19 @@
+import 'package:Vertretung/authentication/logInPage.dart';
 import 'package:Vertretung/friends/friendRequests.dart';
 import 'package:Vertretung/friends/friendsList.dart';
 import 'package:Vertretung/pages/aboutPage.dart';
 import 'package:Vertretung/pages/faecherPage.dart';
 import 'package:Vertretung/pages/helpPage.dart';
-import 'package:Vertretung/pages/introScreen.dart';
+import 'package:Vertretung/main/introScreen.dart';
 import 'package:Vertretung/pages/newsPage.dart';
-import 'package:Vertretung/pages/accountPage.dart';
-import 'package:Vertretung/pages/wrapper.dart';
+import 'package:Vertretung/authentication/accountPage.dart';
+import 'package:Vertretung/main/wrapper.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'authentication/changePasswordPage.dart';
 import 'logic/localDatabase.dart';
 import 'logic/names.dart';
 import 'logic/theme.dart';
@@ -48,6 +50,8 @@ class MyAppSt extends StatelessWidget {
           Names.accountPage: (context) => AccountPage(),
           Names.friendRequests: (context) => FriendRequests(),
           Names.friendsList: (context) => FriendsList(),
+          Names.logInPage: (context) => LogInPage(),
+          Names.changePasswordPage: (context) => ChangePasswordPage(),
         },
       ),
     );

@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 class Vertretung extends StatefulWidget {
   @override
   _VertretungState createState() => _VertretungState();
@@ -107,16 +108,19 @@ class _VertretungState extends State<Vertretung> {
         });
       }
     });
-
-    Filter filter = Filter();
+    String stufe = await LocalDatabase().getString(Names.stufe);
+    Filter filter = Filter(stufe);
     List<List<String>> allMyListToday;
     List<List<String>> allListToday;
     List<List<String>> allMyListTomorrow;
     List<List<String>> allListTomorrow;
 
-    allMyListToday = await filter.checkerFaecher(Names.lessonsToday);
+    List<String> faecherList = await LocalDatabase().getStringList(Names.faecherList);
+    List<String> faecherNotList = await LocalDatabase().getStringList(Names.faecherNotList);
+    
+    allMyListToday = await filter.checkerFaecher(Names.lessonsToday,faecherList,faecherNotList);
     allListToday = await filter.checker(Names.lessonsToday);
-    allMyListTomorrow = await filter.checkerFaecher(Names.lessonsTomorrow);
+    allMyListTomorrow = await filter.checkerFaecher(Names.lessonsTomorrow,faecherList,faecherNotList);
     allListTomorrow = await filter.checker(Names.lessonsTomorrow);
 
     setState(() {
@@ -128,9 +132,37 @@ class _VertretungState extends State<Vertretung> {
       }
     });
   }
+  void linkGenerate()async{
+    DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: "https://vertretung.page.link/friendrequest",
+      link: Uri.parse("https://vertretung.page.link/"),
+      androidParameters: AndroidParameters(
+        packageName: 'com.whg.vertretung',
+      ),
 
+    );
+    ShortDynamicLink link = await parameters.buildShortLink();
+    print(link.shortUrl);
+  }
   @override
   void initState() {
+    linkGenerate();
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+          final Uri deepLink = dynamicLink?.link;
+
+          if (deepLink != null) {
+            print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhll");
+            print(deepLink.data.toString());
+          }
+        },
+        onError: (OnLinkErrorException e) async {
+          print('onLinkError');
+          print(e.message);
+        }
+    );
+
+
     reload();
     refresh();
     super.initState();
@@ -200,7 +232,6 @@ class _VertretungState extends State<Vertretung> {
           ),
           body: SmartRefresher(
             enablePullDown: true,
-            header: WaterDropHeader(),
             controller: _refreshController,
             onRefresh: reload,
             child: TabBarView(

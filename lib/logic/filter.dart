@@ -1,19 +1,23 @@
 
+import 'package:flutter/cupertino.dart';
+
 import 'localDatabase.dart';
 import 'names.dart';
 
 class Filter {
-  LocalDatabase getter = LocalDatabase();
+  LocalDatabase localDatabase = LocalDatabase();
+
+  String stufe;
+  Filter(this.stufe);
 
 
   Future<List<List<String>>> checker(String day) async {
     ///////////////////////////////  Klasse herausfiltern
     // 0 ist außerhalb der stufe, 1 ist innerhalb, 2 ist außerhalb
-    List<String> rawList = await getter.getStringList(day);
-    String className = await getter.getString(Names.stufe);
+    List<String> rawList = await localDatabase.getStringList(day);
     List<String> listWithoutClasses = [];
     int b = 0;
-    className = className.toLowerCase();
+    stufe = stufe.toLowerCase();
     for (String part in rawList) {
       String stk = part.toLowerCase();
       if (stk.contains("std.")) {
@@ -21,7 +25,7 @@ class Filter {
           listWithoutClasses.add(part);
         }
       } else {
-        if (stk.contains(className)) {
+        if (stk.contains(stufe)) {
           b = 1;
         } else {
           b = 2;
@@ -55,9 +59,7 @@ class Filter {
   }
 
 
-  Future<List<List<String>>> checkerFaecher(String day) async {
-    List<String> faecherList = await getter.getStringList(Names.faecherList);
-    List<String> faecherNotList = await getter.getStringList(Names.faecherNotList);
+  Future<List<List<String>>> checkerFaecher(String day,List<dynamic> faecherList,List<dynamic> faecherNotList) async {
     List<List<String>> all = await checker(day);
     List<String> listWithoutClasses = all[0];
     List<String> listWithoutLessons =[];

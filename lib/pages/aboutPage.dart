@@ -1,3 +1,4 @@
+import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,10 +53,10 @@ class _AboutPageState extends State<AboutPage> {
                           final SnackBar snack = SnackBar(
                               behavior: SnackBarBehavior.floating,
                               content: Text(
-                                  "Benachrichtigungstoken wurde zur Zwischenablage hinzugefügt"),
+                                  "User ID wurde zur Zwischenablage hinzugefügt"),
                               backgroundColor: Colors.red);
                           Scaffold.of(context).showSnackBar(snack);
-                          PushNotificationsManager().getToken().then((onValue) {
+                          AuthService().getUserId().then((onValue) {
                             Clipboard.setData(ClipboardData(text: onValue));
                           });
                         },

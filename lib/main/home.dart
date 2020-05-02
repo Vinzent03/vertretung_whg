@@ -2,7 +2,7 @@ import 'package:Vertretung/friends/friends.dart';
 import 'package:Vertretung/logic/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:Vertretung/pages/newsPage.dart';
-import 'package:Vertretung/pages/vertretung.dart';
+import 'package:Vertretung/pages/VertretungsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/logic/functionsForMain.dart';
 
@@ -20,11 +20,19 @@ class _HomeState extends State<Home> {
     showUpdateDialog(context);
     super.initState();
   }
+  final List<Widget> pages = [
+    Vertretung(),
+    Friends(),
+    NewsPage(),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: usedPage,
-      drawer: Drawer(
+      body: IndexedStack(//damit beim page wechsel nichte alles neugeladen werden muss
+        children: pages,
+        index: currentIndex,
+      ),
+      drawer: Drawer(//bisher nur von der seite reinwischbar, wird wahrscheinlich auch noch gelöscht
         child: ListView(
           children: <Widget>[
             DrawerHeader(
@@ -53,7 +61,9 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         elevation: 10,
         currentIndex: currentIndex,
-        backgroundColor: Provider.of<ThemeChanger>(context).getIsDark() ? Colors.black: Colors.white,
+        backgroundColor: Provider.of<ThemeChanger>(context).getIsDark()
+            ? Colors.black
+            : Colors.white,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
@@ -72,19 +82,6 @@ class _HomeState extends State<Home> {
           setState(() {
             currentIndex = index;
           });
-          if (index == 0) {
-            setState(() {
-              usedPage = Vertretung();
-            });
-          } else if (index == 1) {
-            setState(() {
-              usedPage = Friends();
-            });
-          } else if (index == 2) {
-            setState(() {
-              usedPage = NewsPage();
-            });
-          }
         },
       ),
     );

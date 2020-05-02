@@ -1,3 +1,4 @@
+import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
@@ -5,6 +6,7 @@ import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Friends extends StatefulWidget {
   @override
@@ -12,32 +14,63 @@ class Friends extends StatefulWidget {
 }
 
 class _FriendsState extends State<Friends> {
-  final TextEditingController controller = TextEditingController();
-  int friendsCount = 0;
+  List<Map<String, String>> friendsList = [
+    {"name": "loading", "ver": "loading"}
+  ];
   String name = "Lade...";
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
   @override
   void initState() {
-      CloudDatabase().getFriendsList().then((anz){
-        setState(() {
-          friendsCount = anz.length;
-        });
-      });
-      LocalDatabase().getString(Names.name).then((newName){
-        setState(() {
-          name = newName;
-        });
-      });
+    reload();
     super.initState();
   }
 
-  addFriendAlert() {
+  void reload() async {
+    await FriendLogic().getLists().then((newFriendsList) {
+      setState(() {
+        friendsList = newFriendsList;
+      });
+    });
+
+    _refreshController.refreshCompleted();
+  }
+
+  addFriendAlert() async {
+    final TextEditingController controller = TextEditingController();
+    var friendsList = await CloudDatabase().getFriendsList();
+    bool valid = true;
+
+    String isValid(st) {
+      if(st != ""){
+        if (st.length >= 5) {
+          for (var friend in friendsList) {
+            if (friend["frienduid"].substring(0, 6).contains(controller.text)) {
+              valid = false;
+              return "Dieser Nutzer ist bereits in deiner Freundesliste";
+            }
+          }
+        }
+        if(st.length <5){
+          valid = false;
+          return"Token zu kurz";
+        }
+      }
+
+      valid = true;
+      return null;
+    }
+
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: Text("Gib den Token deines Freundes ein"),
-            content: TextField(
+            content: TextFormField(
               controller: controller,
+              autovalidate: true,
+              validator: isValid,
             ),
             actions: <Widget>[
               FlatButton(
@@ -46,107 +79,77 @@ class _FriendsState extends State<Friends> {
               ),
               RaisedButton(
                   child: Text("Bestätigen"),
-                  onPressed: () {
-                    Functions().callAddFriendRequest(controller.text);
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    if (valid) {
+                      Functions().callAddFriendRequest(controller.text);
+                      Navigator.pop(context);
+                    }
                   }),
             ],
           );
         });
   }
-  changeNameAlert() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Gib deinen neuen Namen ein"),
-            content: TextField(
-              controller: controller,
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("abbrechen"),
-                onPressed: () => Navigator.pop(context),
-              ),
-              RaisedButton(
-                  child: Text("Bestätigen"),
-                  onPressed: () {
-                    LocalDatabase().setString(Names.name, controller.text);
-                    setState(() {
-                      name = controller.text;
-                    });
-                    CloudDatabase().updateName(controller.text);
-                    Navigator.pop(context);
-                  }),
-            ],
-          );
-        });
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Freunde"),
+        title: InkWell(
+          child: Text(
+            "Freunde: ${friendsList.length}",
+            textAlign: TextAlign.left,
+          ),
+          onTap: () => Navigator.pushNamed(context, Names.friendsList),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () async {
+              String uid = await AuthService().getUserId();
+              final SnackBar snack = SnackBar(
+                content: Text("dein Token wurde zur Zwichenablage hinzugefügt"),
+              );
+              Clipboard.setData(ClipboardData(text: uid.substring(0, 5)));
+              Scaffold.of(context).showSnackBar(snack);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => addFriendAlert(),
+          ),
+          IconButton(
+            icon: Icon(Icons.inbox),
+            onPressed: () => Navigator.pushNamed(context, Names.friendRequests),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              title: FlatButton(
-                child: Text("Freunde : $friendsCount"),
-                onPressed: () => Navigator.pushNamed(context, Names.friendsList),
+      body: SmartRefresher(
+        controller: _refreshController,
+        onRefresh: reload,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: friendsList.length,
+                physics: ScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Colors.blue[700],
+                    child: ListTile(
+                      dense: true,
+                      leading: CircleAvatar(
+                        child: Text(friendsList[index]["name"].substring(0, 2)),
+                        backgroundColor: Colors.white,
+                      ),
+                      title: Text(friendsList[index]["ver"]),
+                      subtitle: Text(friendsList[index]["name"]),
+                    ),
+                  );
+                },
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.share),
-                    onPressed: ()async{
-                      String uid = await AuthService().getUserId();
-                      final SnackBar snack = SnackBar(
-                        content: Text("dein Token wurde zur Zwichenablage hinzugefügt"),
-                      );
-                      Clipboard.setData(ClipboardData(text: uid.substring(0,5)));
-                      Scaffold.of(context).showSnackBar(snack);
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () => addFriendAlert(),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.inbox),
-                    onPressed: () => Navigator.pushNamed(context, Names.friendRequests),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              title: Text(
-                "Dein Name: $name"
-              ),
-              trailing: FlatButton(
-                child: Text(
-                  "Ändern"
-                ),
-                onPressed: ()=> changeNameAlert(),
-              ),
-            ),
-            ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                ListTile(
-                  title: Text("Darstellung noch nicht festgelegt bzw. keine Idee"),
-                  leading: CircleAvatar(
-                    child: Text("KA"),
-                  ),
-                )
-              ],
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );

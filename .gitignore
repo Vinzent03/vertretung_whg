@@ -38,3 +38,5 @@ lib/generated_plugin_registrant.dart
 
 #For safety because our api key code shouldnt be public
 android/app/google-services.json
+#github token
+lib/logic/gitHubToken.dart
