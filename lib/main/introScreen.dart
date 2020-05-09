@@ -78,7 +78,7 @@ class _IntroScreenState extends State<IntroScreen> {
             backgroundColor: Colors.blue[800],
           ),
           Slide(
-            title: "Was ist dein Name?",
+            title: "Wie ist dein Name?",
             maxLineTitle: 3,
             styleTitle: TextStyle(fontSize: 25, color: Colors.white),
             centerWidget: Container(

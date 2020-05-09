@@ -32,32 +32,6 @@ class _HomeState extends State<Home> {
         children: pages,
         index: currentIndex,
       ),
-      /*drawer: Drawer(//bisher nur von der seite reinwischbar, wird wahrscheinlich auch noch gelöscht
-        child: ListView(
-          children: <Widget>[
-            DrawerHeader(
-              child: Text("Header"),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-            ),
-            ListTile(
-              title: Text('Item 1'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-            ListTile(
-              title: Text('Item 2'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-          ],
-        ),
-      ),*/
       bottomNavigationBar: BottomNavigationBar(
         elevation: 10,
         currentIndex: currentIndex,

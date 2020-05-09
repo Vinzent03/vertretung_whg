@@ -48,7 +48,7 @@ class AuthService {
       local.setBool(Names.dark, true);
       local.setBool(Names.notification, true);
       if (user.isAnonymous) {
-        print("user deletet");
+        print("user deleted");
         return await user.delete();
       }
       print("ausgeloggt");
@@ -78,6 +78,19 @@ class AuthService {
   Future<String> getEmail() async {
     FirebaseUser user = await _auth.currentUser();
     return user.email;
+  }
+
+  Future<String> getName() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user.displayName;
+  }
+
+  Future<String> updateName(String newName) async {
+    FirebaseUser user = await _auth.currentUser();
+    UserUpdateInfo info = UserUpdateInfo();
+    info.displayName = newName;
+    user.updateProfile(info);
+    return user.displayName;
   }
 
   Future<String> signInEmail({email, password}) async {

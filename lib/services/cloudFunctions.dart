@@ -40,9 +40,10 @@ class Functions{
   Future<void> callDeleteProfile()async{
     CloudFunctions cf = CloudFunctions(app: FirebaseApp.instance,region: "europe-west3");
     final HttpsCallable  call = cf.getHttpsCallable(functionName: "deleteProfile");
-    call.call().whenComplete((){
+    await call.call().whenComplete(()async{
       print("Konto gelöscht");
-      AuthService().signOut();
+      await AuthService().signOut();
+      return;
     });
     return;
   }

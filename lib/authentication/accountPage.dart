@@ -11,7 +11,7 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  String name;
+  String name = "Laden";
   String email = "Laden";
   bool isAnon = true;
 
@@ -34,10 +34,11 @@ class _AccountPageState extends State<AccountPage> {
                   child: Text("Bestätigen"),
                   onPressed: () {
                     if (controller.text.length >= 2) {
-                      LocalDatabase().setString(Names.name, controller.text);
-                      setState(() {
-                        name = controller.text;
-                      });
+                      // LocalDatabase().setString(Names.name, controller.text);
+                      // setState(() {
+                      //   name = controller.text;
+                      // });
+                      AuthService().updateName(controller.text);
                       CloudDatabase().updateName(controller.text);
                       Navigator.pop(context);
                     }
@@ -64,7 +65,8 @@ class _AccountPageState extends State<AccountPage> {
                 child: Text("Bestätigen"),
                 onPressed: () async {
                   await Functions().callDeleteProfile();
-                  Navigator.pushNamed(context, Names.homePage);
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, Names.homePage, (r) => false);
                 },
               )
             ],
@@ -74,11 +76,12 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   void initState() {
-    LocalDatabase().getString(Names.name).then((newName) {
-      setState(() {
-        name = newName;
-      });
-    });
+    // LocalDatabase().getString(Names.name).then((newName) {
+    //   setState(() {
+    //     name = newName;
+    //   });
+    // });
+    AuthService().getName().then((value) => name = value);
     AuthService().isAnon().then((newIsAnon) {
       setState(() {
         isAnon = newIsAnon;
@@ -117,55 +120,55 @@ class _AccountPageState extends State<AccountPage> {
             Card(
               child: Column(
                 children: <Widget>[
-                  ListTile(leading: Icon(Icons.email)
-                    , title: Text(
-                        "Anmelde Methode:"),
+                  ListTile(
+                    leading: Icon(Icons.email),
+                    title: Text("Anmelde Methode:"),
                     subtitle: isAnon ? null : Text(email),
                     trailing: Text("${isAnon ? "Anonym    " : "Email    "}"),
                   ),
-                  if(!isAnon)
-                  ListTile(
-                    leading: Icon(Icons.security),
-                    title: Text("Passwort ändern"),
-                    onTap: () {
-                      Navigator.pushNamed(context, Names.changePasswordPage);
-                    },
-                  )
+                  if (!isAnon)
+                    ListTile(
+                      leading: Icon(Icons.security),
+                      title: Text("Passwort ändern"),
+                      onTap: () {
+                        Navigator.pushNamed(context, Names.changePasswordPage);
+                      },
+                    )
                 ],
               ),
             ),
-            if(isAnon)
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.info),
-                title: Text(
-                    "Zum Anmelden bitte erst Abmelden bzw. Konto löschen wenn du Anonym bist"),
+            if (isAnon)
+              Card(
+                child: ListTile(
+                  leading: Icon(Icons.info),
+                  title: Text(
+                      "Zum Anmelden bitte erst Abmelden bzw. Konto löschen wenn du Anonym bist"),
+                ),
               ),
-            ),
             Card(
               color: Colors.blue,
               child: isAnon
                   ? ListTile(
-                title: RaisedButton(
-                  color: Colors.blue,
-                  elevation: 0,
-                  child: Text("Registrieren"),
-                  onPressed: () =>
-                      Navigator.pushNamed(
-                          context, Names.logInPage,
-                          arguments: true),
-                ),
-              )
+                      title: RaisedButton(
+                        color: Colors.blue,
+                        elevation: 0,
+                        child: Text("Registrieren"),
+                        onPressed: () => Navigator.pushNamed(
+                            context, Names.logInPage,
+                            arguments: true),
+                      ),
+                    )
                   : ListTile(
-                title: RaisedButton(
-                    color: Colors.blue,
-                    elevation: 0,
-                    child: Text("Abmelden"),
-                    onPressed: () {
-                      AuthService().signOut();
-                      Navigator.pushNamed(context, Names.homePage);
-                    }),
-              ),
+                      title: RaisedButton(
+                          color: Colors.blue,
+                          elevation: 0,
+                          child: Text("Abmelden"),
+                          onPressed: () async {
+                            await AuthService().signOut();
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, Names.homePage, (r) => false);
+                          }),
+                    ),
             ),
             Card(
               color: Colors.red,
