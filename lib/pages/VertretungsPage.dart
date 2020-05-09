@@ -146,7 +146,7 @@ class _VertretungState extends State<Vertretung> {
   }
   @override
   void initState() {
-    linkGenerate();
+    /*linkGenerate();
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
           final Uri deepLink = dynamicLink?.link;
@@ -160,7 +160,7 @@ class _VertretungState extends State<Vertretung> {
           print('onLinkError');
           print(e.message);
         }
-    );
+    );*/
 
 
     reload();
@@ -177,7 +177,7 @@ class _VertretungState extends State<Vertretung> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("$change  Woche:${getWeekNumber()}"),
+            title: Text("$change  Woche: ${getWeekNumber()}"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.help_outline),

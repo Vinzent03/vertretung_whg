@@ -64,7 +64,7 @@ class _AccountPageState extends State<AccountPage> {
                 child: Text("Bestätigen"),
                 onPressed: () async {
                   await Functions().callDeleteProfile();
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, Names.homePage);
                 },
               )
             ],
@@ -106,7 +106,8 @@ class _AccountPageState extends State<AccountPage> {
             Card(
               child: ListTile(
                 leading: Icon(Icons.person),
-                title: Text("Dein Name: $name"),
+                title: Text("Dein Name:"),
+                subtitle: Text(name),
                 trailing: FlatButton(
                   child: Text("Ändern"),
                   onPressed: () => changeNameAlert(),
@@ -118,9 +119,11 @@ class _AccountPageState extends State<AccountPage> {
                 children: <Widget>[
                   ListTile(leading: Icon(Icons.email)
                     , title: Text(
-                        "Anmelde Methode:    ${isAnon ? "Anonym" : "Email"}"),
+                        "Anmelde Methode:"),
                     subtitle: isAnon ? null : Text(email),
+                    trailing: Text("${isAnon ? "Anonym    " : "Email    "}"),
                   ),
+                  if(!isAnon)
                   ListTile(
                     leading: Icon(Icons.security),
                     title: Text("Passwort ändern"),
@@ -131,11 +134,12 @@ class _AccountPageState extends State<AccountPage> {
                 ],
               ),
             ),
+            if(isAnon)
             Card(
               child: ListTile(
                 leading: Icon(Icons.info),
                 title: Text(
-                    "Zum Anmelden erst Abmelden oder Konto löschen, wenn du anonym bist"),
+                    "Zum Anmelden bitte erst Abmelden bzw. Konto löschen wenn du Anonym bist"),
               ),
             ),
             Card(

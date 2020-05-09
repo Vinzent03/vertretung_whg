@@ -18,14 +18,8 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
-  /*@override
-  void initState() {
-    SchedulerBinding.instance.addPostFrameCallback((callback) {
-      Provider.of<ThemeChanger>(context, listen: false).setLightTheme();
-    });
-    super.initState();
-  }*/
 
+  TextEditingController nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -34,9 +28,21 @@ class _IntroScreenState extends State<IntroScreen> {
         slides: [
           Slide(
             widgetDescription: Center(
-              child: Text(
-                "Der bessere Vertretungsplan!",
-                style: TextStyle(fontSize: 40, color: Colors.white),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "Der bessere Vertretungsplan!",
+                    style: TextStyle(fontSize: 40, color: Colors.white),
+                  ),
+                  SizedBox(
+                    height: 200,
+                  ),
+                  Text("Du hast schon ein Account? Dann klick unten auf Anmelden",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),)
+                ],
               ),
             ),
             backgroundColor: Colors.blue[800],
@@ -54,7 +60,7 @@ class _IntroScreenState extends State<IntroScreen> {
                     "\n-Durchgehender Dark/Light Mode\n"
                     "\n-Anzeige der aktuellen Wochennummer",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
               ),
@@ -68,6 +74,24 @@ class _IntroScreenState extends State<IntroScreen> {
             centerWidget: Theme(
               data: lightTheme,
               child: StufenList(),
+            ),
+            backgroundColor: Colors.blue[800],
+          ),
+          Slide(
+            title: "Was ist dein Name?",
+            maxLineTitle: 3,
+            styleTitle: TextStyle(fontSize: 25, color: Colors.white),
+            centerWidget: Container(
+              padding: EdgeInsets.all(100),
+              child: TextField(
+                controller: nameController,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white
+                ),
+
+              ),
             ),
             backgroundColor: Colors.blue[800],
           ),
@@ -95,15 +119,17 @@ class _IntroScreenState extends State<IntroScreen> {
         colorDot: Colors.white,
         colorActiveDot: Colors.blue[900],
         nameSkipBtn: "Anmelden",
+        widthSkipBtn: 100,
         onSkipPress: ()=> Navigator.pushNamed(context, Names.logInPage,arguments: false),
         onDonePress: () async {
+          LocalDatabase().setString(Names.name, nameController.text);
           await AuthService().signInAnon();
           CloudDatabase().updateUserData(
             faecher: [],
             faecherNot: [],
             stufe: await LocalDatabase().getString(Names.stufe),
             faecherOn: false,
-            name: "Nicht festgelegt",
+            name: nameController.text,
             notification: true,
           );
         },

@@ -107,7 +107,7 @@ class _FriendsState extends State<Friends> {
             onPressed: () async {
               String uid = await AuthService().getUserId();
               final SnackBar snack = SnackBar(
-                content: Text("dein Token wurde zur Zwichenablage hinzugefügt"),
+                content: Text("Dein Token wurde zur Zwischenablage hinzugefügt"),
               );
               Clipboard.setData(ClipboardData(text: uid.substring(0, 5)));
               Scaffold.of(context).showSnackBar(snack);

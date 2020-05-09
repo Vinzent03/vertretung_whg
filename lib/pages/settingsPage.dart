@@ -322,7 +322,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   child: Column(
                                     children: <Widget>[
                                       Text(
-                                        "Hier kannst du deinen Fehler/Verbesserungsvorschlag eingeben. Dein Fehler wird automatisch auf GitHub als Issue erstellt, er ist also öffentlich einsehbar!",
+                                        "Hier kannst du deinen Fehler/Verbesserungsvorschlag eingeben. Dein Fehler wird automatisch auf GitHub als Issue erstellt. Er ist also öffentlich einsehbar!",
                                         style: TextStyle(fontSize: 16),
                                       ),
                                       TextField(

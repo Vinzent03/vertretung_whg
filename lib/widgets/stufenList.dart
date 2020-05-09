@@ -11,7 +11,7 @@ class StufenList extends StatefulWidget {
 }
 
 class _StufenListState extends State<StufenList> {
-  LocalDatabase getter = LocalDatabase();
+  LocalDatabase localDatabase = LocalDatabase();
   String value = "";
   String stufe = "Wähle eine Stufe";
   String klasse = "Wähle eine Klasse";
@@ -91,7 +91,7 @@ class _StufenListState extends State<StufenList> {
     PushNotificationsManager().unsubTopic(finalStufe);
     PushNotificationsManager().subTopic(finalStufe);
     FirebaseAnalytics().setUserProperty(name: "stufe", value: finalStufe);
-    getter.setString(Names.stufe, finalStufe);
+    localDatabase.setString(Names.stufe, finalStufe);
 /*    Manager().updateUserData(
         faecherOn: getter.getBool(Names.faecherOn),
         stufe: finalStufe,
@@ -109,7 +109,9 @@ class _StufenListState extends State<StufenList> {
         DropdownButton<String>(
           hint: Text(
             stufe,
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(
+              fontSize: 20,
+            ),
           ),
           items: stufen.map((item) {
             return DropdownMenuItem<String>(
@@ -128,7 +130,9 @@ class _StufenListState extends State<StufenList> {
           ),
           disabledHint: Text(
             "Wähle zuerst eine Stufe",
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(
+              fontSize: 18,
+            ),
           ),
           items: menuItems,
           onChanged: disabledDropdown ? null : (_value) => finish(_value),

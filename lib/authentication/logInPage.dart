@@ -24,6 +24,7 @@ class _LogInPageState extends State<LogInPage> {
           return Center(
             child: SingleChildScrollView(
               child: Card(
+                elevation: 3,
                 child: Container(
                   padding: EdgeInsets.all(30),
                   child: Column(
@@ -73,6 +74,8 @@ class _LogInPageState extends State<LogInPage> {
                           },
                         ),
                       ),
+
+                      // passsword vergessen ListTle
                       if (!isRegistration)
                         ListTile(
                           dense: true,

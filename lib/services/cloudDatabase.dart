@@ -61,11 +61,13 @@ class CloudDatabase {
     DocumentSnapshot snap =
         await ref.collection("userdata").document(uid).get();
     LocalDatabase local = LocalDatabase();
-    local.setString(Names.stufe,snap.data["stufe"]);
+    local.setString(Names.stufe, snap.data["stufe"]);
     local.setString(Names.name, snap.data["name"]);
     local.setString(Names.newsAnzahl, "0");
-    local.setStringList(Names.faecherList, snap.data["faecher"]);
-    local.setStringList(Names.faecherNotList, snap.data["faecherNot"]);
+    local.setStringList(
+        Names.faecherList, List<String>.from(snap.data["faecher"]));
+    local.setStringList(
+        Names.faecherNotList, List<String>.from(snap.data["faecherNot"]));
     local.setBool(Names.faecherOn, snap.data["faecherOn"]);
     local.setBool(Names.notification, snap.data["notification"]);
   }
@@ -136,12 +138,13 @@ class CloudDatabase {
         .document(uid)
         .collection("requests")
         .getDocuments();
-    snap.documents.forEach((doc) => {
-          list.add({
-            "name": doc.data["name"],
-            "frienduid": doc.documentID,
-          }),
-        });
+    snap.documents.forEach(
+        (doc) => ref.collection("userdata").document(doc.documentID).get().then(
+              (friendDoc) => list.add({
+                "name": friendDoc.data["name"],
+                "frienduid": doc.documentID,
+              }),
+            ));
     return list;
   }
 

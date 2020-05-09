@@ -1,5 +1,6 @@
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'cloudFunctions.dart';
@@ -35,21 +36,22 @@ class AuthService {
   Future signOut() async {
     var user = await _auth.currentUser();
     try {
+      LocalDatabase local = LocalDatabase();
+      local.setString(Names.stufe, "Nicht festgelegt");
+      local.setString(Names.name, "Nicht festgelegt");
+      local.setString(Names.newsAnzahl, "0");
+      local.setStringList(Names.faecherList, []);
+      local.setStringList(Names.faecherNotList, []);
+      local.setStringList(Names.faecherListCustom, []);
+      local.setStringList(Names.faecherNotListCustom, []);
+      local.setBool(Names.faecherOn, false);
+      local.setBool(Names.dark, true);
+      local.setBool(Names.notification, true);
       if (user.isAnonymous) {
-        user.delete();
-        LocalDatabase local = LocalDatabase();
-        local.setString(Names.stufe, "Nicht festgelegt");
-        local.setString(Names.name, "Nicht festgelegt");
-        local.setString(Names.newsAnzahl, "0");
-        local.setStringList(Names.faecherList, []);
-        local.setStringList(Names.faecherNotList, []);
-        local.setStringList(Names.faecherListCustom, []);
-        local.setStringList(Names.faecherNotListCustom, []);
-        local.setBool(Names.faecherOn, false);
-        local.setBool(Names.dark, true);
-        local.setBool(Names.notification, true);
+        print("user deletet");
+        return await user.delete();
       }
-
+      print("ausgeloggt");
       return await _auth.signOut();
     } catch (e) {
       print("Couldnt log out");
@@ -82,6 +84,7 @@ class AuthService {
     try {
       AuthResult res = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
+      CloudDatabase().restoreAccount();
     } catch (e) {
       switch (e.code) {
         case "ERROR_INVALID_EMAIL":
@@ -158,9 +161,9 @@ class AuthService {
   }
 
   Future<String> resetPassword(String email) async {
-    try{
+    try {
       await _auth.sendPasswordResetEmail(email: email);
-    }catch (e){
+    } catch (e) {
       switch (e.code) {
         case "ERROR_INVALID_EMAIL":
           return "Dies scheint keine richte E-Mail zu sein.";

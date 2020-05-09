@@ -15,6 +15,7 @@ class ChangePasswordPage extends StatelessWidget {
         return Center(
           child: SingleChildScrollView(
             child: Card(
+              elevation: 3,
               child: Container(
                 padding: EdgeInsets.all(30),
                 child: Column(
