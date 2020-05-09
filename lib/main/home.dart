@@ -1,4 +1,4 @@
-import 'package:Vertretung/friends/friends.dart';
+import 'package:Vertretung/friends/friendsPage.dart';
 import 'package:Vertretung/logic/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:Vertretung/pages/newsPage.dart';
