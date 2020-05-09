@@ -38,7 +38,6 @@ class AuthService {
     try {
       LocalDatabase local = LocalDatabase();
       local.setString(Names.stufe, "Nicht festgelegt");
-      local.setString(Names.name, "Nicht festgelegt");
       local.setString(Names.newsAnzahl, "0");
       local.setStringList(Names.faecherList, []);
       local.setStringList(Names.faecherNotList, []);

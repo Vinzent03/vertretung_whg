@@ -14,6 +14,7 @@ class _AccountPageState extends State<AccountPage> {
   String name = "Laden";
   String email = "Laden";
   bool isAnon = true;
+  bool beta = false;
 
   changeNameAlert() {
     final TextEditingController controller = TextEditingController();
@@ -35,9 +36,9 @@ class _AccountPageState extends State<AccountPage> {
                   onPressed: () {
                     if (controller.text.length >= 2) {
                       // LocalDatabase().setString(Names.name, controller.text);
-                      // setState(() {
-                      //   name = controller.text;
-                      // });
+                      setState(() {
+                        name = controller.text;
+                      });
                       AuthService().updateName(controller.text);
                       CloudDatabase().updateName(controller.text);
                       Navigator.pop(context);
@@ -74,6 +75,37 @@ class _AccountPageState extends State<AccountPage> {
         });
   }
 
+  void becomeBetaUserAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              beta
+                  ? "Möchtest du wirklich kein Beta Nutzer mehr sein? Falls du irgendwelche Fehler hattest, melde diese doch bitte."
+                  : "Als Beta Nutzer bekommst du früher Updates. Diese sind ggf. fehlerhaft. Bei einem App-Neustart bekommst du dann eine Meldung zu einem verfügbaren Update",
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("abbrechen"),
+                onPressed: () => Navigator.pop(context),
+              ),
+              RaisedButton(
+                color: Colors.red,
+                child: Text("Bestätigen"),
+                onPressed: () async {
+                  LocalDatabase().setBool(Names.beta, !beta);
+                  setState(() {
+                    beta = !beta;
+                  });
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
   @override
   void initState() {
     // LocalDatabase().getString(Names.name).then((newName) {
@@ -94,6 +126,7 @@ class _AccountPageState extends State<AccountPage> {
         });
       }
     });
+    LocalDatabase().getBool(Names.beta).then((value) => beta = value);
     super.initState();
   }
 
@@ -137,6 +170,18 @@ class _AccountPageState extends State<AccountPage> {
                 ],
               ),
             ),
+
+            //Beta
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.warning),
+                title: Text(beta
+                    ? "Kein Beta Nutzer mehr werden"
+                    : "Beta Nutzer werden"),
+                onTap: becomeBetaUserAlert,
+              ),
+            ),
+            //Anonym
             if (isAnon)
               Card(
                 child: ListTile(

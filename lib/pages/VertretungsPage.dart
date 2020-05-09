@@ -86,7 +86,7 @@ class _VertretungState extends State<Vertretung> {
     int dayOfYear = int.parse(DateFormat("D").format(date));
     return ((dayOfYear - date.weekday + 10) / 7).floor();
   }
-  void reload() {
+  void refresh() { // refresh the vertretung
     setState(() {
       change = "Loading";
     });
@@ -98,7 +98,7 @@ class _VertretungState extends State<Vertretung> {
     });*/
   }
 
-  void refresh() async {
+  void reload() async { //reload 
     getter.setStringList(Names.lessonsToday, rawListToday);
     getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);
     getter.getBool(Names.faecherOn).then((onValue) {
@@ -163,8 +163,8 @@ class _VertretungState extends State<Vertretung> {
     );*/
 
 
-    reload();
     refresh();
+    reload();
     super.initState();
   }
 
@@ -185,7 +185,10 @@ class _VertretungState extends State<Vertretung> {
               ),
               IconButton(
                 icon: Icon(Icons.settings),
-                onPressed: ()=>Navigator.pushNamed(context, Names.settingsPage),
+                onPressed: ()async {
+                  await Navigator.pushNamed(context, Names.settingsPage);
+                  reload();
+                }
               )
             ],
             bottom: TabBar(
@@ -233,7 +236,7 @@ class _VertretungState extends State<Vertretung> {
           body: SmartRefresher(
             enablePullDown: true,
             controller: _refreshController,
-            onRefresh: reload,
+            onRefresh: refresh,
             child: TabBarView(
               physics: ScrollPhysics(),
               children: <Widget>[

@@ -62,7 +62,6 @@ class CloudDatabase {
         await ref.collection("userdata").document(uid).get();
     LocalDatabase local = LocalDatabase();
     local.setString(Names.stufe, snap.data["stufe"]);
-    local.setString(Names.name, snap.data["name"]);
     local.setString(Names.newsAnzahl, "0");
     local.setStringList(
         Names.faecherList, List<String>.from(snap.data["faecher"]));
@@ -78,10 +77,11 @@ class CloudDatabase {
     String version = pa.version;
     bool updateAvaible = true;
     bool forceUpdate;
-
+    bool beta = await LocalDatabase().getBool(Names.beta);
     DocumentSnapshot snap =
         await ref.collection("details").document("versions").get();
-    updateAvaible = snap.data["newVersion"] != version;
+    updateAvaible =
+        snap.data[beta ? "newBetaVersion" : "newVersion"] != version;
     forceUpdate = snap.data["forceUpdate"];
     if (updateAvaible) {
       if (forceUpdate) {
@@ -95,15 +95,17 @@ class CloudDatabase {
   }
 
   Future<String> getUpdateLink() async {
+    bool beta = await LocalDatabase().getBool(Names.beta);
     DocumentSnapshot snap =
         await ref.collection("details").document("links").get();
-    return snap.data["newLink"];
+    return snap.data[beta? "newBetaLink": "newLink"];
   }
 
   Future<List<dynamic>> getUpdateMessage() async {
+    bool beta = await LocalDatabase().getBool(Names.beta);
     DocumentSnapshot snap =
         await ref.collection("details").document("versions").get();
-    return snap.data["message"];
+    return snap.data[beta?"betaMessage":"message"];
   }
 
   ///////  News

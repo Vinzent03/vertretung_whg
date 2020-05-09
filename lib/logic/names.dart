@@ -27,5 +27,5 @@ class Names{
   static const String faecherNotList = "faecherNotList";
   static const String notification = "notification";
   static const String newsAnzahl = "newsAnzahl";
-  static const String name = "name";
+  static const String beta = "beta";
 }

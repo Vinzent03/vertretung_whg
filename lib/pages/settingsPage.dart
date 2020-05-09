@@ -79,7 +79,6 @@ class _SettingsPageState extends State<SettingsPage> {
     bool pfaecherOn;
     bool pnotification;
     String pstufe;
-    String pname;
     List<String> pfaecherList;
     getter.getBool(Names.dark).then((bool b) {
       pdark = b;
@@ -93,9 +92,7 @@ class _SettingsPageState extends State<SettingsPage> {
     getter.getString(Names.stufe).then((String st) {
       pstufe = st;
     });
-    getter.getString(Names.name).then((String st) {
-      pname = st;
-    });
+
     getter.getStringList(Names.faecherList).then((List<String> st) {
       pfaecherList = st;
     });
@@ -106,7 +103,6 @@ class _SettingsPageState extends State<SettingsPage> {
         faecherOn = pfaecherOn;
         notification = pnotification;
         stufe = pstufe;
-        name = pname;
         faecherList = pfaecherList;
       });
     });

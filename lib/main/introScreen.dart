@@ -122,7 +122,7 @@ class _IntroScreenState extends State<IntroScreen> {
         widthSkipBtn: 100,
         onSkipPress: ()=> Navigator.pushNamed(context, Names.logInPage,arguments: false),
         onDonePress: () async {
-          LocalDatabase().setString(Names.name, nameController.text);
+          AuthService().updateName(nameController.text);
           await AuthService().signInAnon();
           CloudDatabase().updateUserData(
             faecher: [],
