@@ -1,7 +1,7 @@
 import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/logic/theme.dart';
+import 'package:Vertretung/provider/theme.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/widgets/generalBlueprint.dart';
 import 'package:intl/intl.dart';
@@ -11,11 +11,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 class Vertretung extends StatefulWidget {
+  Vertretung({Key key}) : super(key: key);
   @override
   _VertretungState createState() => _VertretungState();
 }
 
-class _VertretungState extends State<Vertretung> {
+class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
   final controller = PageController(initialPage: 0);
   CloudDatabase cd;
   LocalDatabase getter = LocalDatabase();
@@ -23,7 +24,6 @@ class _VertretungState extends State<Vertretung> {
   int currentPage = 0;
   bool isNewsAvailable = false;
   bool faecherOn = false; //if personalisierte Vertretung is enabled
-  bool shouldShowBanner = false; //the banner if a update is recommended
   String change = "Loading"; // The last tine the data on dsb mobile changed
   List<String> listWithoutClasses = [""];
   RefreshController _refreshController =
@@ -80,6 +80,10 @@ class _VertretungState extends State<Vertretung> {
     "Q2",
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
+  List<Widget> myTabViews;
+  List<Widget> myTabViewsFaecherOn;
+  List<Widget> myTabs;
+  List<Widget> myTabsFaecherOn;
 
   int getWeekNumber() {
     DateTime date = DateTime.now();
@@ -100,8 +104,8 @@ class _VertretungState extends State<Vertretung> {
     });*/
   }
 
-  void reload() async {
-    //reload
+  Future<void> reload() async {
+    //reload the settings
     getter.setStringList(Names.lessonsToday, rawListToday);
     getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);
     getter.getBool(Names.faecherOn).then((onValue) {
@@ -177,11 +181,19 @@ class _VertretungState extends State<Vertretung> {
 
   @override
   Widget build(BuildContext context) {
+    if(Provider.of<ThemeChanger>(context).getRestore()){
+      print("will reloaden");
+      reload().then((value) => Provider.of<ThemeChanger>(context,listen: false).setRestore(false));
+    }
+      
     final theme = Provider.of<ThemeChanger>(context);
     return MaterialApp(
       theme: theme.getTheme(),
       home: DefaultTabController(
         length: faecherOn ? 4 : 2,
+        key: Key(faecherOn
+            ? "On"
+            : "Off"),//key is needed because otherwise the tab length would not be updated
         child: Scaffold(
             appBar: AppBar(
               title: Text("$change  Woche: ${getWeekNumber()}"),
@@ -198,28 +210,32 @@ class _VertretungState extends State<Vertretung> {
                     })
               ],
               bottom: TabBar(
-                isScrollable: faecherOn,//when scrollable is true, the tabs dont use max space
-                tabs: <Widget>[
+                isScrollable: faecherOn,
+                tabs: [
                   if (faecherOn)
                     Tab(
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[Icon(Icons.person), Text("Heute")],
                       ),
                     ),
                   if (faecherOn)
                     Tab(
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[Icon(Icons.person), Text("Morgen")],
                       ),
                     ),
                   Tab(
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[Icon(Icons.group), Text("Heute")],
                     ),
                   ),
                   Tab(
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[Icon(Icons.group), Text("Morgen")],
                     ),
@@ -233,7 +249,7 @@ class _VertretungState extends State<Vertretung> {
               onRefresh: refresh,
               child: TabBarView(
                 physics: ScrollPhysics(),
-                children: <Widget>[
+                children: [
                   if (faecherOn)
                     GeneralBlueprint(
                       change: change,

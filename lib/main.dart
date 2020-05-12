@@ -16,15 +16,15 @@ import 'package:provider/provider.dart';
 import 'authentication/changePasswordPage.dart';
 import 'logic/localDatabase.dart';
 import 'logic/names.dart';
-import 'logic/theme.dart';
-import 'logic/themedata.dart';
+import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/themedata.dart';
 import 'pages/settingsPage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   LocalDatabase().getBool(Names.dark).then((isDark) {
     runApp(ChangeNotifierProvider<ThemeChanger>(
-      create: (_) => ThemeChanger(isDark ? darkTheme : lightTheme, isDark),
+      create: (_) => ThemeChanger(isDark ? darkTheme : lightTheme, isDark,false),
       child: MyAppSt(),
     ));
   });

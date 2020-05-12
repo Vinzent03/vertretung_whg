@@ -61,7 +61,8 @@ class _LogInPageState extends State<LogInPage> {
                             else
                               err = await AuthService().signInEmail(
                                   email: emailController.text,
-                                  password: passwordController.text);
+                                  password: passwordController.text,
+                                  context: context);
                             if (err != null) {
                               final SnackBar snack = SnackBar(
                                 content: Text(err),

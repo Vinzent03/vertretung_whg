@@ -94,6 +94,7 @@ class _AccountPageState extends State<AccountPage> {
                 color: Colors.red,
                 child: Text("Bestätigen"),
                 onPressed: () async {
+                  CloudDatabase().becomeBetaUser(!beta);
                   LocalDatabase().setBool(Names.beta, !beta);
                   setState(() {
                     beta = !beta;
@@ -108,11 +109,6 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   void initState() {
-    // LocalDatabase().getString(Names.name).then((newName) {
-    //   setState(() {
-    //     name = newName;
-    //   });
-    // });
     AuthService().getName().then((value) => name = value);
     AuthService().isAnon().then((newIsAnon) {
       setState(() {

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:share/share.dart';
-import 'package:Vertretung/logic/theme.dart';
-import 'package:provider/provider.dart';
 
 class VertretungTile extends StatelessWidget {
   final List<List<String>> list;

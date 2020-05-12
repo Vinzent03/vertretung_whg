@@ -1,8 +1,10 @@
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/pages/VertretungsPage.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 
@@ -42,6 +44,16 @@ class CloudDatabase {
       });
   }
 
+  /// if a user should be beta or not
+  void becomeBetaUser(bool isBeta) async {
+    AuthService _auth = AuthService();
+    DocumentReference doc =
+        ref.collection("userdata").document(await _auth.getUserId());
+    doc.setData({
+      "beta": isBeta,
+    }, merge: true);
+  }
+
   void updateName(String newName) async {
     AuthService _auth = AuthService();
     DocumentReference doc =
@@ -56,7 +68,7 @@ class CloudDatabase {
     await ref.collection("userdata").document(await _auth.getUserId()).delete();
   }
 
-  void restoreAccount() async {
+  Future<void> restoreAccount() async {
     String uid = await AuthService().getUserId();
     DocumentSnapshot snap =
         await ref.collection("userdata").document(uid).get();
@@ -67,8 +79,14 @@ class CloudDatabase {
         Names.faecherList, List<String>.from(snap.data["faecher"]));
     local.setStringList(
         Names.faecherNotList, List<String>.from(snap.data["faecherNot"]));
-    local.setBool(Names.faecherOn, snap.data["faecherOn"]);
+    await local.setBool(Names.faecherOn, snap.data["faecherOn"]);
     local.setBool(Names.notification, snap.data["notification"]);
+    bool newBeta;
+    if(snap.data["beta"] == null)
+      newBeta = false;
+    else
+      newBeta = snap.data["beta"];
+    await local.setBool(Names.beta, newBeta);
   }
 
   /////// Upddates
@@ -98,14 +116,14 @@ class CloudDatabase {
     bool beta = await LocalDatabase().getBool(Names.beta);
     DocumentSnapshot snap =
         await ref.collection("details").document("links").get();
-    return snap.data[beta? "newBetaLink": "newLink"];
+    return snap.data[beta ? "newBetaLink" : "newLink"];
   }
 
   Future<List<dynamic>> getUpdateMessage() async {
     bool beta = await LocalDatabase().getBool(Names.beta);
     DocumentSnapshot snap =
         await ref.collection("details").document("versions").get();
-    return snap.data[beta?"betaMessage":"message"];
+    return snap.data[beta ? "betaMessage" : "message"];
   }
 
   ///////  News

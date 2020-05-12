@@ -1,5 +1,5 @@
 import 'package:Vertretung/friends/friendsPage.dart';
-import 'package:Vertretung/logic/theme.dart';
+import 'package:Vertretung/provider/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:Vertretung/pages/newsPage.dart';
 import 'package:Vertretung/pages/VertretungsPage.dart';

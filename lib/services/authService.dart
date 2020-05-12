@@ -1,9 +1,9 @@
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/provider/theme.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'cloudFunctions.dart';
+import 'package:provider/provider.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -13,9 +13,6 @@ class AuthService {
     try {
       AuthResult result = await _auth.signInAnonymously();
       FirebaseUser user = result.user;
-      UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
-      userUpdateInfo.displayName = "in den update profile gesetzt";
-      user.updateProfile(userUpdateInfo);
       return user;
     } catch (e) {
       print(e.toString());
@@ -92,12 +89,15 @@ class AuthService {
     return user.displayName;
   }
 
-  Future<String> signInEmail({email, password}) async {
+  Future<String> signInEmail({email, password, context}) async {
     try {
       AuthResult res = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      CloudDatabase().restoreAccount();
+
+      await CloudDatabase().restoreAccount();
+      Provider.of<ThemeChanger>(context, listen: false).setRestore(true);
     } catch (e) {
+      print(e.toString());
       switch (e.code) {
         case "ERROR_INVALID_EMAIL":
           return "Dies scheint keine richte E-Mail zu sein.";

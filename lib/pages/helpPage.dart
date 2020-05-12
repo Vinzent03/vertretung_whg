@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/theme.dart';
+import 'package:Vertretung/provider/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

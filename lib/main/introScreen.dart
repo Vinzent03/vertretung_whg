@@ -1,16 +1,13 @@
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/logic/theme.dart';
-import 'package:Vertretung/logic/themedata.dart';
+import 'package:Vertretung/provider/themedata.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/widgets/stufenList.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 import '../logic/localDatabase.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:provider/provider.dart';
 
 class IntroScreen extends StatefulWidget {
   @override
@@ -18,7 +15,6 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
-
   TextEditingController nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -37,11 +33,13 @@ class _IntroScreenState extends State<IntroScreen> {
                   SizedBox(
                     height: 200,
                   ),
-                  Text("Du hast schon ein Account? Dann klick unten auf Anmelden",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),)
+                  Text(
+                    "Du hast schon ein Account? Dann klick unten auf Anmelden",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  )
                 ],
               ),
             ),
@@ -53,12 +51,12 @@ class _IntroScreenState extends State<IntroScreen> {
               padding: EdgeInsets.all(20),
               child: Text(
                 "-Personalisierte Vertretung\n"
-                    "\n-Du bekommst SINNVOLLE Benachrichtigungen\n"
-                    "\n-Kein lästiges Reinzoomen in der Dsb-Mobile App\n"
-                    "\n-Du siehst immer was deine Freunde für Vertretung haben\n"
-                    "\n-Verteilung von Nachrichten direkt über die App\n"
-                    "\n-Durchgehender Dark/Light Mode\n"
-                    "\n-Anzeige der aktuellen Wochennummer",
+                "\n-Du bekommst SINNVOLLE Benachrichtigungen\n"
+                "\n-Kein lästiges Reinzoomen in der Dsb-Mobile App\n"
+                "\n-Du siehst immer was deine Freunde für Vertretung haben\n"
+                "\n-Verteilung von Nachrichten direkt über die App\n"
+                "\n-Durchgehender Dark/Light Mode\n"
+                "\n-Anzeige der aktuellen Wochennummer",
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -88,9 +86,8 @@ class _IntroScreenState extends State<IntroScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
-                  color: Colors.white
+                  color: Colors.white,
                 ),
-
               ),
             ),
             backgroundColor: Colors.blue[800],
@@ -120,10 +117,11 @@ class _IntroScreenState extends State<IntroScreen> {
         colorActiveDot: Colors.blue[900],
         nameSkipBtn: "Anmelden",
         widthSkipBtn: 100,
-        onSkipPress: ()=> Navigator.pushNamed(context, Names.logInPage,arguments: false),
+        onSkipPress: () =>
+            Navigator.pushNamed(context, Names.logInPage, arguments: false),
         onDonePress: () async {
-          AuthService().updateName(nameController.text);
           await AuthService().signInAnon();
+          AuthService().updateName(nameController.text);
           CloudDatabase().updateUserData(
             faecher: [],
             faecherNot: [],
@@ -132,6 +130,9 @@ class _IntroScreenState extends State<IntroScreen> {
             name: nameController.text,
             notification: true,
           );
+          LocalDatabase local = LocalDatabase();
+          local.setBool(Names.faecherOn, false);
+          local.setBool(Names.beta, false);
         },
       ),
     );

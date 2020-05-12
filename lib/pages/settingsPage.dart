@@ -1,6 +1,5 @@
 import 'package:Vertretung/logic/gitHubToken.dart';
-import 'package:Vertretung/logic/theme.dart';
-import 'dart:convert';
+import 'package:Vertretung/provider/theme.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:share/share.dart';
 import 'package:Vertretung/widgets/stufenList.dart';
@@ -30,7 +29,6 @@ class _SettingsPageState extends State<SettingsPage> {
   List<String> faecherList = [];
   List<String> faecherNotList = [];
   AuthService _authService = AuthService();
-
 
   LocalDatabase getter = LocalDatabase();
 
@@ -120,7 +118,7 @@ class _SettingsPageState extends State<SettingsPage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.share),
-              onPressed: ()async{
+              onPressed: () async {
                 String link = await CloudDatabase().getUpdateLink();
                 //Share.share("Hier ist der Link für die Vertretungsapp: $link");
                 Share.share("https://vertretung.page.link/group");
@@ -133,16 +131,16 @@ class _SettingsPageState extends State<SettingsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Card(
-                elevation: 3,
+                  elevation: 3,
                   color: Colors.blue[500],
                   child: ListTile(
-                  title: Text(
-                    "Dein Account",
-                  ),
-                  leading: Icon(Icons.donut_large),
-                  onTap: ()=> Navigator.pushNamed(context, Names.accountPage),
-                )
-              ),
+                    title: Text(
+                      "Dein Account",
+                    ),
+                    leading: Icon(Icons.donut_large),
+                    onTap: () =>
+                        Navigator.pushNamed(context, Names.accountPage),
+                  )),
               Card(
                   elevation: 3,
                   child: ListTile(
@@ -283,7 +281,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           setState(() {
                             notification = b;
                           });
-                            updateUserdata();
+                          updateUserdata();
                         });
                       },
                       title: Text(
@@ -314,7 +312,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                content: SingleChildScrollView(//damit man beim schreiben nicht nur 3 Zeilen sieht
+                                content: SingleChildScrollView(
+                                  //damit man beim schreiben nicht nur 3 Zeilen sieht
                                   child: Column(
                                     children: <Widget>[
                                       Text(
@@ -337,7 +336,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                     child: Text("abschicken"),
                                     onPressed: () async {
                                       print("abschicken");
-                                      GitHub github = GitHub(auth: Authentication.withToken(GitHubToken.token));
+                                      GitHub github = GitHub(
+                                          auth: Authentication.withToken(
+                                              GitHubToken.token));
                                       github.issues.create(
                                           RepositorySlug(
                                               "Vinzent03", "vertretung_whg"),
