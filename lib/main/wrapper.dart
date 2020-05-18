@@ -8,21 +8,21 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 import 'home.dart';
 
-class Wrapper extends StatelessWidget{
-  Wrapper(){
+class Wrapper extends StatelessWidget {
+  Wrapper() {
     PushNotificationsManager().init();
     initDynamicLinks();
   }
   void initDynamicLinks() async {
-    final PendingDynamicLinkData data = await FirebaseDynamicLinks.instance.getInitialLink();
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
   }
 
-
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
-    print(user== null ?"Kein konto":user.uid);
-    if(user == null){
+    print(user == null ? "Kein konto" : user.uid);
+    if(user == null) {
       return IntroScreen();
     }else{
       return Home();

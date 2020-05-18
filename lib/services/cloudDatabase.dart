@@ -100,7 +100,7 @@ class CloudDatabase {
         await ref.collection("details").document("versions").get();
     updateAvaible =
         snap.data[beta ? "newBetaVersion" : "newVersion"] != version;
-    forceUpdate = snap.data["forceUpdate"];
+    forceUpdate = snap.data[beta? "betaForceUpdate":"forceUpdate"];
     if (updateAvaible) {
       if (forceUpdate) {
         return "forceUpdate";

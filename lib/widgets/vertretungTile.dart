@@ -20,6 +20,8 @@ class VertretungTile extends StatelessWidget {
     //bool isDark = Provider.of<ThemeChanger>(context).getIsDark();
     return Card(
       color: Colors.blue[700],
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15))),
       child: ListTile(
         dense: dense,
         onTap: () {},

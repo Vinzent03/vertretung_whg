@@ -8,6 +8,8 @@ class ThemeChanger with ChangeNotifier {
   bool isDark;
   bool newRestore;
   getTheme() => _themeData;
+
+  /// Return true if the dark mode is activated
   getIsDark() => isDark;
 
   setDarkTheme() {

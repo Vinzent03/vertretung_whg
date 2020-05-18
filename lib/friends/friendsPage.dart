@@ -1,5 +1,4 @@
 import 'package:Vertretung/friends/friendLogic.dart';
-import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -135,6 +134,8 @@ class _FriendsState extends State<Friends> {
                 physics: ScrollPhysics(),
                 itemBuilder: (context, index) {
                   return Card(
+                    shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15))),
                     color: Colors.blue[700],
                     child: ListTile(
                       dense: true,

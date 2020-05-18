@@ -18,6 +18,7 @@ import 'logic/localDatabase.dart';
 import 'logic/names.dart';
 import 'package:Vertretung/provider/theme.dart';
 import 'package:Vertretung/provider/themedata.dart';
+import 'main/splash.dart';
 import 'pages/settingsPage.dart';
 
 void main() {
@@ -38,9 +39,10 @@ class MyAppSt extends StatelessWidget {
       value: AuthService().user,
       child: MaterialApp(
         theme: theme.getTheme(),
-        initialRoute: Names.homePage,
+        initialRoute: Names.splashSceen,
         routes: {
-          Names.homePage: (context) => Wrapper(),
+          Names.splashSceen: (context) => Splash(),
+          Names.wrapper: (context) => Wrapper(),
           Names.settingsPage: (context) => SettingsPage(),
           Names.helpPage: (context) => HelpPage(),
           Names.introScreen: (context) => IntroScreen(),

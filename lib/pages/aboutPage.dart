@@ -72,6 +72,8 @@ class _AboutPageState extends State<AboutPage> {
                       scale: 15,
                     ),
                     title: Text("Wir sind auf GitHub!"),
+                    onTap: () => launch(
+                          "https://github.com/Vinzent03/Vertretung-fuer-das-Werner-Heisenberg-Gymnasium"),
                     trailing: IconButton(
                       icon: Image.asset(
                         "assets/images/GitHub.png",

@@ -191,60 +191,49 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: Text("Deine Fächer(Whitelist)"),
                       enabled: faecherOn,
                       leading: Icon(Icons.edit),
-                      trailing: FlatButton(
-                          child: Text(
-                            "ändern",
-                            style: TextStyle(fontSize: 17),
-                          ),
-                          onPressed: !faecherOn
-                              ? null
-                              : () async {
-                                  await Navigator.pushNamed(
-                                      context, Names.faecherPage, arguments: [
-                                    Names.faecherList,
-                                    Names.faecherListCustom
-                                  ]);
-                                  Future.delayed(Duration(seconds: 2), () {
-                                    //Man muss noch auf das abspeicher in der faecherList warten, ohne extra warte Zeit, würde man noch die alten daten bekommen, weil der Schreibvorgang noch nicht fertig ist.
-                                    getter
-                                        .getStringList(Names.faecherList)
-                                        .then((onValue) {
-                                      setState(() {
-                                        faecherList = onValue;
-                                      });
-                                      print("hallo bin fächer mit $onValue");
-                                      updateUserdata();
-                                    });
+                      onTap: !faecherOn
+                          ? null
+                          : () async {
+                              await Navigator.pushNamed(
+                                  context, Names.faecherPage, arguments: [
+                                Names.faecherList,
+                                Names.faecherListCustom
+                              ]);
+                              Future.delayed(Duration(seconds: 2), () {
+                                //Man muss noch auf das abspeicher in der faecherList warten, ohne extra warte Zeit, würde man noch die alten daten bekommen, weil der Schreibvorgang noch nicht fertig ist.
+                                getter
+                                    .getStringList(Names.faecherList)
+                                    .then((onValue) {
+                                  setState(() {
+                                    faecherList = onValue;
                                   });
-                                }),
+                                  print("hallo bin fächer mit $onValue");
+                                  updateUserdata();
+                                });
+                              });
+                            },
                     ),
                     ListTile(
-                      title: Text("Fächer anderer(Blacklist)"),
-                      enabled: faecherOn,
-                      leading: Icon(Icons.edit),
-                      trailing: FlatButton(
-                          child: Text(
-                            "ändern",
-                            style: TextStyle(fontSize: 17),
-                          ),
-                          onPressed: !faecherOn
-                              ? null
-                              : () async {
-                                  await Navigator.pushNamed(
-                                      context, Names.faecherPage, arguments: [
-                                    Names.faecherNotList,
-                                    Names.faecherNotListCustom
-                                  ]);
-                                  getter
-                                      .getStringList(Names.faecherNotList)
-                                      .then((onValue) {
-                                    setState(() {
-                                      faecherNotList = onValue;
-                                    });
-                                    updateUserdata();
+                        title: Text("Fächer anderer(Blacklist)"),
+                        enabled: faecherOn,
+                        leading: Icon(Icons.edit),
+                        onTap: !faecherOn
+                            ? null
+                            : () async {
+                                await Navigator.pushNamed(
+                                    context, Names.faecherPage, arguments: [
+                                  Names.faecherNotList,
+                                  Names.faecherNotListCustom
+                                ]);
+                                getter
+                                    .getStringList(Names.faecherNotList)
+                                    .then((onValue) {
+                                  setState(() {
+                                    faecherNotList = onValue;
                                   });
-                                }),
-                    )
+                                  updateUserdata();
+                                });
+                              })
                   ],
                 ),
               ),
@@ -312,6 +301,9 @@ class _SettingsPageState extends State<SettingsPage> {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15))),
                                 content: SingleChildScrollView(
                                   //damit man beim schreiben nicht nur 3 Zeilen sieht
                                   child: Column(

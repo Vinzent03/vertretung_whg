@@ -228,22 +228,24 @@ class _FaecherListState extends State<FaecherList> {
         );
       } else {
         //chckboxlisttile generell
-        return CheckboxListTile(
-          title: Text(root.title),
-          value: root.isChecked,
-          secondary: root.isCustom
-              ? IconButton(
-                  onPressed: () {
-                    setState(() {
-                      selectedFaecher.remove(root.title);
-                      faecherCustom
-                          .removeWhere((item) => item.title == root.title);
-                    });
-                  },
-                  icon: Icon(Icons.delete),
-                )
-              : Icon(Icons.group),
-          onChanged: (isChecked) => checkItem(root, isChecked),
+        return Card(
+                  child: CheckboxListTile(
+            title: Text(root.title),
+            value: root.isChecked,
+            secondary: root.isCustom
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedFaecher.remove(root.title);
+                        faecherCustom
+                            .removeWhere((item) => item.title == root.title);
+                      });
+                    },
+                    icon: Icon(Icons.delete),
+                  )
+                : Icon(Icons.group),
+            onChanged: (isChecked) => checkItem(root, isChecked),
+          ),
         );
       }
     } else {

@@ -16,12 +16,14 @@ class _AccountPageState extends State<AccountPage> {
   bool isAnon = true;
   bool beta = false;
 
-  changeNameAlert() {
+  changeNameAlert(scaffoldContext) {
     final TextEditingController controller = TextEditingController();
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15))),
             title: Text("Gib deinen neuen Namen ein"),
             content: TextField(
               controller: controller,
@@ -33,15 +35,26 @@ class _AccountPageState extends State<AccountPage> {
               ),
               RaisedButton(
                   child: Text("Bestätigen"),
-                  onPressed: () {
+                  onPressed: () async {
                     if (controller.text.length >= 2) {
-                      // LocalDatabase().setString(Names.name, controller.text);
                       setState(() {
                         name = controller.text;
                       });
                       AuthService().updateName(controller.text);
                       CloudDatabase().updateName(controller.text);
                       Navigator.pop(context);
+                    } else {
+                      final snack = SnackBar(
+                        content: Text("Bitte wähle einen längeren Namen"),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.red,
+                      );
+
+                      Scaffold.of(scaffoldContext).showSnackBar(snack);
+                      await Future.delayed(
+                        Duration(seconds: 4),
+                      ); //Erst nach den 4 Sekunden wird die Snackbar geschlossen. Keine Ahnung warum das extra nötig ist.
+                      Scaffold.of(scaffoldContext).removeCurrentSnackBar();
                     }
                   }),
             ],
@@ -67,7 +80,7 @@ class _AccountPageState extends State<AccountPage> {
                 onPressed: () async {
                   await Functions().callDeleteProfile();
                   Navigator.pushNamedAndRemoveUntil(
-                      context, Names.homePage, (r) => false);
+                      context, Names.wrapper, (r) => false);
                 },
               )
             ],
@@ -129,102 +142,105 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Dein Account"),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.person),
-                title: Text("Dein Name:"),
-                subtitle: Text(name),
-                trailing: FlatButton(
-                  child: Text("Ändern"),
-                  onPressed: () => changeNameAlert(),
-                ),
-              ),
-            ),
-            Card(
-              child: Column(
-                children: <Widget>[
-                  ListTile(
-                    leading: Icon(Icons.email),
-                    title: Text("Anmelde Methode:"),
-                    subtitle: isAnon ? null : Text(email),
-                    trailing: Text("${isAnon ? "Anonym    " : "Email    "}"),
-                  ),
-                  if (!isAnon)
-                    ListTile(
-                      leading: Icon(Icons.security),
-                      title: Text("Passwort ändern"),
-                      onTap: () {
-                        Navigator.pushNamed(context, Names.changePasswordPage);
-                      },
-                    )
-                ],
-              ),
-            ),
-
-            //Beta
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.warning),
-                title: Text(beta
-                    ? "Kein Beta Nutzer mehr werden"
-                    : "Beta Nutzer werden"),
-                onTap: becomeBetaUserAlert,
-              ),
-            ),
-            //Anonym
-            if (isAnon)
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.info),
-                  title: Text(
-                      "Zum Anmelden bitte erst Abmelden bzw. Konto löschen wenn du Anonym bist"),
-                ),
-              ),
-            Card(
-              color: Colors.blue,
-              child: isAnon
-                  ? ListTile(
-                      title: RaisedButton(
-                        color: Colors.blue,
-                        elevation: 0,
-                        child: Text("Registrieren"),
-                        onPressed: () => Navigator.pushNamed(
-                            context, Names.logInPage,
-                            arguments: true),
-                      ),
-                    )
-                  : ListTile(
-                      title: RaisedButton(
-                          color: Colors.blue,
-                          elevation: 0,
-                          child: Text("Abmelden"),
-                          onPressed: () async {
-                            await AuthService().signOut();
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, Names.homePage, (r) => false);
-                          }),
-                    ),
-            ),
-            Card(
-              color: Colors.red,
-              child: ListTile(
-                title: RaisedButton(
-                  color: Colors.red,
-                  elevation: 0,
-                  child: Text("Konto löschen"),
-                  onPressed: deleteAccountAlert,
-                ),
-              ),
-            )
-          ],
+        appBar: AppBar(
+          title: Text("Dein Account"),
         ),
-      ),
-    );
+        body: Builder(builder: (context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Card(
+                  child: ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text("Dein Name:"),
+                      onTap: () => changeNameAlert(context),
+                      trailing: Padding(
+                          child: Text(name),
+                          padding: EdgeInsets.only(right: 10))),
+                ),
+                Card(
+                  child: Column(
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.email),
+                        title: Text("Anmelde Methode:"),
+                        subtitle: isAnon ? null : Text(email),
+                        trailing: Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: Text("${isAnon ? "Anonym" : "Email"}"),
+                        ),
+                      ),
+                      if (!isAnon)
+                        ListTile(
+                          leading: Icon(Icons.security),
+                          title: Text("Passwort ändern"),
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, Names.changePasswordPage);
+                          },
+                        )
+                    ],
+                  ),
+                ),
+
+                //Beta
+                Card(
+                  child: ListTile(
+                    leading: Icon(Icons.warning),
+                    title: Text(beta
+                        ? "Kein Beta Nutzer mehr werden"
+                        : "Beta Nutzer werden"),
+                    onTap: becomeBetaUserAlert,
+                  ),
+                ),
+                //Anonym
+                if (isAnon)
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.info),
+                      title: Text(
+                          "Zum Anmelden bitte erst Abmelden bzw. Konto löschen wenn du Anonym bist"),
+                    ),
+                  ),
+                Card(
+                  color: Colors.blue,
+                  child: isAnon
+                      ? ListTile(
+                          title: RaisedButton(
+                            color: Colors.blue,
+                            elevation: 0,
+                            child: Text("Registrieren"),
+                            onPressed: () => Navigator.pushNamed(
+                                context, Names.logInPage,
+                                arguments: true),
+                          ),
+                        )
+                      : ListTile(
+                          title: RaisedButton(
+                              color: Colors.blue,
+                              elevation: 0,
+                              child: Text("Abmelden"),
+                              onPressed: () async {
+                                await AuthService().signOut();
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, Names.wrapper, (r) => false);
+                              }),
+                        ),
+                ),
+                Card(
+                  color: Colors.red,
+                  child: ListTile(
+                    title: RaisedButton(
+                      color: Colors.red,
+                      elevation: 0,
+                      child: Text("Konto löschen"),
+                      onPressed: deleteAccountAlert,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          );
+        }));
   }
 }

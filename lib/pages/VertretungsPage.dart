@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:Vertretung/Widgets/myTab.dart' as myTab;
 
 class Vertretung extends StatefulWidget {
   Vertretung({Key key}) : super(key: key);
@@ -181,11 +182,12 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if(Provider.of<ThemeChanger>(context).getRestore()){
+    if (Provider.of<ThemeChanger>(context).getRestore()) {
       print("will reloaden");
-      reload().then((value) => Provider.of<ThemeChanger>(context,listen: false).setRestore(false));
+      reload().then((value) =>
+          Provider.of<ThemeChanger>(context, listen: false).setRestore(false));
     }
-      
+
     final theme = Provider.of<ThemeChanger>(context);
     return MaterialApp(
       theme: theme.getTheme(),
@@ -193,7 +195,7 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
         length: faecherOn ? 4 : 2,
         key: Key(faecherOn
             ? "On"
-            : "Off"),//key is needed because otherwise the tab length would not be updated
+            : "Off"), //key is needed because otherwise the tab length would not be updated
         child: Scaffold(
             appBar: AppBar(
               title: Text("$change  Woche: ${getWeekNumber()}"),
@@ -210,35 +212,36 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
                     })
               ],
               bottom: TabBar(
-                isScrollable: faecherOn,
                 tabs: [
                   if (faecherOn)
-                    Tab(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[Icon(Icons.person), Text("Heute")],
+                    myTab.MyTab(// Extra tab class, because the default tab height is too high, so I cloned the class
+                      icon: Icon(
+                        Icons.person,
                       ),
+                      iconMargin: EdgeInsets.all(0),
+                    text: "Heute",
                     ),
                   if (faecherOn)
-                    Tab(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[Icon(Icons.person), Text("Morgen")],
+                    myTab.MyTab(
+                      icon: Icon(
+                        Icons.person,
                       ),
+                      iconMargin: EdgeInsets.all(0),
+                    text: "Morgen",
                     ),
-                  Tab(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[Icon(Icons.group), Text("Heute")],
+                  myTab.MyTab(
+                    icon: Icon(
+                      Icons.group,
                     ),
+                    iconMargin: EdgeInsets.all(0),
+                    text: "Heute",
                   ),
-                  Tab(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[Icon(Icons.group), Text("Morgen")],
+                  myTab.MyTab(
+                    icon: Icon(
+                      Icons.group,
                     ),
+                    iconMargin: EdgeInsets.all(0),
+                    text: "Morgen",
                   ),
                 ],
               ),
