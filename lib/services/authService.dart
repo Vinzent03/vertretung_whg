@@ -30,7 +30,7 @@ class AuthService {
   }
 
   //sign out
-  Future signOut() async {
+  Future signOut({bool deleteAccount=false}) async {
     var user = await _auth.currentUser();
     try {
       LocalDatabase local = LocalDatabase();
@@ -43,7 +43,7 @@ class AuthService {
       local.setBool(Names.faecherOn, false);
       local.setBool(Names.dark, true);
       local.setBool(Names.notification, true);
-      if (user.isAnonymous) {
+      if (user.isAnonymous || deleteAccount) {
         print("user deleted");
         return await user.delete();
       }
@@ -95,7 +95,7 @@ class AuthService {
           email: email, password: password);
 
       await CloudDatabase().restoreAccount();
-      Provider.of<ThemeChanger>(context, listen: false).setRestore(true);
+      Provider.of<ThemeChanger>(context, listen: false).setVertretungReload(true);
     } catch (e) {
       print(e.toString());
       switch (e.code) {

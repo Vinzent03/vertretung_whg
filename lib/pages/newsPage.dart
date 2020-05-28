@@ -31,7 +31,7 @@ class _NewsPageState extends State<NewsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Inbox"),
+        title: Text("Nachrichten"),
       ),
       body: SmartRefresher(
         controller: _refreshController,

@@ -7,9 +7,7 @@ class FriendsList extends StatefulWidget {
 }
 
 class _FriendsListState extends State<FriendsList> {
-  List<dynamic> list = [
-    {"name": "Lade"}
-  ];
+  List<dynamic> list = [];
   void removeFriendAlert(var friend) {
     showDialog(
         context: context,
@@ -23,14 +21,15 @@ class _FriendsListState extends State<FriendsList> {
                 onPressed: () => Navigator.pop(context),
               ),
               RaisedButton(
-                  child: Text("Bestätigen"),
-                  onPressed: () {
-                    setState(() {
-                      list.remove(friend);
-                    });
-                    CloudDatabase().removeFriend(friend["frienduid"]);
-                    Navigator.pop(context);
-                  }),
+                child: Text("Bestätigen"),
+                onPressed: () {
+                  setState(() {
+                    list.remove(friend);
+                  });
+                  CloudDatabase().removeFriend(friend["frienduid"]);
+                  Navigator.pop(context);
+                },
+              ),
             ],
           );
         });
@@ -50,7 +49,7 @@ class _FriendsListState extends State<FriendsList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Freundes Liste"),
+        title: Text("Freundes Liste(${list.length})"),
       ),
       body: ListView.builder(
         shrinkWrap: true,

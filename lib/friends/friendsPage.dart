@@ -1,11 +1,14 @@
 import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/provider/theme.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 
 class Friends extends StatefulWidget {
   @override
@@ -18,21 +21,20 @@ class _FriendsState extends State<Friends> {
   ];
   String name = "Lade...";
   RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: true);
 
   @override
   void initState() {
-    reload();
+    //reload();
     super.initState();
   }
 
-  void reload() async {
+  Future<void> reload() async {
     await FriendLogic().getLists().then((newFriendsList) {
       setState(() {
         friendsList = newFriendsList;
       });
     });
-
     _refreshController.refreshCompleted();
   }
 
@@ -42,7 +44,7 @@ class _FriendsState extends State<Friends> {
     bool valid = true;
 
     String isValid(st) {
-      if(st != ""){
+      if (st != "") {
         if (st.length >= 5) {
           for (var friend in friendsList) {
             if (friend["frienduid"].substring(0, 6).contains(controller.text)) {
@@ -51,9 +53,9 @@ class _FriendsState extends State<Friends> {
             }
           }
         }
-        if(st.length <5){
+        if (st.length < 5) {
           valid = false;
-          return"Token zu kurz";
+          return "Token zu kurz";
         }
       }
 
@@ -91,27 +93,24 @@ class _FriendsState extends State<Friends> {
 
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<ThemeChanger>(context).getFriendReload()) {
+      reload().then((value) => Provider.of<ThemeChanger>(context, listen: false)
+          .setFriendReload(false));
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: InkWell(
-          child: Text(
-            "Freunde: ${friendsList.length}",
-            textAlign: TextAlign.left,
-          ),
-          onTap: () => Navigator.pushNamed(context, Names.friendsList),
+        title: Text(
+          "Freunde",
+          textAlign: TextAlign.left,
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () async {
-              String uid = await AuthService().getUserId();
-              final SnackBar snack = SnackBar(
-                content: Text("Dein Token wurde zur Zwischenablage hinzugefügt"),
-              );
-              Clipboard.setData(ClipboardData(text: uid.substring(0, 5)));
-              Scaffold.of(context).showSnackBar(snack);
-            },
-          ),
+              icon: Icon(Icons.share),
+              onPressed: () async {
+                String uid = await AuthService().getUserId();
+                Share.share("Mein Freundestoken: " + uid.substring(0, 5));
+              }),
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () => addFriendAlert(),
@@ -120,22 +119,24 @@ class _FriendsState extends State<Friends> {
             icon: Icon(Icons.inbox),
             onPressed: () => Navigator.pushNamed(context, Names.friendRequests),
           ),
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: () => Navigator.pushNamed(context, Names.friendsList),
+          ),
         ],
       ),
       body: SmartRefresher(
         controller: _refreshController,
         onRefresh: reload,
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              ListView.builder(
+        child: friendsList.isNotEmpty
+            ? ListView.builder(
                 shrinkWrap: true,
                 itemCount: friendsList.length,
                 physics: ScrollPhysics(),
                 itemBuilder: (context, index) {
                   return Card(
                     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15))),
+                        borderRadius: BorderRadius.all(Radius.circular(15))),
                     color: Colors.blue[700],
                     child: ListTile(
                       dense: true,
@@ -148,10 +149,14 @@ class _FriendsState extends State<Friends> {
                     ),
                   );
                 },
+              )
+            : Center(
+                child: Icon(
+                  Icons.business_center,
+                  color: Colors.blue,
+                  size: 200,
+                ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:Vertretung/logic/filter.dart';
+import 'package:Vertretung/logic/functionsForMain.dart';
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/theme.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:Vertretung/Widgets/myTab.dart' as myTab;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Vertretung extends StatefulWidget {
   Vertretung({Key key}) : super(key: key);
@@ -28,7 +30,7 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
   String change = "Loading"; // The last tine the data on dsb mobile changed
   List<String> listWithoutClasses = [""];
   RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: true);
 
   //initialize these list, because to load faecher from localDatabase takes time, and the UI have to be build
   List<List<String>> myListToday = [
@@ -63,7 +65,7 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
     "9. Std. S0-GK1 bei + im Raum H137  statt bei VT",
     "Q2",
     "6. - 7. Std. L6-GK1 im Raum ??? ",
-    "6. - 7. Std. L6-GK1 im Raum ??? "
+    "6. - 7. Std. L6-GK1 im Raum ??? ",
   ];
   List<String> rawListTomorrow = [
     "6a",
@@ -92,30 +94,30 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
     return ((dayOfYear - date.weekday + 10) / 7).floor();
   }
 
-  void refresh() {
-    // refresh the vertretung
-    setState(() {
-      change = "Loading";
-    });
-    _refreshController.refreshCompleted();
-    /*getData().then((st) { //Now in functionsForMain.dart But have to called here however
-      setState(() {
-        change = st;
-      });
-    });*/
-  }
-
-  Future<void> reload() async {
+  Future<void> reload({bool fromPullToRefresh = false}) async {
     //reload the settings
-    getter.setStringList(Names.lessonsToday, rawListToday);
-    getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);
+    //getter.setStringList(Names.lessonsToday, rawListToday);
+    //getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);
     getter.getBool(Names.faecherOn).then((onValue) {
-      if (mounted) {
-        setState(() {
-          faecherOn = onValue;
-        });
-      }
+      setState(() {
+        faecherOn = onValue;
+      });
     });
+
+    //load the data from dsb mobile
+    List<dynamic> dataResult = await getData();
+    if (dataResult.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Keine Verbindung. Alte Ergebnisse werden angezeigt",
+        toastLength: Toast.LENGTH_SHORT,
+      );
+    } else {
+      setState(() {
+        change = dataResult[0];
+        rawListToday = dataResult[1];
+      });
+    }
+    if (fromPullToRefresh) _refreshController.refreshCompleted();
     String stufe = await LocalDatabase().getString(Names.stufe);
     Filter filter = Filter(stufe);
     List<List<String>> allMyListToday;
@@ -143,6 +145,8 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
         listTomorrow = allListTomorrow;
       }
     });
+
+    Provider.of<ThemeChanger>(context, listen: false).setFriendReload(true);
   }
 
   void linkGenerate() async {
@@ -175,17 +179,16 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
         }
     );*/
 
-    refresh();
-    reload();
+    //reload();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ThemeChanger>(context).getRestore()) {
+    if (Provider.of<ThemeChanger>(context).getVertretungReload()) {
       print("will reloaden");
-      reload().then((value) =>
-          Provider.of<ThemeChanger>(context, listen: false).setRestore(false));
+      reload().then((value) => Provider.of<ThemeChanger>(context, listen: false)
+          .setVertretungReload(false));
     }
 
     final theme = Provider.of<ThemeChanger>(context);
@@ -214,12 +217,13 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
               bottom: TabBar(
                 tabs: [
                   if (faecherOn)
-                    myTab.MyTab(// Extra tab class, because the default tab height is too high, so I cloned the class
+                    myTab.MyTab(
+                      // Extra tab class, because the default tab height is too high, so I cloned the class
                       icon: Icon(
                         Icons.person,
                       ),
                       iconMargin: EdgeInsets.all(0),
-                    text: "Heute",
+                      text: "Heute",
                     ),
                   if (faecherOn)
                     myTab.MyTab(
@@ -227,7 +231,7 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
                         Icons.person,
                       ),
                       iconMargin: EdgeInsets.all(0),
-                    text: "Morgen",
+                      text: "Morgen",
                     ),
                   myTab.MyTab(
                     icon: Icon(
@@ -246,41 +250,39 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            body: SmartRefresher(
-              enablePullDown: true,
-              controller: _refreshController,
-              onRefresh: refresh,
-              child: TabBarView(
-                physics: ScrollPhysics(),
-                children: [
-                  if (faecherOn)
-                    GeneralBlueprint(
-                      change: change,
+            body: TabBarView(
+              children: [
+                if (faecherOn)
+                  SmartRefresher(
+                    controller: _refreshController,
+                    onRefresh: () => reload(fromPullToRefresh: true),
+                    child: GeneralBlueprint(
                       list: myListToday,
-                      today: true,
-                      isMy: true,
                     ),
-                  if (faecherOn)
-                    GeneralBlueprint(
-                      change: change,
+                  ),
+                if (faecherOn)
+                  SmartRefresher(
+                    controller: _refreshController,
+                    onRefresh: () => reload(fromPullToRefresh: true),
+                    child: GeneralBlueprint(
                       list: myListTomorrow,
-                      today: false,
-                      isMy: true,
                     ),
-                  GeneralBlueprint(
-                    change: change,
+                  ),
+                SmartRefresher(
+                  controller: _refreshController,
+                  onRefresh: () => reload(fromPullToRefresh: true),
+                  child: GeneralBlueprint(
                     list: listToday,
-                    today: true,
-                    isMy: false,
                   ),
-                  GeneralBlueprint(
-                    change: change,
+                ),
+                SmartRefresher(
+                  controller: _refreshController,
+                  onRefresh: () => reload(fromPullToRefresh: true),
+                  child: GeneralBlueprint(
                     list: listTomorrow,
-                    today: false,
-                    isMy: false,
                   ),
-                ],
-              ),
+                ),
+              ],
             )),
       ),
     );
