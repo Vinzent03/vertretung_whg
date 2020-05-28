@@ -8,9 +8,7 @@ class FriendRequests extends StatefulWidget {
 }
 
 class _FriendRequestsState extends State<FriendRequests> {
-  List<dynamic> list = [
-    {"name": ""}
-  ];
+  List<dynamic> list = [];
 
   @override
   void initState() {

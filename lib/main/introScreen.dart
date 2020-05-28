@@ -121,7 +121,10 @@ class _IntroScreenState extends State<IntroScreen> {
             Navigator.pushNamed(context, Names.logInPage, arguments: false),
         onDonePress: () async {
           await AuthService().signInAnon();
-          AuthService().updateName(nameController.text);
+          String name = nameController.text;
+          if(name == "")
+            name = "Nicht festgelegt";
+          AuthService().updateName(name);
           CloudDatabase().updateUserData(
             faecher: [],
             faecherNot: [],

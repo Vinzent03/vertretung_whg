@@ -53,7 +53,7 @@ class Functions {
         cf.getHttpsCallable(functionName: "deleteProfile");
     await call.call().whenComplete(() async {
       print("Konto gelöscht");
-      await AuthService().signOut();
+      await AuthService().signOut(deleteAccount: true);
       return;
     });
     return;

@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:Vertretung/provider/themedata.dart';
 class ThemeChanger with ChangeNotifier {
   ThemeData _themeData;
-  ThemeChanger(this._themeData,this.isDark,this.newRestore);
+  ThemeChanger(this._themeData,this.isDark,this.newRestore,this.newRestore2);
   bool isDark;
   bool newRestore;
+  bool newRestore2;
   getTheme() => _themeData;
 
   /// Return true if the dark mode is activated
@@ -27,10 +28,17 @@ class ThemeChanger with ChangeNotifier {
   }
   
 
-  getRestore()=> newRestore;
+  getVertretungReload()=> newRestore;
 
-  setRestore(restore){
+  setVertretungReload(restore){
     newRestore = restore;
+    notifyListeners();
+  }
+
+  getFriendReload()=> newRestore2;
+
+  setFriendReload(restore){
+    newRestore2 = restore;
     notifyListeners();
   }
 

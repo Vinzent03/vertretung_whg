@@ -122,6 +122,11 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   void initState() {
+    reload();
+    super.initState();
+  }
+
+  void reload() {
     AuthService().getName().then((value) => name = value);
     AuthService().isAnon().then((newIsAnon) {
       setState(() {
@@ -136,7 +141,6 @@ class _AccountPageState extends State<AccountPage> {
       }
     });
     LocalDatabase().getBool(Names.beta).then((value) => beta = value);
-    super.initState();
   }
 
   @override
@@ -207,13 +211,16 @@ class _AccountPageState extends State<AccountPage> {
                   child: isAnon
                       ? ListTile(
                           title: RaisedButton(
-                            color: Colors.blue,
-                            elevation: 0,
-                            child: Text("Registrieren"),
-                            onPressed: () => Navigator.pushNamed(
-                                context, Names.logInPage,
-                                arguments: true),
-                          ),
+                              color: Colors.blue,
+                              elevation: 0,
+                              child: Text("Registrieren"),
+                              onPressed: () async {
+                                await Navigator.pushNamed(
+                                    context, Names.logInPage,
+                                    arguments: true);
+                                  reload();
+                                
+                              }),
                         )
                       : ListTile(
                           title: RaisedButton(

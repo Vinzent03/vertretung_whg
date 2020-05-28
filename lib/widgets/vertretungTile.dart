@@ -3,36 +3,30 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:share/share.dart';
 
 class VertretungTile extends StatelessWidget {
-  final List<List<String>> list;
-  List<String> faecher;
-  List<String> names;
-  final bool dense;
-  final int index;
+  String faecher;
+  String names;
 
   VertretungTile(
-      {Key key, @required this.list, @required this.index, this.dense})
+      {Key key, @required this.faecher,@required this.names,})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    faecher = list[0];
-    names = list[1];
     //bool isDark = Provider.of<ThemeChanger>(context).getIsDark();
     return Card(
       color: Colors.blue[700],
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(15))),
       child: ListTile(
-        dense: dense,
         onTap: () {},
         title: Text(
-          faecher[index],
+          faecher,
           style: TextStyle(fontSize: 16),
         ),
         leading: CircleAvatar(
           backgroundColor: Colors.white,
           child: Text(
-            names[index],
+            names,
             style: TextStyle(fontSize: 18),
           ),
         ),
@@ -42,18 +36,17 @@ class VertretungTile extends StatelessWidget {
             FirebaseAnalytics analytics = FirebaseAnalytics();
             analytics.logShare(
                 contentType: "geshared",
-                itemId: index.toString(),
-                method: "gedrückt halten");
-            Share.share("Wir haben Vertretung und zwar: ${faecher[index]}");
+                method: "gedrückt halten", itemId: "42");
+            Share.share("Wir haben Vertretung und zwar: $faecher");
           },
         ),
         onLongPress: () {
           FirebaseAnalytics analytics = FirebaseAnalytics();
           analytics.logShare(
               contentType: "geshared",
-              itemId: index.toString(),
+              itemId: "42",
               method: "gedrückt halten");
-          Share.share("Wir haben Vertretung und zwar: ${faecher[index]}");
+          Share.share("Wir haben Vertretung und zwar: $faecher");
         },
       ),
     );

@@ -1,8 +1,4 @@
-
-import 'package:flutter/cupertino.dart';
-
-import 'localDatabase.dart';
-import 'names.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
 
 class Filter {
   LocalDatabase localDatabase = LocalDatabase();
