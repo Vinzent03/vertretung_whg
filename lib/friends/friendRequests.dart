@@ -9,13 +9,14 @@ class FriendRequests extends StatefulWidget {
 
 class _FriendRequestsState extends State<FriendRequests> {
   List<dynamic> list = [];
+  bool finishedLoading = false;
 
   @override
   void initState() {
     CloudDatabase().getFriendRequests().then((newList) {
       setState(() {
         list = newList;
-        print(list);
+        finishedLoading = true;
       });
     });
     super.initState();
@@ -27,39 +28,43 @@ class _FriendRequestsState extends State<FriendRequests> {
       appBar: AppBar(
         title: Text("Freundes Anfragen"),
       ),
-      body: ListView.builder(
-        shrinkWrap: true,
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(list[index]["name"]),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                FlatButton(
-                    child: Text("ablehnen"),
-                    onPressed: () {
-                      Functions()
-                          .callDeclineFriendRequest(list[index]["frienduid"]);
-                      setState(() {
-                        list.remove(list[index]);
-                      });
-                    }),
-                RaisedButton(
-                  child: Text("annhemen"),
-                  onPressed: () {
-                    Functions()
-                        .callAcceptFriendRequest(list[index]["frienduid"]);
-                    setState(() {
-                      list.remove(list[index]);
-                    });
-                  },
-                ),
-              ],
+      body: finishedLoading
+          ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(list[index]["name"]),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      FlatButton(
+                          child: Text("ablehnen"),
+                          onPressed: () {
+                            Functions().callDeclineFriendRequest(
+                                list[index]["frienduid"]);
+                            setState(() {
+                              list.remove(list[index]);
+                            });
+                          }),
+                      RaisedButton(
+                        child: Text("annhemen"),
+                        onPressed: () {
+                          Functions().callAcceptFriendRequest(
+                              list[index]["frienduid"]);
+                          setState(() {
+                            list.remove(list[index]);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
+          : Center(
+              child: CircularProgressIndicator(),
             ),
-          );
-        },
-      ),
     );
   }
 }

@@ -8,6 +8,8 @@ class FriendsList extends StatefulWidget {
 
 class _FriendsListState extends State<FriendsList> {
   List<dynamic> list = [];
+  bool finishedLoading = false;
+
   void removeFriendAlert(var friend) {
     showDialog(
         context: context,
@@ -39,6 +41,7 @@ class _FriendsListState extends State<FriendsList> {
   void initState() {
     CloudDatabase().getFriendsList().then((newList) {
       setState(() {
+        finishedLoading = true;
         list = newList;
       });
     });
@@ -51,25 +54,29 @@ class _FriendsListState extends State<FriendsList> {
       appBar: AppBar(
         title: Text("Freundes Liste(${list.length})"),
       ),
-      body: ListView.builder(
-        shrinkWrap: true,
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          return Card(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15))),
-            child: ListTile(
-              leading: CircleAvatar(
-                  child: Text(list[index]["name"].substring(0, 2))),
-              title: Text(list[index]["name"]),
-              trailing: IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () => removeFriendAlert(list[index]),
-              ),
+      body: finishedLoading
+          ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(15))),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                        child: Text(list[index]["name"].substring(0, 2))),
+                    title: Text(list[index]["name"]),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => removeFriendAlert(list[index]),
+                    ),
+                  ),
+                );
+              },
+            )
+          : Center(
+              child: CircularProgressIndicator(),
             ),
-          );
-        },
-      ),
     );
   }
 }
