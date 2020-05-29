@@ -6,6 +6,7 @@ import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:Vertretung/widgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
@@ -39,6 +40,11 @@ class _FriendsState extends State<Friends> {
     final TextEditingController controller = TextEditingController();
     var friendsList = await CloudDatabase().getFriendsList();
     bool valid = true;
+    ClipboardData clipboardData = await Clipboard.getData("text/plain");
+
+    if (clipboardData.text.length == 25)//If the user has the complet share sentence
+      controller.text = clipboardData.text.substring(20);
+    if (clipboardData.text.length == 5) controller.text = clipboardData.text;//if the user has just the code
 
     String isValid(st) {
       if (st != "") {
@@ -55,7 +61,6 @@ class _FriendsState extends State<Friends> {
           return "Token zu kurz";
         }
       }
-
       valid = true;
       return null;
     }
@@ -94,7 +99,6 @@ class _FriendsState extends State<Friends> {
       reload().then((value) => Provider.of<ThemeChanger>(context, listen: false)
           .setFriendReload(false));
     }
-    
 
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +111,7 @@ class _FriendsState extends State<Friends> {
               icon: Icon(Icons.share),
               onPressed: () async {
                 String uid = await AuthService().getUserId();
-                Share.share("Mein Freundestoken: " + uid.substring(0, 5));
+                Share.share("Mein Freundestoken: " + uid.substring(0, 5));//If change the message also update the length above in addFriendAlert
               }),
           IconButton(
             icon: Icon(Icons.add),
@@ -124,13 +128,12 @@ class _FriendsState extends State<Friends> {
         ],
       ),
       body: SmartRefresher(
-        controller: _refreshController,
-        onRefresh: reload,
-        child: GeneralBlueprint(
-          isFriendList: true,
-          friendsList:friendsList,
-        )
-      ),
+          controller: _refreshController,
+          onRefresh: reload,
+          child: GeneralBlueprint(
+            isFriendList: true,
+            friendsList: friendsList,
+          )),
     );
   }
 }
