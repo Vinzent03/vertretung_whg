@@ -25,7 +25,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   LocalDatabase().getBool(Names.dark).then((isDark) {
     runApp(ChangeNotifierProvider<ThemeChanger>(
-      create: (_) => ThemeChanger(isDark ? darkTheme : lightTheme, isDark,false,false),
+      create: (_) => ThemeChanger(isDark ? darkTheme : lightTheme, isDark),
       child: MyAppSt(),
     ));
   });

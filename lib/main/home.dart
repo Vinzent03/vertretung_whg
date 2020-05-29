@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
             : Colors.white,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: Icon(Icons.format_list_bulleted),
             title: Text("Vertretung"),
           ),
           BottomNavigationBarItem(
@@ -55,6 +55,8 @@ class _HomeState extends State<Home> {
           ),
         ],
         onTap: (index) {
+          if(index != currentIndex)
+            Provider.of<ThemeChanger>(context,listen: false).setAnimation(true);
           setState(() {
             currentIndex = index;
           });

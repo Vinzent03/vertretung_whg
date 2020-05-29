@@ -20,35 +20,19 @@ class Vertretung extends StatefulWidget {
 }
 
 class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
-  final controller = PageController(initialPage: 0);
   CloudDatabase cd;
   LocalDatabase getter = LocalDatabase();
-  int currentIndex = 0; //the index of the bottomNavigationBar(heute/morgen)
-  int currentPage = 0;
-  bool isNewsAvailable = false;
   bool faecherOn = false; //if personalisierte Vertretung is enabled
+  bool finishedLoading = false;
   String change = "Loading"; // The last tine the data on dsb mobile changed
-  List<String> listWithoutClasses = [""];
   RefreshController _refreshController =
-      RefreshController(initialRefresh: true);
+      RefreshController(initialRefresh: false);
 
   //initialize these list, because to load faecher from localDatabase takes time, and the UI have to be build
-  List<List<String>> myListToday = [
-    [""],
-    [""]
-  ];
-  List<List<String>> listToday = [
-    [""],
-    [""]
-  ];
-  List<List<String>> myListTomorrow = [
-    [""],
-    [""]
-  ];
-  List<List<String>> listTomorrow = [
-    [""],
-    [""]
-  ];
+  List<List<String>> myListToday = [];
+  List<List<String>> listToday = [];
+  List<List<String>> myListTomorrow = [];
+  List<List<String>> listTomorrow = [];
 
   List<String> rawListToday = [
     "6a",
@@ -96,16 +80,18 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
 
   Future<void> reload({bool fromPullToRefresh = false}) async {
     //reload the settings
-    //getter.setStringList(Names.lessonsToday, rawListToday);
-    //getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);
+    getter.setStringList(Names.lessonsToday, rawListToday);
+    getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);//load the data from dsb mobile
     getter.getBool(Names.faecherOn).then((onValue) {
       setState(() {
         faecherOn = onValue;
       });
     });
 
-    //load the data from dsb mobile
     List<dynamic> dataResult = await getData();
+
+    if (fromPullToRefresh) _refreshController.refreshCompleted();
+    finishedLoading = true;
     if (dataResult.isEmpty) {
       Fluttertoast.showToast(
         msg: "Keine Verbindung. Alte Ergebnisse werden angezeigt",
@@ -114,10 +100,9 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
     } else {
       setState(() {
         change = dataResult[0];
-        rawListToday = dataResult[1];
+        //rawListToday = dataResult[1];
       });
     }
-    if (fromPullToRefresh) _refreshController.refreshCompleted();
     String stufe = await LocalDatabase().getString(Names.stufe);
     Filter filter = Filter(stufe);
     List<List<String>> allMyListToday;
@@ -145,8 +130,6 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
         listTomorrow = allListTomorrow;
       }
     });
-
-    Provider.of<ThemeChanger>(context, listen: false).setFriendReload(true);
   }
 
   void linkGenerate() async {
@@ -179,7 +162,7 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
         }
     );*/
 
-    //reload();
+    reload();
     super.initState();
   }
 
@@ -200,90 +183,95 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
             ? "On"
             : "Off"), //key is needed because otherwise the tab length would not be updated
         child: Scaffold(
-            appBar: AppBar(
-              title: Text("$change  Woche: ${getWeekNumber()}"),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.help_outline),
-                  onPressed: () => Navigator.pushNamed(context, Names.helpPage),
-                ),
-                IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () async {
-                      await Navigator.pushNamed(context, Names.settingsPage);
-                      reload();
-                    })
-              ],
-              bottom: TabBar(
-                tabs: [
-                  if (faecherOn)
-                    myTab.MyTab(
-                      // Extra tab class, because the default tab height is too high, so I cloned the class
-                      icon: Icon(
-                        Icons.person,
-                      ),
-                      iconMargin: EdgeInsets.all(0),
-                      text: "Heute",
-                    ),
-                  if (faecherOn)
-                    myTab.MyTab(
-                      icon: Icon(
-                        Icons.person,
-                      ),
-                      iconMargin: EdgeInsets.all(0),
-                      text: "Morgen",
-                    ),
+          appBar: AppBar(
+            title: Text("$change  Woche: ${getWeekNumber()}"),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.help_outline),
+                onPressed: () => Navigator.pushNamed(context, Names.helpPage),
+              ),
+              IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, Names.settingsPage);
+                    reload();
+                  })
+            ],
+            bottom: TabBar(
+              tabs: [
+                if (faecherOn)
                   myTab.MyTab(
+                    // Extra tab class, because the default tab height is too high, so I cloned the class
                     icon: Icon(
-                      Icons.group,
+                      Icons.person,
                     ),
                     iconMargin: EdgeInsets.all(0),
                     text: "Heute",
                   ),
+                if (faecherOn)
                   myTab.MyTab(
                     icon: Icon(
-                      Icons.group,
+                      Icons.person,
                     ),
                     iconMargin: EdgeInsets.all(0),
                     text: "Morgen",
                   ),
-                ],
-              ),
-            ),
-            body: TabBarView(
-              children: [
-                if (faecherOn)
-                  SmartRefresher(
-                    controller: _refreshController,
-                    onRefresh: () => reload(fromPullToRefresh: true),
-                    child: GeneralBlueprint(
-                      list: myListToday,
-                    ),
+                myTab.MyTab(
+                  icon: Icon(
+                    Icons.group,
                   ),
-                if (faecherOn)
-                  SmartRefresher(
-                    controller: _refreshController,
-                    onRefresh: () => reload(fromPullToRefresh: true),
-                    child: GeneralBlueprint(
-                      list: myListTomorrow,
-                    ),
-                  ),
-                SmartRefresher(
-                  controller: _refreshController,
-                  onRefresh: () => reload(fromPullToRefresh: true),
-                  child: GeneralBlueprint(
-                    list: listToday,
-                  ),
+                  iconMargin: EdgeInsets.all(0),
+                  text: "Heute",
                 ),
-                SmartRefresher(
-                  controller: _refreshController,
-                  onRefresh: () => reload(fromPullToRefresh: true),
-                  child: GeneralBlueprint(
-                    list: listTomorrow,
+                myTab.MyTab(
+                  icon: Icon(
+                    Icons.group,
                   ),
+                  iconMargin: EdgeInsets.all(0),
+                  text: "Morgen",
                 ),
               ],
-            )),
+            ),
+          ),
+          body: finishedLoading
+              ? TabBarView(
+                  children: [
+                    if (faecherOn)
+                      SmartRefresher(
+                        controller: _refreshController,
+                        onRefresh: () => reload(fromPullToRefresh: true),
+                        child: GeneralBlueprint(
+                          list: myListToday,
+                        ),
+                      ),
+                    if (faecherOn)
+                      SmartRefresher(
+                        controller: _refreshController,
+                        onRefresh: () => reload(fromPullToRefresh: true),
+                        child: GeneralBlueprint(
+                          list: myListTomorrow,
+                        ),
+                      ),
+                    SmartRefresher(
+                      controller: _refreshController,
+                      onRefresh: () => reload(fromPullToRefresh: true),
+                      child: GeneralBlueprint(
+                        list: listToday,
+                      ),
+                    ),
+                    SmartRefresher(
+                      controller: _refreshController,
+                      onRefresh: () => reload(fromPullToRefresh: true),
+                      child: GeneralBlueprint(
+                        list: listTomorrow,
+                      ),
+                    ),
+                  ],
+                )
+              : Center(
+                  child: CircularProgressIndicator(),
+                ),
+        ),
       ),
     );
   }

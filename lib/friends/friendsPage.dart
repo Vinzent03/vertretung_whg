@@ -4,8 +4,8 @@ import 'package:Vertretung/provider/theme.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
+import 'package:Vertretung/widgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
@@ -16,10 +16,7 @@ class Friends extends StatefulWidget {
 }
 
 class _FriendsState extends State<Friends> {
-  List<Map<String, String>> friendsList = [
-    {"name": "loading", "ver": "loading"}
-  ];
-  String name = "Lade...";
+  List<Map<String, String>> friendsList = [];
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
 
@@ -97,6 +94,7 @@ class _FriendsState extends State<Friends> {
       reload().then((value) => Provider.of<ThemeChanger>(context, listen: false)
           .setFriendReload(false));
     }
+    
 
     return Scaffold(
       appBar: AppBar(
@@ -128,35 +126,10 @@ class _FriendsState extends State<Friends> {
       body: SmartRefresher(
         controller: _refreshController,
         onRefresh: reload,
-        child: friendsList.isNotEmpty
-            ? ListView.builder(
-                shrinkWrap: true,
-                itemCount: friendsList.length,
-                physics: ScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15))),
-                    color: Colors.blue[700],
-                    child: ListTile(
-                      dense: true,
-                      leading: CircleAvatar(
-                        child: Text(friendsList[index]["name"].substring(0, 2)),
-                        backgroundColor: Colors.white,
-                      ),
-                      title: Text(friendsList[index]["ver"]),
-                      subtitle: Text(friendsList[index]["name"]),
-                    ),
-                  );
-                },
-              )
-            : Center(
-                child: Icon(
-                  Icons.business_center,
-                  color: Colors.blue,
-                  size: 200,
-                ),
-              ),
+        child: GeneralBlueprint(
+          isFriendList: true,
+          friendsList:friendsList,
+        )
       ),
     );
   }

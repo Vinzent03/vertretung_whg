@@ -2,12 +2,15 @@ import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/provider/themedata.dart';
+
 class ThemeChanger with ChangeNotifier {
   ThemeData _themeData;
-  ThemeChanger(this._themeData,this.isDark,this.newRestore,this.newRestore2);
+  ThemeChanger(this._themeData, this.isDark,
+      {this.isVertretungReload = false, this.isFriendReload =false , this.startAnimation = false});
   bool isDark;
-  bool newRestore;
-  bool newRestore2;
+  bool isVertretungReload;
+  bool isFriendReload;
+  bool startAnimation;
   getTheme() => _themeData;
 
   /// Return true if the dark mode is activated
@@ -21,25 +24,30 @@ class ThemeChanger with ChangeNotifier {
   }
 
   setLightTheme() {
-    isDark= false;
+    isDark = false;
     LocalDatabase().setBool(Names.dark, false);
     _themeData = lightTheme;
     notifyListeners();
   }
-  
 
-  getVertretungReload()=> newRestore;
+  getVertretungReload() => isVertretungReload;
 
-  setVertretungReload(restore){
-    newRestore = restore;
+  setVertretungReload(newBool) {
+    isVertretungReload = newBool;
     notifyListeners();
   }
 
-  getFriendReload()=> newRestore2;
+  getFriendReload() => isFriendReload;
 
-  setFriendReload(restore){
-    newRestore2 = restore;
+  setFriendReload(newBool) {
+    isFriendReload = newBool;
     notifyListeners();
   }
 
+  getAnimation() => startAnimation;
+
+  setAnimation(newBool) {
+    startAnimation = newBool;
+    notifyListeners();
+  }
 }
