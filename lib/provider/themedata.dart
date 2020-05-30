@@ -6,6 +6,10 @@ final darkTheme = ThemeData(
   cardColor: Colors.grey[900],
   toggleableActiveColor: Colors.blue[800],
   scaffoldBackgroundColor: Colors.black,
+  snackBarTheme: SnackBarThemeData(
+      backgroundColor: Colors.grey[900],
+      contentTextStyle: TextStyle(color: Colors.white),
+      actionTextColor: Colors.white),
   appBarTheme: AppBarTheme(
     color: Colors.grey[900],
   ),

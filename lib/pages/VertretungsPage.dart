@@ -24,6 +24,8 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
   LocalDatabase getter = LocalDatabase();
   bool faecherOn = false; //if personalisierte Vertretung is enabled
   bool finishedLoading = false;
+  bool loadingSuccess = true;
+
   String change = "Loading"; // The last tine the data on dsb mobile changed
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -79,30 +81,47 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
   }
 
   Future<void> reload({bool fromPullToRefresh = false}) async {
+    SnackBar snack = SnackBar(
+      content: Text("Es werden alte Daten verwendet."),
+      duration: Duration(days: 1),
+      behavior: SnackBarBehavior.floating,
+      action: SnackBarAction(
+          label: "Ausblenden",
+          onPressed: () {
+            Scaffold.of(context).hideCurrentSnackBar();
+            loadingSuccess = true; // make snackbar able to reshow
+          }),
+    );
     //reload the settings
     getter.setStringList(Names.lessonsToday, rawListToday);
-    getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);//load the data from dsb mobile
+    getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);
     getter.getBool(Names.faecherOn).then((onValue) {
       setState(() {
         faecherOn = onValue;
       });
     });
 
-    List<dynamic> dataResult = await getData();
+    List<dynamic> dataResult = await getData(); //load the data from dsb mobile
 
     if (fromPullToRefresh) _refreshController.refreshCompleted();
     finishedLoading = true;
     if (dataResult.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Keine Verbindung. Alte Ergebnisse werden angezeigt",
-        toastLength: Toast.LENGTH_SHORT,
-      );
+      // Fluttertoast.showToast(
+      //   msg: "Keine Verbindung. Alte Ergebnisse werden angezeigt",
+      //   toastLength: Toast.LENGTH_SHORT,
+      // );
+
+      if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
+      loadingSuccess = false;
     } else {
+      loadingSuccess = true;
+      Scaffold.of(context).hideCurrentSnackBar();
       setState(() {
         change = dataResult[0];
         //rawListToday = dataResult[1];
       });
     }
+
     String stufe = await LocalDatabase().getString(Names.stufe);
     Filter filter = Filter(stufe);
     List<List<String>> allMyListToday;
