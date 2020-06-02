@@ -25,7 +25,6 @@ class _SettingsPageState extends State<SettingsPage> {
   bool refresh = false;
   bool notification = false;
   String stufe = "Nicht Geladen";
-  String name = "Nicht Geladen";
   List<String> faecherList = [];
   List<String> faecherNotList = [];
   AuthService _authService = AuthService();
@@ -66,7 +65,6 @@ class _SettingsPageState extends State<SettingsPage> {
       faecher: faecherList,
       faecherNot: faecherNotList,
       notification: notification,
-      name: name,
     );
   }
 

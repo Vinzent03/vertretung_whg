@@ -41,11 +41,13 @@ class _FriendsState extends State<Friends> {
     var friendsList = await CloudDatabase().getFriendsList();
     bool valid = true;
     ClipboardData clipboardData = await Clipboard.getData("text/plain");
-
-    if (clipboardData.text.length == 25)//If the user has the complet share sentence
-      controller.text = clipboardData.text.substring(20);
-    if (clipboardData.text.length == 5) controller.text = clipboardData.text;//if the user has just the code
-
+    if (clipboardData != null) {
+      if (clipboardData.text.length ==
+          25) //If the user has the complet share sentence
+        controller.text = clipboardData.text.substring(20);
+      if (clipboardData.text.length == 5)
+        controller.text = clipboardData.text; //if the user has just the code
+    }
     String isValid(st) {
       if (st != "") {
         if (st.length >= 5) {
@@ -111,7 +113,9 @@ class _FriendsState extends State<Friends> {
               icon: Icon(Icons.share),
               onPressed: () async {
                 String uid = await AuthService().getUserId();
-                Share.share("Mein Freundestoken: " + uid.substring(0, 5));//If change the message also update the length above in addFriendAlert
+                Share.share("Mein Freundestoken: " +
+                    uid.substring(0,
+                        5)); //If change the message also update the length above in addFriendAlert
               }),
           IconButton(
             icon: Icon(Icons.add),

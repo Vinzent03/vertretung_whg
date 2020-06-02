@@ -1,19 +1,16 @@
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/pages/VertretungsPage.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-import 'package:Vertretung/services/cloudFunctions.dart';
 
 class CloudDatabase {
   final Firestore ref = Firestore.instance;
 
   ////////////UserData
   void updateUserData(
-      {faecherOn, stufe, faecher, faecherNot, notification, name}) async {
+      {faecherOn, stufe, faecher, faecherNot, notification}) async {
     AuthService _auth = AuthService();
     String token = await PushNotificationsManager().getToken();
     print("data wurde gesettet");
@@ -26,8 +23,7 @@ class CloudDatabase {
       "notification": notification,
       "stufe": stufe,
       "token": token,
-      "name": name,
-    });
+    }, merge: true);
   }
 
   void updateFaecher({list, bool isWhitelist}) async {
@@ -79,14 +75,9 @@ class CloudDatabase {
         Names.faecherList, List<String>.from(snap.data["faecher"]));
     local.setStringList(
         Names.faecherNotList, List<String>.from(snap.data["faecherNot"]));
-    await local.setBool(Names.faecherOn, snap.data["faecherOn"]);
+    local.setBool(Names.faecherOn, snap.data["faecherOn"]);
     local.setBool(Names.notification, snap.data["notification"]);
-    bool newBeta;
-    if(snap.data["beta"] == null)
-      newBeta = false;
-    else
-      newBeta = snap.data["beta"];
-    await local.setBool(Names.beta, newBeta);
+    await local.setBool(Names.beta, snap.data["beta"]);
   }
 
   /////// Upddates
@@ -100,7 +91,7 @@ class CloudDatabase {
         await ref.collection("details").document("versions").get();
     updateAvaible =
         snap.data[beta ? "newBetaVersion" : "newVersion"] != version;
-    forceUpdate = snap.data[beta? "betaForceUpdate":"forceUpdate"];
+    forceUpdate = snap.data[beta ? "betaForceUpdate" : "forceUpdate"];
     if (updateAvaible) {
       if (forceUpdate) {
         return "forceUpdate";
@@ -158,13 +149,14 @@ class CloudDatabase {
         .document(uid)
         .collection("requests")
         .getDocuments();
-    snap.documents.forEach(
-        (doc) => ref.collection("userdata").document(doc.documentID).get().then(
-              (friendDoc) => list.add({
-                "name": friendDoc.data["name"],
-                "frienduid": doc.documentID,
-              }),
-            ));
+    for (DocumentSnapshot doc in snap.documents) {
+      DocumentSnapshot friendDoc =
+          await ref.collection("userdata").document(doc.documentID).get();
+      list.add({
+        "name": friendDoc.data["name"],
+        "frienduid": doc.documentID,
+      });
+    }
     return list;
   }
 

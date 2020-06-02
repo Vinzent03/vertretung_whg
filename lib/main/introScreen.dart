@@ -130,9 +130,9 @@ class _IntroScreenState extends State<IntroScreen> {
             faecherNot: [],
             stufe: await LocalDatabase().getString(Names.stufe),
             faecherOn: false,
-            name: nameController.text,
             notification: true,
           );
+          CloudDatabase().becomeBetaUser(false);
           LocalDatabase local = LocalDatabase();
           local.setBool(Names.faecherOn, false);
           local.setBool(Names.beta, false);

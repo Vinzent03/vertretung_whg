@@ -43,6 +43,7 @@ class AuthService {
       local.setBool(Names.faecherOn, false);
       local.setBool(Names.dark, true);
       local.setBool(Names.notification, true);
+      local.setBool(Names.beta,false);
       if (user.isAnonymous || deleteAccount) {
         print("user deleted");
         return await user.delete();
