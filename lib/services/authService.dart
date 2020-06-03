@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  //sign in anon
   Future signInAnon() async {
     try {
       AuthResult result = await _auth.signInAnonymously();
@@ -29,8 +28,7 @@ class AuthService {
     return _auth.onAuthStateChanged;
   }
 
-  //sign out
-  Future signOut({bool deleteAccount=false}) async {
+  Future signOut({bool deleteAccount = false}) async {
     var user = await _auth.currentUser();
     try {
       LocalDatabase local = LocalDatabase();
@@ -43,7 +41,7 @@ class AuthService {
       local.setBool(Names.faecherOn, false);
       local.setBool(Names.dark, true);
       local.setBool(Names.notification, true);
-      local.setBool(Names.beta,false);
+      local.setBool(Names.beta, false);
       if (user.isAnonymous || deleteAccount) {
         print("user deleted");
         return await user.delete();
@@ -68,7 +66,23 @@ class AuthService {
     try {
       AuthResult res = await user.linkWithCredential(credential);
     } catch (e) {
-      return e.code;
+      print(e.toString());
+      switch (e.code) {
+        case "ERROR_WEAK_PASSWORD":
+          return "Das Passwort ist zu schwach.";
+          break;
+        case "ERROR_EMAIL_ALREADY_IN_USE  ":
+          return "Diese Email wird bereits genutzt.";
+          break;
+        case "ERROR_INVALID_EMAIL":
+          return "Dies scheint keine richte E-Mail zu sein.";
+          break;
+        case "ERROR_USER_DISABLED":
+          return "Dieses Konto wurde deaktiviert";
+          break;
+        default:
+          return "Ein unerwarteter Fehler ist aufgetreten.";
+      }
     }
   }
 
@@ -96,7 +110,8 @@ class AuthService {
           email: email, password: password);
 
       await CloudDatabase().restoreAccount();
-      Provider.of<ThemeChanger>(context, listen: false).setVertretungReload(true);
+      Provider.of<ThemeChanger>(context, listen: false)
+          .setVertretungReload(true);
     } catch (e) {
       print(e.toString());
       switch (e.code) {
@@ -109,7 +124,7 @@ class AuthService {
         case "ERROR_USER_NOT_FOUND":
           return "Kein Konto mit der Email gefundend";
           break;
-        case "ERRreturn OR_USER_DISABLED":
+        case "ERROR_USER_DISABLED":
           return "Dieses Konto wurde deaktiviert";
           break;
         case "ERROR_TOO_MANY_REQUESTS":

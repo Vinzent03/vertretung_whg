@@ -3,16 +3,19 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:share/share.dart';
 
 class VertretungTile extends StatelessWidget {
-  String faecher;
-  String names;
+  final String title;
+  final String subjectPrefix;
+  final String names;
 
-  VertretungTile(
-      {Key key, @required this.faecher,@required this.names,})
-      : super(key: key);
+  VertretungTile({
+    Key key,
+    @required this.title,
+    @required this.subjectPrefix,
+    this.names,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    //bool isDark = Provider.of<ThemeChanger>(context).getIsDark();
     return Card(
       color: Colors.blue[700],
       shape: RoundedRectangleBorder(
@@ -20,33 +23,34 @@ class VertretungTile extends StatelessWidget {
       child: ListTile(
         onTap: () {},
         title: Text(
-          faecher,
+          title,
           style: TextStyle(fontSize: 16),
         ),
         leading: CircleAvatar(
           backgroundColor: Colors.white,
           child: Text(
-            names,
+            subjectPrefix,
             style: TextStyle(fontSize: 18),
           ),
         ),
-        trailing: IconButton(
-          icon: Icon(Icons.share),
-          onPressed: () {
-            FirebaseAnalytics analytics = FirebaseAnalytics();
-            analytics.logShare(
-                contentType: "geshared",
-                method: "gedrückt halten", itemId: "42");
-            Share.share("Wir haben Vertretung und zwar: $faecher");
-          },
-        ),
+        trailing: names == null? //dont show the share button on the friendspage
+            IconButton(
+              icon: Icon(Icons.share),
+              onPressed: () {
+                FirebaseAnalytics analytics = FirebaseAnalytics();
+                analytics.logShare(
+                    contentType: "geshared",
+                    method: "gedrückt halten",
+                    itemId: "42");
+                Share.share("Wir haben Vertretung und zwar: $title");
+              },
+            ):null,
+        subtitle: names != null ? Text(names) : null,
         onLongPress: () {
           FirebaseAnalytics analytics = FirebaseAnalytics();
           analytics.logShare(
-              contentType: "geshared",
-              itemId: "42",
-              method: "gedrückt halten");
-          Share.share("Wir haben Vertretung und zwar: $faecher");
+              contentType: "geshared", itemId: "42", method: "gedrückt halten");
+          Share.share("Wir haben Vertretung und zwar: $title");
         },
       ),
     );

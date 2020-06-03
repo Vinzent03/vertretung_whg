@@ -135,8 +135,7 @@ class _FriendsState extends State<Friends> {
           controller: _refreshController,
           onRefresh: reload,
           child: GeneralBlueprint(
-            isFriendList: true,
-            friendsList: friendsList,
+            list: friendsList,
           )),
     );
   }

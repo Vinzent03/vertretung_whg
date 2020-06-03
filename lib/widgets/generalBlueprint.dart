@@ -2,16 +2,14 @@ import 'package:Vertretung/provider/theme.dart';
 import 'package:flutter/material.dart';
 import 'vertretungTile.dart';
 import "package:provider/provider.dart";
+import 'dart:math';
 
 class GeneralBlueprint extends StatefulWidget {
-  final List<List<String>> list;
-  final List<Map<String, String>> friendsList;
-  final bool isFriendList;
+  final List<dynamic> list;
+
   GeneralBlueprint({
     Key key,
-    this.isFriendList = false,
-    this.friendsList = const[],
-    this.list= const[[],[]],
+    this.list = const [],
   }) : super(key: key);
 
   @override
@@ -36,43 +34,25 @@ class _GeneralBlueprintState extends State<GeneralBlueprint>
   Widget build(BuildContext context) {
     if (Provider.of<ThemeChanger>(context).getAnimation()) {
       _controller.reset();
-      _controller.forward().then((value) => Provider.of<ThemeChanger>(context, listen: false)
-          .setAnimation(false));
+      _controller.forward().then((value) =>
+          Provider.of<ThemeChanger>(context, listen: false)
+              .setAnimation(false));
     }
-    if (! (widget.list[0].isEmpty && widget.friendsList.isEmpty))
+    if (widget.list.isNotEmpty)
       return ScaleTransition(
         scale: _animation,
-        child: !widget.isFriendList? ListView.builder(
+        child: ListView.builder(
             physics: ScrollPhysics(),
             shrinkWrap: true,
-            itemCount: widget.list[0].length,
+            itemCount: widget.list.length,
             itemBuilder: (context, index) {
+
               return VertretungTile(
-                faecher: widget.list[0][index],
-                names: widget.list[1][index],
+                title: widget.list[index]["ver"],
+                subjectPrefix: widget.list[index]["subjectPrefix"],
+                names: widget.list[index]["name"],
               );
-            }): 
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.friendsList.length,
-                physics: ScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15))),
-                    color: Colors.blue[700],
-                    child: ListTile(
-                      dense: true,
-                      leading: CircleAvatar(
-                        child: Text(widget.friendsList[index]["name"].substring(0, 2)),
-                        backgroundColor: Colors.white,
-                      ),
-                      title: Text(widget.friendsList[index]["ver"]),
-                      subtitle: Text(widget.friendsList[index]["name"]),
-                    ),
-                  );
-                },
-              ),
+            }),
       );
     else
       return ScaleTransition(

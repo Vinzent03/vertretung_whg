@@ -31,10 +31,10 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
       RefreshController(initialRefresh: false);
 
   //initialize these list, because to load faecher from localDatabase takes time, and the UI have to be build
-  List<List<String>> myListToday = [];
-  List<List<String>> listToday = [];
-  List<List<String>> myListTomorrow = [];
-  List<List<String>> listTomorrow = [];
+  List<dynamic> myListToday = [];
+  List<dynamic> listToday = [];
+  List<dynamic> myListTomorrow = [];
+  List<dynamic> listTomorrow = [];
 
   List<String> rawListToday = [
     "6a",
@@ -124,10 +124,10 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
 
     String stufe = await LocalDatabase().getString(Names.stufe);
     Filter filter = Filter(stufe);
-    List<List<String>> allMyListToday;
-    List<List<String>> allListToday;
-    List<List<String>> allMyListTomorrow;
-    List<List<String>> allListTomorrow;
+    List<dynamic> allMyListToday;
+    List<dynamic> allListToday;
+    List<dynamic> allMyListTomorrow;
+    List<dynamic> allListTomorrow;
 
     List<String> faecherList =
         await LocalDatabase().getStringList(Names.faecherList);

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FriendLogic {
   final Firestore ref = Firestore.instance;
 
+  ///get Vertretung for the given user
   Future<List> individual(String frienduid) async {
     DocumentSnapshot snap =
         await ref.collection("userdata").document(frienduid).get();
@@ -13,47 +14,52 @@ class FriendLogic {
     if (snap.data["faecherOn"]) {
       var list = await filter.checkerFaecher(
           Names.lessonsToday, snap["faecher"], snap["faecherNot"]);
-      return list[0];
-    }else{
+      return list;
+    } else {
       var list = await filter.checker(
-          Names.lessonsToday,);
-      return list[0];
+        Names.lessonsToday,
+      );
+      return list;
     }
   }
 
   Future<List<Map<String, String>>> getLists() async {
-    List<Map<String, String>> newFriendsList = [];
-    List<dynamic> anz = await CloudDatabase().getFriendsList();
-    for (var user in anz) {
-      List<String> list = await individual(user["frienduid"]);
-      for (String ver in list) {
-        if (newFriendsList.isNotEmpty) {
-          List<String> lol = [];
-          for(var st in newFriendsList){
-          lol.add(st["ver"]);
-        }
+    List<Map<String, String>> friendsVertretung = [];
+    List<dynamic> users = await CloudDatabase().getFriendsList();
+    for (var user in users) {
+      List<dynamic> list = await individual(user["frienduid"]);
+      for (var vertretung in list) {
+        if (friendsVertretung.isNotEmpty) {
+          List<String> temporarilyfriendVertretung = [];
+          for (var st in friendsVertretung) {
+            temporarilyfriendVertretung.add(st["ver"]);
+          }
 
-
-          if (lol.contains(ver)) {
-            for (var oldVer in newFriendsList) {
-              if (oldVer["ver"] == ver) {
-                oldVer["name"] = oldVer["name"] +", " +user["name"];
+          if (temporarilyfriendVertretung.contains(vertretung["ver"])) {
+            //add the name to the list who have this Vertretung
+            for (var oldVer in friendsVertretung) {
+              if (oldVer["ver"] == vertretung) {
+                oldVer["name"] = oldVer["name"] + ", " + user["name"];
               }
             }
-          }else {
-            newFriendsList.add({
+          } else {
+            //nobody else has this Vertretung
+            friendsVertretung.add({
               "name": user["name"],
-              "ver": ver,
+              "ver": vertretung["ver"],
+              "subjectPrefix": vertretung["subjectPrefix"]
             });
           }
         } else {
-          newFriendsList.add({
+          //first Vertretung in the List
+          friendsVertretung.add({
             "name": user["name"],
-            "ver": ver,
+            "ver": vertretung["ver"],
+            "subjectPrefix": vertretung["subjectPrefix"]
           });
         }
       }
     }
-    return newFriendsList;
+    return friendsVertretung;
   }
 }

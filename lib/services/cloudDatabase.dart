@@ -65,9 +65,19 @@ class CloudDatabase {
   }
 
   Future<void> restoreAccount() async {
-    String uid = await AuthService().getUserId();
+    AuthService _auth = AuthService();
+    String uid = await _auth.getUserId();
     DocumentSnapshot snap =
         await ref.collection("userdata").document(uid).get();
+
+    //update the token
+    DocumentReference doc =
+        ref.collection("userdata").document(uid);
+    String token = await PushNotificationsManager().getToken();
+    doc.updateData({
+      "token": token,
+    });
+
     LocalDatabase local = LocalDatabase();
     local.setString(Names.stufe, snap.data["stufe"]);
     local.setString(Names.newsAnzahl, "0");
