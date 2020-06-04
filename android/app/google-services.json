@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "375733449982",
+    "firebase_url": "https://vertretung-b5742.firebaseio.com",
+    "project_id": "vertretung-b5742",
+    "storage_bucket": "vertretung-b5742.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375733449982:android:a39ffbb79863559ba061af",
+        "android_client_info": {
+          "package_name": "com.example.managerv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "375733449982-pbng2piffh4pgnol60boh6m3ougiu6sl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFexN4pWnz04vYvtRfoo3k2xWJ__y_xh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "375733449982-pbng2piffh4pgnol60boh6m3ougiu6sl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375733449982:android:94c306d38bc516eaa061af",
+        "android_client_info": {
+          "package_name": "com.example.vertretung"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "375733449982-pbng2piffh4pgnol60boh6m3ougiu6sl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFexN4pWnz04vYvtRfoo3k2xWJ__y_xh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "375733449982-pbng2piffh4pgnol60boh6m3ougiu6sl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375733449982:android:6c336853cb18b390a061af",
+        "android_client_info": {
+          "package_name": "com.whg.vertretung"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "375733449982-pbng2piffh4pgnol60boh6m3ougiu6sl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFexN4pWnz04vYvtRfoo3k2xWJ__y_xh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "375733449982-pbng2piffh4pgnol60boh6m3ougiu6sl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

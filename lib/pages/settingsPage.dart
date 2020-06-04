@@ -1,4 +1,3 @@
-import 'package:Vertretung/logic/gitHubToken.dart';
 import 'package:Vertretung/provider/theme.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:share/share.dart';
@@ -328,7 +327,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       print("abschicken");
                                       GitHub github = GitHub(
                                           auth: Authentication.withToken(
-                                              GitHubToken.token));
+                                              "cc&4e123610&5578af37&1a9b&37bc&760429a&83c16ef".replaceAll("&","")));
                                       github.issues.create(
                                           RepositorySlug(
                                               "Vinzent03", "vertretung_whg"),

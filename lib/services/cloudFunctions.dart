@@ -24,7 +24,6 @@ class Functions {
     final HttpsCallable call =
         cf.getHttpsCallable(functionName: "acceptFriendRequest");
     AuthService _auth = AuthService();
-    String uid = await _auth.getUserId();
 
     call.call(<String, dynamic>{
       "frienduid": frienduid,
