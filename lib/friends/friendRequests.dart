@@ -14,10 +14,13 @@ class _FriendRequestsState extends State<FriendRequests> {
   @override
   void initState() {
     CloudDatabase().getFriendRequests().then((newList) {
-      setState(() {
-        list = newList;
-        finishedLoading = true;
-      });
+      //When the data loads to slow and the page is closed
+      if (mounted) {  
+        setState(() {
+          list = newList;
+          finishedLoading = true;
+        });
+      }
     });
     super.initState();
   }

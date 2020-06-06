@@ -2,7 +2,7 @@ import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/theme.dart';
 import 'package:Vertretung/services/authService.dart';
-import 'package:Vertretung/services/cloudDatabase.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:Vertretung/widgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
@@ -36,11 +36,15 @@ class _FriendsState extends State<Friends> {
     _refreshController.refreshCompleted();
   }
 
-  addFriendAlert() async {
+  addFriendAlert(scaffoldContext) async {
     final TextEditingController controller = TextEditingController();
-    var friendsList = await CloudDatabase().getFriendsList();
-    bool valid = true;
     ClipboardData clipboardData = await Clipboard.getData("text/plain");
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    bool _autoValidate = false;
+    String message;
+    String uid;
+    bool error = false;
+    AuthService().getUserId().then((value) => uid = value.substring(0, 5));
     if (clipboardData != null) {
       if (clipboardData.text.length ==
           25) //If the user has the complet share sentence
@@ -48,23 +52,28 @@ class _FriendsState extends State<Friends> {
       if (clipboardData.text.length == 5)
         controller.text = clipboardData.text; //if the user has just the code
     }
+
     String isValid(st) {
-      if (st != "") {
-        if (st.length >= 5) {
-          for (var friend in friendsList) {
-            if (friend["frienduid"].substring(0, 6).contains(controller.text)) {
-              valid = false;
-              return "Dieser Nutzer ist bereits in deiner Freundesliste";
-            }
-          }
-        }
-        if (st.length < 5) {
-          valid = false;
-          return "Token zu kurz";
-        }
+      if (error) return message;
+      if (st == uid) {
+        return "Du kannst dich nicht selbst hinzufügen";
       }
-      valid = true;
+      if (st.length != 5) {
+        return "Der Token muss 5 Zeichen lang sein";
+      }
+
       return null;
+    }
+
+    bool _validateInputs() {
+      if (_formKey.currentState.validate()) {
+        return true;
+      } else {
+        setState(() {
+          _autoValidate = true;
+        });
+        return false;
+      }
     }
 
     showDialog(
@@ -72,10 +81,13 @@ class _FriendsState extends State<Friends> {
         builder: (context) {
           return AlertDialog(
             title: Text("Gib den Token deines Freundes ein"),
-            content: TextFormField(
-              controller: controller,
-              autovalidate: true,
-              validator: isValid,
+            content: Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: controller,
+                autovalidate: _autoValidate,
+                validator: isValid,
+              ),
             ),
             actions: <Widget>[
               FlatButton(
@@ -85,9 +97,49 @@ class _FriendsState extends State<Friends> {
               RaisedButton(
                   child: Text("Bestätigen"),
                   onPressed: () async {
-                    if (valid) {
-                      Functions().callAddFriendRequest(controller.text);
-                      Navigator.pop(context);
+                    error = false;
+                    if (_validateInputs()) {
+                      var connectivityResult =
+                          await (Connectivity().checkConnectivity());
+                      if (connectivityResult == ConnectivityResult.none) {
+                        Navigator.pop(context);
+                         return Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
+                            content: Text("Keine Verbindung"),
+                            behavior: SnackBarBehavior.floating,
+                          ));
+                      }
+                      var result = await Functions()
+                          .callAddFriendRequest(controller.text);
+                      switch (result["code"]) {
+                        case "Successful":
+                          Navigator.pop(context);
+                          Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
+                            content: Text("Freundesanfrage geschickt"),
+                            behavior: SnackBarBehavior.floating,
+                          ));
+                          break;
+                        case "ERROR_ALREADY_REQUESTED":
+                          setState(() {
+                            message = result["message"];
+                            error = true;
+                            _validateInputs();
+                          });
+                          break;
+                        case "ERROR_ALREADY_FRIEND":
+                          setState(() {
+                            message = result["message"];
+                            error = true;
+                            _validateInputs();
+                          });
+                          break;
+                        case "ERROR_CANT_FIND_FRIEND":
+                          setState(() {
+                            message = result["message"];
+                            error = true;
+                            _validateInputs();
+                          });
+                          break;
+                      }
                     }
                   }),
             ],
@@ -117,10 +169,12 @@ class _FriendsState extends State<Friends> {
                     uid.substring(0,
                         5)); //If change the message also update the length above in addFriendAlert
               }),
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => addFriendAlert(),
-          ),
+          Builder(builder: (context) {
+            return IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () => addFriendAlert(context),
+            );
+          }),
           IconButton(
             icon: Icon(Icons.inbox),
             onPressed: () => Navigator.pushNamed(context, Names.friendRequests),

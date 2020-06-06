@@ -3,6 +3,7 @@ import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:flutter/material.dart';
 
 class AccountPage extends StatefulWidget {
@@ -78,6 +79,9 @@ class _AccountPageState extends State<AccountPage> {
                 color: Colors.red,
                 child: Text("Bestätigen"),
                 onPressed: () async {
+                  ProgressDialog pr =  ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+                  pr.show();
+                  
                   await Functions().callDeleteProfile();
                   Navigator.pushNamedAndRemoveUntil(
                       context, Names.wrapper, (r) => false);
@@ -218,8 +222,7 @@ class _AccountPageState extends State<AccountPage> {
                                 await Navigator.pushNamed(
                                     context, Names.logInPage,
                                     arguments: true);
-                                  reload();
-                                
+                                reload();
                               }),
                         )
                       : ListTile(

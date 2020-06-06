@@ -40,10 +40,13 @@ class _FriendsListState extends State<FriendsList> {
   @override
   void initState() {
     CloudDatabase().getFriendsList().then((newList) {
-      setState(() {
-        finishedLoading = true;
-        list = newList;
-      });
+      //When the data loads to slow and the page is closed
+      if (mounted) {
+        setState(() {
+          finishedLoading = true;
+          list = newList;
+        });
+      }
     });
     super.initState();
   }

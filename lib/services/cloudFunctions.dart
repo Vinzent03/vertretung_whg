@@ -4,18 +4,15 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 class Functions {
-  void callAddFriendRequest(String frienduid) async {
+  Future<dynamic> callAddFriendRequest(String frienduid) async {
     CloudFunctions cf =
         CloudFunctions(app: FirebaseApp.instance, region: "europe-west3");
-    final HttpsCallable call =
-        cf.getHttpsCallable(functionName: "addFriendRequest");
-    AuthService _auth = AuthService();
+    HttpsCallable call = cf.getHttpsCallable(functionName: "addFriendRequest");
     print(frienduid);
-    String uid = await _auth.getUserId();
-
-    call.call(<String, dynamic>{
+    HttpsCallableResult result = await call.call(<String, dynamic>{
       "frienduid": frienduid,
     });
+    return result.data;
   }
 
   void callAcceptFriendRequest(String frienduid) async {
@@ -23,8 +20,6 @@ class Functions {
         CloudFunctions(app: FirebaseApp.instance, region: "europe-west3");
     final HttpsCallable call =
         cf.getHttpsCallable(functionName: "acceptFriendRequest");
-    AuthService _auth = AuthService();
-
     call.call(<String, dynamic>{
       "frienduid": frienduid,
     });
