@@ -73,7 +73,7 @@ class _AboutPageState extends State<AboutPage> {
                     ),
                     title: Text("Wir sind auf GitHub!"),
                     onTap: () => launch(
-                          "https://github.com/Vinzent03/Vertretung-fuer-das-Werner-Heisenberg-Gymnasium"),
+                        "https://github.com/Vinzent03/Vertretung-fuer-das-Werner-Heisenberg-Gymnasium"),
                     trailing: IconButton(
                       icon: Image.asset(
                         "assets/images/GitHub.png",
@@ -116,6 +116,16 @@ class _AboutPageState extends State<AboutPage> {
                         title: Text("Rairosu"),
                       ),
                     ],
+                  ),
+                ),
+                Card(
+                  child: ListTile(
+                    title: Text("Lizenzen"),
+                    leading: Icon(Icons.library_books),
+                    onTap: () {
+                      showLicensePage(
+                          context: context, applicationName: "Vertretung");
+                    },
                   ),
                 )
               ],

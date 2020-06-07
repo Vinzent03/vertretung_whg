@@ -1,5 +1,5 @@
 import 'package:Vertretung/main/introScreen.dart';
-import 'package:Vertretung/pages/VertretungsPage.dart';
+import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,12 +11,13 @@ import 'home.dart';
 class Wrapper extends StatelessWidget {
   Wrapper() {
     PushNotificationsManager().init();
-    initDynamicLinks();
+    //initDynamicLinks();   //not working
+    //AuthService().getAdminStatus();
   }
-  void initDynamicLinks() async {
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-  }
+  // void initDynamicLinks() async {
+  //   final PendingDynamicLinkData data =
+  //       await FirebaseDynamicLinks.instance.getInitialLink();
+  // }
 
   @override
   Widget build(BuildContext context) {

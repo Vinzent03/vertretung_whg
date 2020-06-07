@@ -41,7 +41,6 @@ class _AccountPageState extends State<AccountPage> {
                       setState(() {
                         name = controller.text;
                       });
-                      AuthService().updateName(controller.text);
                       CloudDatabase().updateName(controller.text);
                       Navigator.pop(context);
                     } else {
@@ -79,9 +78,12 @@ class _AccountPageState extends State<AccountPage> {
                 color: Colors.red,
                 child: Text("Bestätigen"),
                 onPressed: () async {
-                  ProgressDialog pr =  ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+                  ProgressDialog pr = ProgressDialog(context,
+                      type: ProgressDialogType.Normal,
+                      isDismissible: false,
+                      showLogs: false);
                   pr.show();
-                  
+
                   await Functions().callDeleteProfile();
                   Navigator.pushNamedAndRemoveUntil(
                       context, Names.wrapper, (r) => false);
@@ -131,7 +133,9 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void reload() {
-    AuthService().getName().then((value) => name = value);
+    CloudDatabase().getName().then((value) => setState(() {
+          name = value;
+        }));
     AuthService().isAnon().then((newIsAnon) {
       setState(() {
         isAnon = newIsAnon;

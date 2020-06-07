@@ -91,19 +91,6 @@ class AuthService {
     return user.email;
   }
 
-  Future<String> getName() async {
-    FirebaseUser user = await _auth.currentUser();
-    return user.displayName;
-  }
-
-  Future<String> updateName(String newName) async {
-    FirebaseUser user = await _auth.currentUser();
-    UserUpdateInfo info = UserUpdateInfo();
-    info.displayName = newName;
-    user.updateProfile(info);
-    return user.displayName;
-  }
-
   Future<String> signInEmail({email, password, context}) async {
     try {
       AuthResult res = await _auth.signInWithEmailAndPassword(
@@ -203,5 +190,12 @@ class AuthService {
           return "An undefined Error happened.";
       }
     }
+  }
+
+  Future<bool> getAdminStatus() async {
+    FirebaseUser user = await _auth.currentUser();
+    var claims = await user.getIdToken();
+    print(claims.claims["admin"]);
+    return claims.claims["admin"] ?? false;
   }
 }

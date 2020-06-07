@@ -54,9 +54,16 @@ class CloudDatabase {
     AuthService _auth = AuthService();
     DocumentReference doc =
         ref.collection("userdata").document(await _auth.getUserId());
-    doc.updateData({
+    doc.setData({
       "name": newName,
-    });
+    }, merge: true);
+  }
+
+  Future<String> getName() async {
+    String uid = await AuthService().getUserId();
+    DocumentSnapshot snap =
+        await ref.collection("userdata").document(uid).get();
+    return snap.data["name"];
   }
 
   void deleteDocument() async {
@@ -71,8 +78,7 @@ class CloudDatabase {
         await ref.collection("userdata").document(uid).get();
 
     //update the token
-    DocumentReference doc =
-        ref.collection("userdata").document(uid);
+    DocumentReference doc = ref.collection("userdata").document(uid);
     String token = await PushNotificationsManager().getToken();
     doc.updateData({
       "token": token,

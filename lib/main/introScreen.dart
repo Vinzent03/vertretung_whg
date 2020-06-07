@@ -122,17 +122,17 @@ class _IntroScreenState extends State<IntroScreen> {
         onDonePress: () async {
           await AuthService().signInAnon();
           String name = nameController.text;
-          if(name == "")
-            name = "Nicht festgelegt";
-          AuthService().updateName(name);
-          CloudDatabase().updateUserData(
+          if (name == "") name = "Nicht festgelegt";
+          CloudDatabase db = CloudDatabase();
+          db.updateName(name);
+          db.updateUserData(
             faecher: [],
             faecherNot: [],
             stufe: await LocalDatabase().getString(Names.stufe),
             faecherOn: false,
             notification: true,
           );
-          CloudDatabase().becomeBetaUser(false);
+          db.becomeBetaUser(false);
           LocalDatabase local = LocalDatabase();
           local.setBool(Names.faecherOn, false);
           local.setBool(Names.beta, false);
