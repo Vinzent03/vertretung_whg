@@ -1,7 +1,7 @@
-import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:share/share.dart';
-import 'package:Vertretung/widgets/stufenList.dart';
+import 'package:Vertretung/otherWidgets/stufenList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:github/github.dart';
@@ -11,6 +11,8 @@ import '../logic/localDatabase.dart';
 import '../logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
+
+import 'faecherPage.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -106,7 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeChanger _themeChanger = Provider.of<ThemeChanger>(context);
+    ProviderData _themeChanger = Provider.of<ProviderData>(context);
     return Theme(
       data: _themeChanger.getTheme(),
       child: Scaffold(
@@ -178,9 +180,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       secondary: Icon(Icons.group),
                       onChanged: (bool b) {
                         getter.setBool(Names.faecherOn, b);
-                        setState(() {
-                          faecherOn = b;
-                        });
+                        if (mounted)
+                          setState(() {
+                            faecherOn = b;
+                          });
                         updateUserdata();
                       },
                     ),
@@ -191,19 +194,24 @@ class _SettingsPageState extends State<SettingsPage> {
                       onTap: !faecherOn
                           ? null
                           : () async {
-                              await Navigator.pushNamed(
-                                  context, Names.faecherPage, arguments: [
-                                Names.faecherList,
-                                Names.faecherListCustom
-                              ]);
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FaecherPage([
+                                    Names.faecherList,
+                                    Names.faecherListCustom
+                                  ]),
+                                ),
+                              );
                               Future.delayed(Duration(seconds: 2), () {
                                 //Man muss noch auf das abspeicher in der faecherList warten, ohne extra warte Zeit, würde man noch die alten daten bekommen, weil der Schreibvorgang noch nicht fertig ist.
                                 getter
                                     .getStringList(Names.faecherList)
                                     .then((onValue) {
-                                  setState(() {
-                                    faecherList = onValue;
-                                  });
+                                  if (mounted)
+                                    setState(() {
+                                      faecherList = onValue;
+                                    });
                                   print("hallo bin fächer mit $onValue");
                                   updateUserdata();
                                 });
@@ -217,11 +225,15 @@ class _SettingsPageState extends State<SettingsPage> {
                         onTap: !faecherOn
                             ? null
                             : () async {
-                                await Navigator.pushNamed(
-                                    context, Names.faecherPage, arguments: [
-                                  Names.faecherNotList,
-                                  Names.faecherNotListCustom
-                                ]);
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FaecherPage([
+                                      Names.faecherNotList,
+                                      Names.faecherNotListCustom
+                                    ]),
+                                  ),
+                                );
                                 getter
                                     .getStringList(Names.faecherNotList)
                                     .then((onValue) {
@@ -327,7 +339,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                       print("abschicken");
                                       GitHub github = GitHub(
                                           auth: Authentication.withToken(
-                                              "cc&4e123610&5578af37&1a9b&37bc&760429a&83c16ef".replaceAll("&","")));
+                                              "cc&4e123610&5578af37&1a9b&37bc&760429a&83c16ef"
+                                                  .replaceAll("&", "")));
                                       github.issues.create(
                                           RepositorySlug(
                                               "Vinzent03", "vertretung_whg"),

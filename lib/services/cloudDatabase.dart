@@ -8,7 +8,6 @@ import 'package:package_info/package_info.dart';
 class CloudDatabase {
   final Firestore ref = Firestore.instance;
 
-  ////////////UserData
   void updateUserData(
       {faecherOn, stufe, faecher, faecherNot, notification}) async {
     AuthService _auth = AuthService();
@@ -40,7 +39,6 @@ class CloudDatabase {
       });
   }
 
-  /// if a user should be beta or not
   void becomeBetaUser(bool isBeta) async {
     AuthService _auth = AuthService();
     DocumentReference doc =
@@ -176,16 +174,16 @@ class CloudDatabase {
     return list;
   }
 
-  void removeFriend(String frienduid) async {
+  Future<void> removeFriend(String frienduid) async {
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
 
-    DocumentReference doc = await ref
+    DocumentReference doc = ref
         .collection("userFriends")
         .document(uid)
         .collection("friends")
         .document(frienduid);
-    doc.delete();
+    return await doc.delete();
   }
 
   Future<List<dynamic>> getFriendsList() async {

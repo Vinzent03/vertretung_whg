@@ -1,10 +1,10 @@
 import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
-import 'package:Vertretung/widgets/generalBlueprint.dart';
+import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -96,6 +96,7 @@ class _FriendsState extends State<Friends> {
               ),
               RaisedButton(
                   child: Text("Bestätigen"),
+                  // ignore: missing_return
                   onPressed: () async {
                     error = false;
                     if (_validateInputs()) {
@@ -103,10 +104,11 @@ class _FriendsState extends State<Friends> {
                           await (Connectivity().checkConnectivity());
                       if (connectivityResult == ConnectivityResult.none) {
                         Navigator.pop(context);
-                         return Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
-                            content: Text("Keine Verbindung"),
-                            behavior: SnackBarBehavior.floating,
-                          ));
+                        return Scaffold.of(scaffoldContext)
+                            .showSnackBar(SnackBar(
+                          content: Text("Keine Verbindung"),
+                          behavior: SnackBarBehavior.floating,
+                        ));
                       }
                       var result = await Functions()
                           .callAddFriendRequest(controller.text);
@@ -149,8 +151,8 @@ class _FriendsState extends State<Friends> {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ThemeChanger>(context).getFriendReload()) {
-      reload().then((value) => Provider.of<ThemeChanger>(context, listen: false)
+    if (Provider.of<ProviderData>(context).getFriendReload()) {
+      reload().then((value) => Provider.of<ProviderData>(context, listen: false)
           .setFriendReload(false));
     }
 

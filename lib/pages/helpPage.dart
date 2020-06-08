@@ -1,4 +1,4 @@
-import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +53,7 @@ class _HelpPageState extends State<HelpPage> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Provider.of<ThemeChanger>(context).getTheme(),
+      data: Provider.of<ProviderData>(context).getTheme(),
       child: Scaffold(
         appBar: AppBar(
           title: Text("Help"),

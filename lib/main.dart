@@ -1,11 +1,11 @@
 import 'package:Vertretung/authentication/logInPage.dart';
 import 'package:Vertretung/friends/friendRequests.dart';
 import 'package:Vertretung/friends/friendsList.dart';
+import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/pages/aboutPage.dart';
 import 'package:Vertretung/pages/faecherPage.dart';
 import 'package:Vertretung/pages/helpPage.dart';
 import 'package:Vertretung/main/introScreen.dart';
-import 'package:Vertretung/pages/newsPage.dart';
 import 'package:Vertretung/authentication/accountPage.dart';
 import 'package:Vertretung/main/wrapper.dart';
 import 'package:Vertretung/services/authService.dart';
@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 import 'authentication/changePasswordPage.dart';
 import 'logic/localDatabase.dart';
 import 'logic/names.dart';
-import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/provider/themedata.dart';
 import 'main/splash.dart';
 import 'pages/settingsPage.dart';
@@ -24,8 +24,8 @@ import 'pages/settingsPage.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   LocalDatabase().getBool(Names.dark).then((isDark) {
-    runApp(ChangeNotifierProvider<ThemeChanger>(
-      create: (_) => ThemeChanger(isDark ? darkTheme : lightTheme, isDark),
+    runApp(ChangeNotifierProvider<ProviderData>(
+      create: (_) => ProviderData(isDark ? darkTheme : lightTheme, isDark),
       child: MyAppSt(),
     ));
   });
@@ -34,7 +34,7 @@ void main() {
 class MyAppSt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeChanger>(context);
+    final theme = Provider.of<ProviderData>(context);
     return StreamProvider<FirebaseUser>.value(
       value: AuthService().user,
       child: MaterialApp(
@@ -46,7 +46,6 @@ class MyAppSt extends StatelessWidget {
           Names.settingsPage: (context) => SettingsPage(),
           Names.helpPage: (context) => HelpPage(),
           Names.introScreen: (context) => IntroScreen(),
-          Names.faecherPage: (context) => FaecherPage(),
           Names.newsPage: (context) => NewsPage(),
           Names.aboutPage: (context) => AboutPage(),
           Names.accountPage: (context) => AccountPage(),

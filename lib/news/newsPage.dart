@@ -1,6 +1,4 @@
-import 'package:Vertretung/logic/localDatabase.dart';
-import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
@@ -52,10 +50,10 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ThemeChanger>(context).getAnimation()) {
+    if (Provider.of<ProviderData>(context).getAnimation()) {
       _controller.reset();
       _controller.forward().then((value) =>
-          Provider.of<ThemeChanger>(context, listen: false)
+          Provider.of<ProviderData>(context, listen: false)
               .setAnimation(false));
     }
     return Scaffold(

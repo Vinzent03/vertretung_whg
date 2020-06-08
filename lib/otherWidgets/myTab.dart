@@ -10,7 +10,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 
-const double _kTabHeight = 46.0;
+//!!!!!!!! Is the same tab as in flutter except of the _kTabHeight = 46.0!!!!!!!!!!!!!!!!!
+
+
+const double _kTabHeight = 46.0;//changed
 const double _kTextAndIconTabHeight = 50.0;
 
 /// Defines how the bounds of the selected tab indicator are computed.

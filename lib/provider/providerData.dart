@@ -3,9 +3,9 @@ import 'package:Vertretung/logic/names.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/provider/themedata.dart';
 
-class ThemeChanger with ChangeNotifier {
+class ProviderData with ChangeNotifier {
   ThemeData _themeData;
-  ThemeChanger(this._themeData, this.isDark,
+  ProviderData(this._themeData, this.isDark,
       {this.isVertretungReload = false, this.isFriendReload =false , this.startAnimation = false});
   bool isDark;
   bool isVertretungReload;

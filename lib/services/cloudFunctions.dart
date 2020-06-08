@@ -29,8 +29,6 @@ class Functions {
         CloudFunctions(app: FirebaseApp.instance, region: "europe-west3");
     final HttpsCallable call =
         cf.getHttpsCallable(functionName: "declineFriendRequest");
-    AuthService _auth = AuthService();
-    print(frienduid);
     call.call(<String, dynamic>{
       "frienduid": frienduid,
     });
@@ -41,19 +39,15 @@ class Functions {
         CloudFunctions(app: FirebaseApp.instance, region: "europe-west3");
     final HttpsCallable call =
         cf.getHttpsCallable(functionName: "deleteProfile");
-    await call.call().whenComplete(() async {
-      print("Konto gelöscht");
-      await AuthService().signOut(deleteAccount: true);
-      return;
-    });
-    return;
+    await call.call();
+    print("Konto gelöscht");
+    return await AuthService().signOut(deleteAccount: true);
   }
 
   Future<dynamic> addNews(newNews) async {
     CloudFunctions cf =
         CloudFunctions(app: FirebaseApp.instance, region: "europe-west3");
     HttpsCallable call = cf.getHttpsCallable(functionName: "addNews");
-
     HttpsCallableResult result = await call.call(<String, dynamic>{
       "newNews": newNews,
     });

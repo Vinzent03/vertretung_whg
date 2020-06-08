@@ -1,25 +1,24 @@
 import 'package:Vertretung/logic/filter.dart';
-import 'package:Vertretung/logic/functionsForMain.dart';
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:Vertretung/widgets/generalBlueprint.dart';
-import 'package:intl/intl.dart';
+import 'package:Vertretung/vertretung/FunctionsForVertretung.dart';
+import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:Vertretung/widgets/myTab.dart' as myTab;
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:Vertretung/otherWidgets/myTab.dart' as myTab;
 
-class Vertretung extends StatefulWidget {
-  Vertretung({Key key}) : super(key: key);
+class VertretungsPage extends StatefulWidget {
+  VertretungsPage({Key key}) : super(key: key);
+
   @override
-  _VertretungState createState() => _VertretungState();
+  _VertretungsPageState createState() => _VertretungsPageState();
 }
 
-class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
+class _VertretungsPageState extends State<VertretungsPage>
+    with TickerProviderStateMixin {
   CloudDatabase cd;
   LocalDatabase getter = LocalDatabase();
   bool faecherOn = false; //if personalisierte Vertretung is enabled
@@ -74,12 +73,6 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
   List<Widget> myTabs;
   List<Widget> myTabsFaecherOn;
 
-  int getWeekNumber() {
-    DateTime date = DateTime.now();
-    int dayOfYear = int.parse(DateFormat("D").format(date));
-    return ((dayOfYear - date.weekday + 10) / 7).floor();
-  }
-
   Future<void> reload({bool fromPullToRefresh = false}) async {
     SnackBar snack = SnackBar(
       content: Text("Es werden alte Daten verwendet."),
@@ -101,16 +94,12 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
       });
     });
 
-    List<dynamic> dataResult = await getData(); //load the data from dsb mobile
+    List<dynamic> dataResult = await FunctionsForVertretung()
+        .getData(); //load the data from dsb mobile
 
     if (fromPullToRefresh) _refreshController.refreshCompleted();
     finishedLoading = true;
     if (dataResult.isEmpty) {
-      // Fluttertoast.showToast(
-      //   msg: "Keine Verbindung. Alte Ergebnisse werden angezeigt",
-      //   toastLength: Toast.LENGTH_SHORT,
-      // );
-
       if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
       loadingSuccess = false;
     } else {
@@ -151,7 +140,7 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
     });
   }
 
-  void linkGenerate() async {
+  /*void linkGenerate() async {
     DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: "https://vertretung.page.link/friendrequest",
       link: Uri.parse("https://vertretung.page.link/"),
@@ -161,7 +150,7 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
     );
     ShortDynamicLink link = await parameters.buildShortLink();
     print(link.shortUrl);
-  }
+  }*/
 
   @override
   void initState() {
@@ -187,23 +176,23 @@ class _VertretungState extends State<Vertretung> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ThemeChanger>(context).getVertretungReload()) {
+    if (Provider.of<ProviderData>(context).getVertretungReload()) {
       print("will reloaden");
-      reload().then((value) => Provider.of<ThemeChanger>(context, listen: false)
+      reload().then((value) => Provider.of<ProviderData>(context, listen: false)
           .setVertretungReload(false));
     }
 
-    final theme = Provider.of<ThemeChanger>(context);
+    final theme = Provider.of<ProviderData>(context);
     return MaterialApp(
       theme: theme.getTheme(),
       home: DefaultTabController(
         length: faecherOn ? 4 : 2,
-        key: Key(faecherOn
-            ? "On"
-            : "Off"), //key is needed because otherwise the tab length would not be updated
+        key: Key(faecherOn ? "On" : "Off"),
+        //key is needed because otherwise the tab length would not be updated
         child: Scaffold(
           appBar: AppBar(
-            title: Text("$change  Woche: ${getWeekNumber()}"),
+            title: Text(
+                "$change  Woche: ${FunctionsForVertretung().getWeekNumber()}"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.help_outline),

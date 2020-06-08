@@ -1,6 +1,6 @@
 import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +97,7 @@ class AuthService {
           email: email, password: password);
 
       await CloudDatabase().restoreAccount();
-      Provider.of<ThemeChanger>(context, listen: false)
+      return Provider.of<ProviderData>(context, listen: false)
           .setVertretungReload(true);
     } catch (e) {
       print(e.toString());
@@ -195,7 +195,6 @@ class AuthService {
   Future<bool> getAdminStatus() async {
     FirebaseUser user = await _auth.currentUser();
     var claims = await user.getIdToken();
-    print(claims.claims["admin"]);
     return claims.claims["admin"] ?? false;
   }
 }

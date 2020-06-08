@@ -1,4 +1,4 @@
-import 'package:Vertretung/pages/newsPage.dart';
+import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/material.dart';
 

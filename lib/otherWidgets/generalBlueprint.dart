@@ -1,8 +1,7 @@
-import 'package:Vertretung/provider/theme.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import 'package:flutter/material.dart';
-import 'vertretungTile.dart';
+import '../vertretung/vertretungTile.dart';
 import "package:provider/provider.dart";
-import 'dart:math';
 
 class GeneralBlueprint extends StatefulWidget {
   final List<dynamic> list;
@@ -32,10 +31,10 @@ class _GeneralBlueprintState extends State<GeneralBlueprint>
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ThemeChanger>(context).getAnimation()) {
+    if (Provider.of<ProviderData>(context).getAnimation()) {
       _controller.reset();
       _controller.forward().then((value) =>
-          Provider.of<ThemeChanger>(context, listen: false)
+          Provider.of<ProviderData>(context, listen: false)
               .setAnimation(false));
     }
     if (widget.list.isNotEmpty)

@@ -1,5 +1,4 @@
 import 'package:Vertretung/services/authService.dart';
-import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';

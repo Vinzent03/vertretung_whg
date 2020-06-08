@@ -1,8 +1,8 @@
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/otherWidgets/stufenList.dart';
 import 'package:Vertretung/provider/themedata.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:Vertretung/widgets/stufenList.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';

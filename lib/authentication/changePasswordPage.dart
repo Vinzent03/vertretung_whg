@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:Vertretung/services/authService.dart';
 
 class ChangePasswordPage extends StatelessWidget {
-  TextEditingController oldPasswordController = TextEditingController();
-  TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController oldPasswordController = TextEditingController();
+  final TextEditingController newPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
