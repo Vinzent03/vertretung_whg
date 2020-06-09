@@ -13,7 +13,7 @@ class FriendLogic {
     Filter filter = Filter(snap["stufe"]);
     if (snap.data["faecherOn"]) {
       var list = await filter.checkerFaecher(
-          Names.lessonsToday, snap["faecher"], snap["faecherNot"]);
+          Names.lessonsToday, snap.data["faecher"], snap.data["faecherNot"]);
       return list;
     } else {
       var list = await filter.checker(
@@ -23,9 +23,9 @@ class FriendLogic {
     }
   }
 
-  Future<List<Map<String, String>>> getLists() async {
+  Future<dynamic> getFriendVertretung(List<dynamic> users) async {
     List<Map<String, String>> friendsVertretung = [];
-    List<dynamic> users = await CloudDatabase().getFriendsList();
+
     for (var user in users) {
       List<dynamic> list = await individual(user["frienduid"]);
       for (var vertretung in list) {
@@ -38,7 +38,7 @@ class FriendLogic {
           if (temporarilyfriendVertretung.contains(vertretung["ver"])) {
             //add the name to the list who have this Vertretung
             for (var oldVer in friendsVertretung) {
-              if (oldVer["ver"] == vertretung) {
+              if (oldVer["ver"] == vertretung["ver"]) {
                 oldVer["name"] = oldVer["name"] + ", " + user["name"];
               }
             }

@@ -2,6 +2,7 @@ import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/authService.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
@@ -17,20 +18,32 @@ class Friends extends StatefulWidget {
 }
 
 class _FriendsState extends State<Friends> {
-  List<Map<String, String>> friendsList = [];
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
-
+  List<Map<String, String>> friendVertretung = [];
+  List<FriendFilterModel> friendFilterList = [];
+  List<dynamic> selectedFriends = [];
+  List<dynamic> friendList;
   @override
   void initState() {
-    //reload();
     super.initState();
   }
-
   Future<void> reload() async {
-    await FriendLogic().getLists().then((newFriendsList) {
+    friendList = await CloudDatabase().getFriendsList();
+    if (friendFilterList.isEmpty ||
+        friendList.length != friendFilterList.length) {
+      friendFilterList = [];
+      for (var friend in friendList) {
+        friendFilterList.add(FriendFilterModel(true, friend));
+        selectedFriends.add(friend);
+      }
+    }
+
+    await FriendLogic()
+        .getFriendVertretung(selectedFriends)
+        .then((newFriendVertretung) {
       setState(() {
-        friendsList = newFriendsList;
+        friendVertretung = newFriendVertretung;
       });
     });
     _refreshController.refreshCompleted();
@@ -80,6 +93,8 @@ class _FriendsState extends State<Friends> {
         context: context,
         builder: (context) {
           return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15))),
             title: Text("Gib den Token deines Freundes ein"),
             content: Form(
               key: _formKey,
@@ -149,6 +164,20 @@ class _FriendsState extends State<Friends> {
         });
   }
 
+  void onChanged(bool isChecked, index, Function setState) {
+    setState(() {
+      friendFilterList[index].isChecked = isChecked;
+    });
+    if (isChecked)
+      selectedFriends.add(friendFilterList[index].user);
+    else
+      selectedFriends.remove(friendFilterList[index].user);
+
+    setState(() {
+      friendFilterList[index].isChecked = isChecked;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (Provider.of<ProviderData>(context).getFriendReload()) {
@@ -188,11 +217,80 @@ class _FriendsState extends State<Friends> {
         ],
       ),
       body: SmartRefresher(
-          controller: _refreshController,
-          onRefresh: reload,
+        controller: _refreshController,
+        onRefresh: reload,
+        child: AnimatedSwitcher(
+          key: ValueKey(friendVertretung),
+          duration: Duration(seconds: 1),
           child: GeneralBlueprint(
-            list: friendsList,
-          )),
+            list: friendVertretung,
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await showDialog(
+            context: context,
+            builder: (context) {
+              //to chagne the state
+              return StatefulBuilder(
+                builder: (context, setState) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(15))),
+                  title: Text("Wähle deine Freunde"),
+                  content: ListView.builder(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return CheckboxListTile(
+                        title: Text(friendFilterList[index].user["name"]),
+                        value: friendFilterList[index].isChecked,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: (isChecked) =>
+                            onChanged(isChecked, index, setState),
+                      );
+                    },
+                    itemCount: friendFilterList.length,
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Alle auswählen"),
+                      onPressed: () {
+                        selectedFriends = [];
+                        for (var user in friendFilterList) {
+                          setState(() {
+                            user.isChecked = true;
+                          });
+                          selectedFriends.add(user.user);
+                        }
+                      },
+                    ),
+                    FlatButton(
+                      child: Text("Alle abwählen"),
+                      onPressed: () {
+                        selectedFriends = [];
+                        for (var user in friendFilterList) {
+                          setState(() {
+                            user.isChecked = false;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+          _refreshController.requestRefresh();
+        },
+        child: Icon(Icons.filter_list),
+        backgroundColor: selectedFriends.length != friendList.length ? Colors.red:null,
+      ),
     );
   }
+}
+
+class FriendFilterModel {
+  bool isChecked;
+  final user;
+  FriendFilterModel(this.isChecked, this.user);
 }

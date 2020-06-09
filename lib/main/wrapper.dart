@@ -20,7 +20,6 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
-    print("Aktueller User in Wrapper: ${user == null ? "Kein konto" : user.uid}");
     if(user == null) {
       return IntroScreen();
     }else{

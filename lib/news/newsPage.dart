@@ -5,7 +5,7 @@ import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
-
+import 'package:progress_dialog/progress_dialog.dart';
 import 'editNewsPage.dart';
 
 class NewsPage extends StatefulWidget {
@@ -81,28 +81,40 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                           onSelected: (selected) async {
                             var result;
                             if (selected == actions.delete) {
+                              ProgressDialog pr = ProgressDialog(context,
+                                  type: ProgressDialogType.Normal,
+                                  isDismissible: false,
+                                  showLogs: false);
+                              pr.show();
+
                               result = await Functions().deleteNews(index);
+                              pr.hide();
+                              
                               switch (result["code"]) {
                                 case "Successful":
                                   reload();
                                   break;
                                 case "ERROR_NO_ADMIN":
-                                  Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: Text(
-                                        "Du bist kein Admin, bitte melde dich ab und dann wieder an. Wenn du denktst du solltest Admin sein, melde dich bitte bei mir."),
-                                    duration: Duration(minutes: 1),
-                                  ));
+                                  Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "Du bist kein Admin, bitte melde dich ab und dann wieder an. Wenn du denktst du solltest Admin sein, melde dich bitte bei mir."),
+                                      duration: Duration(minutes: 1),
+                                    ),
+                                  );
                                   break;
                               }
                             } else {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => EditNewsPage(),
-                                    settings: RouteSettings(
-                                        arguments: NewsTransmitter(true,
-                                            text: newsList[index]["text"],
-                                            title: newsList[index]["title"]))),
+                                  builder: (context) => EditNewsPage(),
+                                  settings: RouteSettings(
+                                    arguments: NewsTransmitter(true,
+                                        text: newsList[index]["text"],
+                                        title: newsList[index]["title"]),
+                                  ),
+                                ),
                               );
                               reload();
                             }
@@ -134,8 +146,11 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => EditNewsPage(),
-                      settings: RouteSettings(arguments: NewsTransmitter(false))),
+                    builder: (context) => EditNewsPage(),
+                    settings: RouteSettings(
+                      arguments: NewsTransmitter(false),
+                    ),
+                  ),
                 ).then((value) => reload());
               },
             )

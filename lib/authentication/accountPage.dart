@@ -5,6 +5,7 @@ import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity/connectivity.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -94,6 +95,18 @@ class _AccountPageState extends State<AccountPage> {
         });
   }
 
+  Future<bool> checkConnectivity(context) async {
+    ConnectivityResult res = await Connectivity().checkConnectivity();
+    if (res == ConnectivityResult.none) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Keine Verbindung"),
+        behavior: SnackBarBehavior.floating,
+      ));
+      return false;
+    } else
+      return true;
+  }
+
   void becomeBetaUserAlert() {
     showDialog(
         context: context,
@@ -126,12 +139,6 @@ class _AccountPageState extends State<AccountPage> {
         });
   }
 
-  @override
-  void initState() {
-    reload();
-    super.initState();
-  }
-
   void reload() {
     CloudDatabase().getName().then((value) => setState(() {
           name = value;
@@ -149,6 +156,12 @@ class _AccountPageState extends State<AccountPage> {
       }
     });
     LocalDatabase().getBool(Names.beta).then((value) => beta = value);
+  }
+
+  @override
+  void initState() {
+    reload();
+    super.initState();
   }
 
   @override
@@ -186,9 +199,10 @@ class _AccountPageState extends State<AccountPage> {
                         ListTile(
                           leading: Icon(Icons.security),
                           title: Text("Passwort ändern"),
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, Names.changePasswordPage);
+                          onTap: () async {
+                            if (await checkConnectivity(context))
+                              Navigator.pushNamed(
+                                  context, Names.changePasswordPage);
                           },
                         )
                     ],
@@ -223,9 +237,10 @@ class _AccountPageState extends State<AccountPage> {
                               elevation: 0,
                               child: Text("Registrieren"),
                               onPressed: () async {
-                                await Navigator.pushNamed(
-                                    context, Names.logInPage,
-                                    arguments: true);
+                                if (await checkConnectivity(context))
+                                  await Navigator.pushNamed(
+                                      context, Names.logInPage,
+                                      arguments: true);
                                 reload();
                               }),
                         )
@@ -248,7 +263,10 @@ class _AccountPageState extends State<AccountPage> {
                       color: Colors.red,
                       elevation: 0,
                       child: Text("Konto löschen"),
-                      onPressed: deleteAccountAlert,
+                      onPressed: () async {
+                        if (await checkConnectivity(context))
+                          deleteAccountAlert();
+                      },
                     ),
                   ),
                 )

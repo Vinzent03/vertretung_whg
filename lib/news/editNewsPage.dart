@@ -1,5 +1,6 @@
 import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:flutter/material.dart';
 
 class EditNewsPage extends StatefulWidget {
@@ -57,6 +58,13 @@ class EditNewsPageState extends State<EditNewsPage> {
                       return Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text("Bitte gib einen Titel an"),
                       ));
+
+                    ProgressDialog pr = ProgressDialog(context,
+                        type: ProgressDialogType.Normal,
+                        isDismissible: false,
+                        showLogs: false);
+                    pr.show();
+
                     var result;
                     if (transmitter.isEditAction) {
                       result = await Functions().editNews(transmitter.index, {
@@ -69,6 +77,9 @@ class EditNewsPageState extends State<EditNewsPage> {
                         "text": textController.text
                       });
                     }
+
+                    pr.hide();
+                    
                     switch (result["code"]) {
                       case "Successful":
                         Navigator.pop(context);
