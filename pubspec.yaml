@@ -11,7 +11,7 @@ description: LUL
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.9+2.1
+version: 1.2.0+2.1
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -31,7 +31,7 @@ dev_dependencies:
   http: ^0.12.0
   shared_preferences: ^0.5.6+3
   intl: ^0.16.1
-  flutter_launcher_icons: ^0.7.4 #bei neuem icon run "flutter pub run flutter_launcher_icons:main"
+  flutter_launcher_icons: ^0.7.4 #for a new Icon run "flutter pub run flutter_launcher_icons:main"
   share: ^0.6.3+6
   package_info: ^0.4.0+16
   firebase_messaging: ^6.0.13
@@ -50,6 +50,7 @@ dev_dependencies:
   fluttertoast: ^4.0.0
   connectivity: ^0.4.8+6
   progress_dialog: ^1.2.4
+  wiredash: ^0.2.0
 
 flutter_icons:
   android: "launcher_icon"

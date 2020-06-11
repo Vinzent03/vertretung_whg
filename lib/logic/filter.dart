@@ -7,8 +7,9 @@ class Filter {
   Filter(this.stufe);
 
   Future<List<dynamic>> checker(String day) async {
-    ///////////////////////////////  Klasse herausfiltern
-    // 0 ist außerhalb der stufe, 1 ist innerhalb, 2 ist außerhalb
+    //filter the specific class:
+
+    // 0 bevor the class was found in the list, 1 in the class, 2 out of the class
     List<String> rawList = await localDatabase.getStringList(day);
     List<String> listWithoutClasses = [];
     int b = 0;
@@ -27,7 +28,8 @@ class Filter {
         }
       }
     }
-    /////////////////////////////////////   Jetzt die bessere Sprache
+
+    //just a better formatting of the given text(not especially needed)
     List<String> betterList = [];
     for (String st in listWithoutClasses) {
       if (st.contains("bei +")) {
@@ -41,6 +43,7 @@ class Filter {
     return mergeList(betterList);
   }
 
+  //check only for the given faecher
   Future<List<dynamic>> checkerFaecher(String day, List<dynamic> faecherList,
       List<dynamic> faecherNotList) async {
     List<dynamic> all = await checker(day);
@@ -93,14 +96,13 @@ List<dynamic> mergeList(var list) {
   return finalList;
 }
 
+//get the name of the subject
 String getSubjectPrefix(String st) {
-  //das fach pro stunde herausfinden
-
   int beginn = st.indexOf("Std. ") + 5;
   int luecke = st.indexOf(" ", beginn);
   int minus = st.indexOf("-", beginn) == -1
       ? 20
-      : st.indexOf("-", beginn); // falls kein bindestrich vorhanden ist
+      : st.indexOf("-", beginn); // if no "-" is provided
   int end = luecke < minus ? luecke : minus;
 
   return st.substring(beginn, end);

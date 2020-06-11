@@ -10,6 +10,7 @@ class FunctionsForVertretung{
     return ((dayOfYear - date.weekday + 10) / 7).floor();
   }
 
+  //replace this for your own situation
   Future<List<dynamic>> getData() async {
     print("Anfang des webscrapen");
     var client = Client();
@@ -19,8 +20,8 @@ class FunctionsForVertretung{
       print("Der web Zugriff ist abgeschlossen");
       dom.Document document = parse(response.body);
       String lastChange = document.querySelectorAll('h2').first.text;
-      var lol = lastChange.substring(18);
-      var lol2 = lol.replaceAll(lol.substring(3,10), "");
+      var lastChangeShort = lastChange.substring(18);
+      var lastChangeFinal = lastChangeShort.replaceAll(lastChangeShort.substring(3,10), "");
 
       List<dom.Element> vertretungToday = document.querySelectorAll('td');
 
@@ -28,7 +29,7 @@ class FunctionsForVertretung{
       vertretungToday.forEach((element) {
         vertretungTodayList.add(element.text);
       });
-      return [lol2, vertretungTodayList];
+      return [lastChangeFinal, vertretungTodayList];
     } catch (e) {
       print(e);
       return [];

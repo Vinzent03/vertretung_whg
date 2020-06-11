@@ -29,6 +29,7 @@
 .pub-cache/
 .pub/
 /build/
+pubspec.lock
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -39,3 +40,5 @@ lib/generated_plugin_registrant.dart
 
 android/key.properties
 android/Vertretung.jks
+lib/logic/wiredashKeys.dart
+android/app/google-services.json

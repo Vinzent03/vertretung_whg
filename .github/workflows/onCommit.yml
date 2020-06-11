@@ -27,6 +27,8 @@ jobs:
     - run: |
         mv hidedData/key.properties android/
         mv hidedData/Vertretung.jks android/
+        mv hidedData/google-services.json android/app/
+        mv hidedData/wiredashKeys.dart lib/logic/
     - run: flutter build apk 
       continue-on-error: true
     - uses: actions/upload-artifact@v2

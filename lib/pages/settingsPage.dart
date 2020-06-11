@@ -4,13 +4,13 @@ import 'package:share/share.dart';
 import 'package:Vertretung/otherWidgets/stufenList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:github/github.dart';
-import 'package:flutter/widgets.dart';
+import "package:wiredash/wiredash.dart";
 import 'package:Vertretung/services/authService.dart';
 import '../logic/localDatabase.dart';
 import '../logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info/package_info.dart';
 
 import 'faecherPage.dart';
 
@@ -300,60 +300,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       onTap: () =>
                           Navigator.pushNamed(context, Names.aboutPage),
                     ),
-                    ListTile(
-                      title: Text("Fehler melden"),
-                      leading: Icon(Icons.error_outline),
-                      onTap: () {
-                        TextEditingController controller =
-                            TextEditingController();
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15))),
-                                content: SingleChildScrollView(
-                                  //damit man beim schreiben nicht nur 3 Zeilen sieht
-                                  child: Column(
-                                    children: <Widget>[
-                                      Text(
-                                        "Hier kannst du deinen Fehler/Verbesserungsvorschlag eingeben. Dein Fehler wird automatisch auf GitHub als Issue erstellt. Er ist also öffentlich einsehbar!",
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      TextField(
-                                        controller: controller,
-                                        maxLines: null,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text("abbrechen"),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                  RaisedButton(
-                                    child: Text("abschicken"),
-                                    onPressed: () async {
-                                      print("abschicken");
-                                      GitHub github = GitHub(
-                                          auth: Authentication.withToken(
-                                              "cc&4e123610&5578af37&1a9b&37bc&760429a&83c16ef"
-                                                  .replaceAll("&", "")));
-                                      github.issues.create(
-                                          RepositorySlug(
-                                              "Vinzent03", "vertretung_whg"),
-                                          IssueRequest(
-                                              title: "Feedback aus der App",
-                                              body: controller.text,
-                                              labels: ["Aus der App"]));
-                                      Navigator.pop(context);
-                                    },
-                                  )
-                                ],
-                              );
-                            });
+                    ListTile( 
+                      leading: Icon(Icons.feedback),
+                      title: Text("Feedback"),
+                      onTap: () async {
+                        Wiredash.of(context).setBuildProperties(
+                            buildVersion:
+                                (await PackageInfo.fromPlatform()).version);
+                        Wiredash.of(context).setUserProperties(
+                            userId: await AuthService().getUserId());
+                        Wiredash.of(context).show();
                       },
                     )
                   ],
