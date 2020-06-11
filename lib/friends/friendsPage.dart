@@ -23,7 +23,7 @@ class _FriendsState extends State<Friends> {
   List<Map<String, String>> friendVertretung = [];
   List<FriendFilterModel> friendFilterList = [];
   List<dynamic> selectedFriends = [];
-  List<dynamic> friendList;
+  List<dynamic> friendList = [];
   @override
   void initState() {
     super.initState();
@@ -228,6 +228,7 @@ class _FriendsState extends State<Friends> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: "add",
         onPressed: () async {
           await showDialog(
             context: context,

@@ -48,17 +48,6 @@ class _AboutPageState extends State<AboutPage> {
                           ),
                           onPressed: () => launch("https://discord.gg/X6gdJZg"),
                         ),
-                        onTap: () {
-                          final SnackBar snack = SnackBar(
-                              behavior: SnackBarBehavior.floating,
-                              content: Text(
-                                  "User ID wurde zur Zwischenablage hinzugefügt"),
-                              backgroundColor: Colors.red);
-                          Scaffold.of(context).showSnackBar(snack);
-                          AuthService().getUserId().then((onValue) {
-                            Clipboard.setData(ClipboardData(text: onValue));
-                          });
-                        },
                       ),
                     ],
                   ),
@@ -84,40 +73,23 @@ class _AboutPageState extends State<AboutPage> {
                 ),
                 Card(
                   elevation: 3,
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        leading: Image.asset(
-                          "assets/images/Vinzent-Icon.png",
-                          scale: 28,
-                        ),
-                        title: Text("Vinzent"),
-                        trailing: IconButton(
-                          icon: Image.asset(
-                            "assets/images/Twitter-Icon.png",
-                          ),
-                          onPressed: () =>
-                              launch("https://twitter.com/Vinadon_"),
-                        ),
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/Vinzent-Icon.png",
+                      scale: 28,
+                    ),
+                    title: Text("Vinzent"),
+                    trailing: IconButton(
+                      icon: Image.asset(
+                        "assets/images/Twitter-Icon.png",
                       ),
-                      ListTile(
-                        leading: Image.asset(
-                          "assets/images/Johannes-Icon.png",
-                          scale: 9,
-                        ),
-                        title: Text("Johannes"),
-                      ),
-                      ListTile(
-                        leading: Image.asset(
-                          "assets/images/Rairosu-Icon.png",
-                          scale: 5,
-                        ),
-                        title: Text("Rairosu"),
-                      ),
-                    ],
+                      onPressed: () =>
+                          launch("https://twitter.com/Vinadon_"),
+                    ),
                   ),
                 ),
                 Card(
+                  elevation: 3,
                   child: ListTile(
                     title: Text("Lizenzen"),
                     leading: Icon(Icons.library_books),

@@ -70,6 +70,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
             itemCount: newsList.length,
             itemBuilder: (context, index) {
               return Card(
+                elevation: 3,
                 child: ListTile(
                   title: Text(newsList[index]["title"]),
                   subtitle: newsList[index]["text"] != ""
@@ -141,6 +142,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
       ),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
+            heroTag: "filter",
               child: Icon(Icons.add),
               onPressed: () {
                 Navigator.push(
@@ -151,7 +153,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                       arguments: NewsTransmitter(false),
                     ),
                   ),
-                ).then((value) => reload());
+                ).then((value) => _refreshController.requestRefresh());
               },
             )
           : null,

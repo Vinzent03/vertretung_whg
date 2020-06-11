@@ -175,6 +175,7 @@ class _AccountPageState extends State<AccountPage> {
             child: Column(
               children: <Widget>[
                 Card(
+                  elevation: 3,
                   child: ListTile(
                       leading: Icon(Icons.person),
                       title: Text("Dein Name:"),
@@ -184,6 +185,7 @@ class _AccountPageState extends State<AccountPage> {
                           padding: EdgeInsets.only(right: 10))),
                 ),
                 Card(
+                  elevation: 3,
                   child: Column(
                     children: <Widget>[
                       ListTile(
@@ -211,6 +213,7 @@ class _AccountPageState extends State<AccountPage> {
 
                 //Beta
                 Card(
+                  elevation: 3,
                   child: ListTile(
                     leading: Icon(Icons.warning),
                     title: Text(beta
@@ -222,6 +225,7 @@ class _AccountPageState extends State<AccountPage> {
                 //Anonym
                 if (isAnon)
                   Card(
+                    elevation: 3,
                     child: ListTile(
                       leading: Icon(Icons.info),
                       title: Text(

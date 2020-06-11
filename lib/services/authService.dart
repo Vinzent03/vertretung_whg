@@ -193,8 +193,13 @@ class AuthService {
   }
 
   Future<bool> getAdminStatus() async {
-    FirebaseUser user = await _auth.currentUser();
-    var claims = await user.getIdToken();
-    return claims.claims["admin"] ?? false;
+    //prevent internet issue
+    try {
+      FirebaseUser user = await _auth.currentUser();
+      var claims = await user.getIdToken();
+      return claims.claims["admin"] ?? false;
+    } catch (e) {
+      return false;
+    }
   }
 }
