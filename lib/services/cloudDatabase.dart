@@ -9,18 +9,18 @@ class CloudDatabase {
   final Firestore ref = Firestore.instance;
 
   void updateUserData(
-      {faecherOn, stufe, faecher, faecherNot, notification}) async {
+      {personalSubstitute, schoolClass, subjects, subjectsNot, notification}) async {
     AuthService _auth = AuthService();
     String token = await PushNotificationsManager().getToken();
     print("data wurde gesettet");
     DocumentReference doc =
         ref.collection("userdata").document(await _auth.getUserId());
     doc.setData({
-      "faecher": faecher,
-      "faecherNot": faecherNot,
-      "faecherOn": faecherOn,
+      "subjects": subjects,
+      "subjectsNot": subjectsNot,
+      "personalSubstitute": personalSubstitute,
       "notification": notification,
-      "stufe": stufe,
+      "schoolClass": schoolClass,
       "token": token,
     }, merge: true);
   }
@@ -31,11 +31,11 @@ class CloudDatabase {
         ref.collection("userdata").document(await _auth.getUserId());
     if (isWhitelist)
       doc.updateData({
-        "faecher": list,
+        "subjects": list,
       });
     else
       doc.updateData({
-        "faecherNot": list,
+        "subjectsNot": list,
       });
   }
 
@@ -83,13 +83,12 @@ class CloudDatabase {
     });
 
     LocalDatabase local = LocalDatabase();
-    local.setString(Names.stufe, snap.data["stufe"]);
-    local.setString(Names.newsAnzahl, "0");
+    local.setString(Names.schoolClass, snap.data["schoolClass"]);
     local.setStringList(
-        Names.faecherList, List<String>.from(snap.data["faecher"]));
+        Names.subjectsList, List<String>.from(snap.data["subjects"]));
     local.setStringList(
-        Names.faecherNotList, List<String>.from(snap.data["faecherNot"]));
-    local.setBool(Names.faecherOn, snap.data["faecherOn"]);
+        Names.subjectsNotList, List<String>.from(snap.data["subjectsNot"]));
+    local.setBool(Names.personalSubstitute, snap.data["personalSubstitute"]);
     local.setBool(Names.notification, snap.data["notification"]);
     await local.setBool(Names.beta, snap.data["beta"]);
   }
@@ -132,20 +131,6 @@ class CloudDatabase {
   }
 
   ///////  News
-  Future<bool> getIsNewAvailable() async {
-    int localNewsAnzahl =
-        int.parse(await LocalDatabase().getString(Names.newsAnzahl));
-
-    DocumentSnapshot doc =
-        await ref.collection("details").document("news").get();
-
-    int cloudNewsAnzahl = doc.data["news"].length;
-    if (localNewsAnzahl < cloudNewsAnzahl) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   Future<List<dynamic>> getNews() async {
     DocumentSnapshot snap =

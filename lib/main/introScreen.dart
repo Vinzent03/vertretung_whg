@@ -126,15 +126,15 @@ class _IntroScreenState extends State<IntroScreen> {
           CloudDatabase db = CloudDatabase();
           db.updateName(name);
           db.updateUserData(
-            faecher: [],
-            faecherNot: [],
-            stufe: await LocalDatabase().getString(Names.stufe),
-            faecherOn: false,
+            subjects: [],
+            subjectsNot: [],
+            schoolClass: await LocalDatabase().getString(Names.schoolClass),
+            personalSubstitute: false,
             notification: true,
           );
           db.becomeBetaUser(false);
           LocalDatabase local = LocalDatabase();
-          local.setBool(Names.faecherOn, false);
+          local.setBool(Names.personalSubstitute, false);
           local.setBool(Names.beta, false);
         },
       ),

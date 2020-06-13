@@ -22,15 +22,14 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   CloudDatabase manager;
   bool dark = false;
-  bool faecherOn = false;
+  bool personalSubstitute = false;
   bool refresh = false;
   bool notification = false;
-  String stufe = "Nicht Geladen";
-  List<String> faecherList = [];
-  List<String> faecherNotList = [];
-  AuthService _authService = AuthService();
+  String schoolClass = "Nicht Geladen";
+  List<String> subjectsList = [];
+  List<String> subjectsNotList = [];
 
-  LocalDatabase getter = LocalDatabase();
+  LocalDatabase localDb = LocalDatabase();
 
   Future<String> createAlertDialog(
       BuildContext context, String situation, String message) {
@@ -59,12 +58,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void updateUserdata() {
-    print(faecherList);
+    print(subjectsList);
     manager.updateUserData(
-      faecherOn: faecherOn,
-      stufe: stufe,
-      faecher: faecherList,
-      faecherNot: faecherNotList,
+      personalSubstitute: personalSubstitute,
+      schoolClass: schoolClass,
+      subjects: subjectsList,
+      subjectsNot: subjectsNotList,
       notification: notification,
     );
   }
@@ -73,34 +72,34 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     manager = CloudDatabase();
     bool pdark;
-    bool pfaecherOn;
+    bool pPersonalSubstitute;
     bool pnotification;
-    String pstufe;
-    List<String> pfaecherList;
-    getter.getBool(Names.dark).then((bool b) {
+    String pSchoolClass;
+    List<String> pSubjectsList;
+    localDb.getBool(Names.darkmode).then((bool b) {
       pdark = b;
     });
-    getter.getBool(Names.faecherOn).then((bool b) {
-      pfaecherOn = b;
+    localDb.getBool(Names.personalSubstitute).then((bool b) {
+      pPersonalSubstitute = b;
     });
-    getter.getBool(Names.notification).then((bool b) {
+    localDb.getBool(Names.notification).then((bool b) {
       pnotification = b;
     });
-    getter.getString(Names.stufe).then((String st) {
-      pstufe = st;
+    localDb.getString(Names.schoolClass).then((String st) {
+      pSchoolClass = st;
     });
 
-    getter.getStringList(Names.faecherList).then((List<String> st) {
-      pfaecherList = st;
+    localDb.getStringList(Names.subjectsList).then((List<String> st) {
+      pSubjectsList = st;
     });
-    getter.getStringList(Names.faecherNot).then((List<String> st) {
+    localDb.getStringList(Names.subjectsNotList).then((List<String> st) {
       setState(() {
-        faecherNotList = st;
+        subjectsNotList = st;
         dark = pdark;
-        faecherOn = pfaecherOn;
+        personalSubstitute = pPersonalSubstitute;
         notification = pnotification;
-        stufe = pstufe;
-        faecherList = pfaecherList;
+        schoolClass = pSchoolClass;
+        subjectsList = pSubjectsList;
       });
     });
     super.initState();
@@ -150,20 +149,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     trailing: FlatButton(
                       child: Text(
-                        stufe,
+                        schoolClass,
                         style: TextStyle(fontSize: 17),
                       ),
                       onPressed: () async {
                         PushNotificationsManager push =
                             PushNotificationsManager();
-                        if (!stufe.contains(" "))
+                        if (!schoolClass.contains(" "))
                           push.unsubTopic(
-                              stufe); //Beim ersten starten ist die stufe "nicht festgelegt" und das geht nicht
+                              schoolClass); //Beim ersten starten ist die schoolClass "nicht festgelegt" und das geht nicht
                         await createAlertDialog(
-                            context, "stufe", "Bitte wähle deine Stufe/Klasse");
-                        getter.getString(Names.stufe).then((onValue) {
+                            context, "schoolClass", "Bitte wähle deine Stufe/Klasse");
+                        localDb.getString(Names.schoolClass).then((onValue) {
                           setState(() {
-                            stufe = onValue;
+                            schoolClass = onValue;
                           });
                           updateUserdata();
                         });
@@ -176,41 +175,41 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: <Widget>[
                     SwitchListTile(
                       title: Text("Personalisierte Vertretung"),
-                      value: faecherOn,
+                      value: personalSubstitute,
                       secondary: Icon(Icons.group),
                       onChanged: (bool b) {
-                        getter.setBool(Names.faecherOn, b);
+                        localDb.setBool(Names.personalSubstitute, b);
                         if (mounted)
                           setState(() {
-                            faecherOn = b;
+                            personalSubstitute = b;
                           });
                         updateUserdata();
                       },
                     ),
                     ListTile(
                       title: Text("Deine Fächer(Whitelist)"),
-                      enabled: faecherOn,
+                      enabled: personalSubstitute,
                       leading: Icon(Icons.edit),
-                      onTap: !faecherOn
+                      onTap: !personalSubstitute
                           ? null
                           : () async {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => FaecherPage([
-                                    Names.faecherList,
-                                    Names.faecherListCustom
+                                    Names.subjectsList,
+                                    Names.subjectsListCustom
                                   ]),
                                 ),
                               );
                               Future.delayed(Duration(seconds: 2), () {
-                                //Man muss noch auf das abspeicher in der faecherList warten, ohne extra warte Zeit, würde man noch die alten daten bekommen, weil der Schreibvorgang noch nicht fertig ist.
-                                getter
-                                    .getStringList(Names.faecherList)
+                                //Wait for the writing from the page
+                                localDb
+                                    .getStringList(Names.subjectsList)
                                     .then((onValue) {
                                   if (mounted)
                                     setState(() {
-                                      faecherList = onValue;
+                                      subjectsList = onValue;
                                     });
                                   print("hallo bin fächer mit $onValue");
                                   updateUserdata();
@@ -220,25 +219,25 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     ListTile(
                         title: Text("Fächer anderer(Blacklist)"),
-                        enabled: faecherOn,
+                        enabled: personalSubstitute,
                         leading: Icon(Icons.edit),
-                        onTap: !faecherOn
+                        onTap: !personalSubstitute
                             ? null
                             : () async {
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => FaecherPage([
-                                      Names.faecherNotList,
-                                      Names.faecherNotListCustom
+                                      Names.subjectsNotList,
+                                      Names.subjectsNotListCustom
                                     ]),
                                   ),
                                 );
-                                getter
-                                    .getStringList(Names.faecherNotList)
+                                localDb
+                                    .getStringList(Names.subjectsNotList)
                                     .then((onValue) {
                                   setState(() {
-                                    faecherNotList = onValue;
+                                    subjectsNotList = onValue;
                                   });
                                   updateUserdata();
                                 });
@@ -274,8 +273,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       secondary: Icon(Icons.notifications_active),
                       value: notification,
                       onChanged: (bool b) {
-                        getter.setBool(Names.notification, b);
-                        getter.getBool(Names.notification).then((bool b) {
+                        localDb.setBool(Names.notification, b);
+                        localDb.getBool(Names.notification).then((bool b) {
                           setState(() {
                             notification = b;
                           });

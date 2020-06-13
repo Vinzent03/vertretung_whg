@@ -12,10 +12,10 @@ class StufenList extends StatefulWidget {
 class _StufenListState extends State<StufenList> {
   LocalDatabase localDatabase = LocalDatabase();
   String value = "";
-  String stufe = "Wähle eine Stufe";
-  String klasse = "Wähle eine Klasse";
+  String levelHint = "Wähle eine Stufe";
+  String classHint = "Wähle eine Klasse";
   bool disabledDropdown = true;
-  List stufen = [
+  List level = [
     {"value": 0, "title": "5"},
     {"value": 1, "title": "6"},
     {"value": 2, "title": "7"},
@@ -23,7 +23,7 @@ class _StufenListState extends State<StufenList> {
     {"value": 4, "title": "9"},
     {"value": 5, "title": "Oberstufe"},
   ];
-  List klassen = [
+  List classes = [
     {
       "1": "5a",
       "2": "5b",
@@ -65,9 +65,9 @@ class _StufenListState extends State<StufenList> {
 
   void populate(int i) {
     menuItems = [];
-    for (String key in klassen[i].keys) {
+    for (String key in classes[i].keys) {
       menuItems.add(DropdownMenuItem<String>(
-        child: Text(klassen[i][key]),
+        child: Text(classes[i][key]),
         value: key,
       ));
     }
@@ -75,7 +75,7 @@ class _StufenListState extends State<StufenList> {
 
   void valueChanged(_value) {
     setState(() {
-      stufe = stufen[int.parse(_value)]["title"];
+      levelHint = level[int.parse(_value)]["title"];
       populate(int.parse(_value));
       disabledDropdown = false;
       value = _value;
@@ -83,20 +83,14 @@ class _StufenListState extends State<StufenList> {
   }
 
   void finish(_value) {
-    String finalStufe = klassen[int.parse(value)][_value];
+    String finalClass = classes[int.parse(value)][_value];
     setState(() {
-      klasse = finalStufe;
+      classHint = finalClass;
     });
-    PushNotificationsManager().unsubTopic(finalStufe);
-    PushNotificationsManager().subTopic(finalStufe);
-    FirebaseAnalytics().setUserProperty(name: "stufe", value: finalStufe);
-    localDatabase.setString(Names.stufe, finalStufe);
-/*    Manager().updateUserData(
-        faecherOn: getter.getBool(Names.faecherOn),
-        stufe: finalStufe,
-        faecher: ["Nicht festgelegt"],
-        faecherNot: ["Nicht festgelegt"],
-        notification: true);*/
+    PushNotificationsManager().unsubTopic(finalClass);
+    PushNotificationsManager().subTopic(finalClass);
+    FirebaseAnalytics().setUserProperty(name: "schoolClass", value: finalClass);
+    localDatabase.setString(Names.schoolClass, finalClass);
   }
 
   @override
@@ -107,12 +101,12 @@ class _StufenListState extends State<StufenList> {
       children: <Widget>[
         DropdownButton<String>(
           hint: Text(
-            stufe,
+            levelHint,
             style: TextStyle(
               fontSize: 20,
             ),
           ),
-          items: stufen.map((item) {
+          items: level.map((item) {
             return DropdownMenuItem<String>(
               value: item["value"].toString(),
               child: Text(
@@ -124,7 +118,7 @@ class _StufenListState extends State<StufenList> {
         ),
         DropdownButton<String>(
           hint: Text(
-            klasse,
+            classHint,
             style: TextStyle(fontSize: 18),
           ),
           disabledHint: Text(

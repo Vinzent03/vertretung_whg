@@ -24,7 +24,7 @@ import 'pages/settingsPage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  LocalDatabase().getBool(Names.dark).then((isDark) {
+  LocalDatabase().getBool(Names.darkmode).then((isDark) {
     runApp(ChangeNotifierProvider<ProviderData>(
       create: (_) => ProviderData(isDark ? darkTheme : lightTheme, isDark),
       child: MyAppSt(),

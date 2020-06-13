@@ -21,7 +21,9 @@ class _VertretungsPageState extends State<VertretungsPage>
     with TickerProviderStateMixin {
   CloudDatabase cd;
   LocalDatabase getter = LocalDatabase();
-  bool faecherOn = false; //if personalisierte Vertretung is enabled
+
+  ///if the user selected personal substitute(use also subjects in filter)
+  bool personalSubstitute = false;
   bool finishedLoading = false;
   bool loadingSuccess = true;
 
@@ -29,7 +31,7 @@ class _VertretungsPageState extends State<VertretungsPage>
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  //initialize these list, because to load faecher from localDatabase takes time, and the UI have to be build
+  //initialize these list, because to load subjects from localDatabase takes time, and the UI have to be build
   List<dynamic> myListToday = [];
   List<dynamic> listToday = [];
   List<dynamic> myListTomorrow = [];
@@ -68,10 +70,6 @@ class _VertretungsPageState extends State<VertretungsPage>
     "Q2",
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
-  List<Widget> myTabViews;
-  List<Widget> myTabViewsFaecherOn;
-  List<Widget> myTabs;
-  List<Widget> myTabsFaecherOn;
 
   Future<void> reload({bool fromPullToRefresh = false}) async {
     SnackBar snack = SnackBar(
@@ -86,11 +84,11 @@ class _VertretungsPageState extends State<VertretungsPage>
           }),
     );
     //reload the settings
-    getter.setStringList(Names.lessonsToday, rawListToday);
-    getter.setStringList(Names.lessonsTomorrow, rawListTomorrow);
-    getter.getBool(Names.faecherOn).then((onValue) {
+    getter.setStringList(Names.substituteToday, rawListToday);
+    getter.setStringList(Names.substituteTomorrow, rawListTomorrow);
+    getter.getBool(Names.personalSubstitute).then((onValue) {
       setState(() {
-        faecherOn = onValue;
+        personalSubstitute = onValue;
       });
     });
 
@@ -112,24 +110,24 @@ class _VertretungsPageState extends State<VertretungsPage>
       });
     }
 
-    String stufe = await LocalDatabase().getString(Names.stufe);
-    Filter filter = Filter(stufe);
+    String schoolClass = await LocalDatabase().getString(Names.schoolClass);
+    Filter filter = Filter(schoolClass);
     List<dynamic> allMyListToday;
     List<dynamic> allListToday;
     List<dynamic> allMyListTomorrow;
     List<dynamic> allListTomorrow;
 
-    List<String> faecherList =
-        await LocalDatabase().getStringList(Names.faecherList);
-    List<String> faecherNotList =
-        await LocalDatabase().getStringList(Names.faecherNotList);
+    List<String> subjectsList =
+        await LocalDatabase().getStringList(Names.subjectsList);
+    List<String> subjectsNotList =
+        await LocalDatabase().getStringList(Names.subjectsNotList);
 
-    allMyListToday = await filter.checkerFaecher(
-        Names.lessonsToday, faecherList, faecherNotList);
-    allListToday = await filter.checker(Names.lessonsToday);
-    allMyListTomorrow = await filter.checkerFaecher(
-        Names.lessonsTomorrow, faecherList, faecherNotList);
-    allListTomorrow = await filter.checker(Names.lessonsTomorrow);
+    allMyListToday = await filter.checkForSubjects(
+        Names.substituteToday, subjectsList, subjectsNotList);
+    allListToday = await filter.checkForSchoolClass(Names.substituteToday);
+    allMyListTomorrow = await filter.checkForSubjects(
+        Names.substituteTomorrow, subjectsList, subjectsNotList);
+    allListTomorrow = await filter.checkForSchoolClass(Names.substituteTomorrow);
 
     setState(() {
       if (mounted) {
@@ -141,36 +139,8 @@ class _VertretungsPageState extends State<VertretungsPage>
     });
   }
 
-  /*void linkGenerate() async {
-    DynamicLinkParameters parameters = DynamicLinkParameters(
-      uriPrefix: "https://vertretung.page.link/friendrequest",
-      link: Uri.parse("https://vertretung.page.link/"),
-      androidParameters: AndroidParameters(
-        packageName: 'com.whg.vertretung',
-      ),
-    );
-    ShortDynamicLink link = await parameters.buildShortLink();
-    print(link.shortUrl);
-  }*/
-
   @override
   void initState() {
-    /*linkGenerate();
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-          final Uri deepLink = dynamicLink?.link;
-
-          if (deepLink != null) {
-            print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhll");
-            print(deepLink.data.toString());
-          }
-        },
-        onError: (OnLinkErrorException e) async {
-          print('onLinkError');
-          print(e.message);
-        }
-    );*/
-
     reload();
     super.initState();
   }
@@ -178,7 +148,6 @@ class _VertretungsPageState extends State<VertretungsPage>
   @override
   Widget build(BuildContext context) {
     if (Provider.of<ProviderData>(context).getVertretungReload()) {
-      print("will reloaden");
       reload().then((value) => Provider.of<ProviderData>(context, listen: false)
           .setVertretungReload(false));
     }
@@ -187,8 +156,8 @@ class _VertretungsPageState extends State<VertretungsPage>
     return MaterialApp(
       theme: theme.getTheme(),
       home: DefaultTabController(
-        length: faecherOn ? 4 : 2,
-        key: Key(faecherOn ? "On" : "Off"),
+        length: personalSubstitute ? 4 : 2,
+        key: Key(personalSubstitute ? "On" : "Off"),
         //key is needed because otherwise the tab length would not be updated
         child: Scaffold(
           appBar: AppBar(
@@ -208,7 +177,7 @@ class _VertretungsPageState extends State<VertretungsPage>
             ],
             bottom: TabBar(
               tabs: [
-                if (faecherOn)
+                if (personalSubstitute)
                   myTab.MyTab(
                     // Extra tab class, because the default tab height is too high, so I cloned the class
                     icon: Icon(
@@ -217,7 +186,7 @@ class _VertretungsPageState extends State<VertretungsPage>
                     iconMargin: EdgeInsets.all(0),
                     text: "Heute",
                   ),
-                if (faecherOn)
+                if (personalSubstitute)
                   myTab.MyTab(
                     icon: Icon(
                       Icons.person,
@@ -245,7 +214,7 @@ class _VertretungsPageState extends State<VertretungsPage>
           body: finishedLoading
               ? TabBarView(
                   children: [
-                    if (faecherOn)
+                    if (personalSubstitute)
                       SmartRefresher(
                         controller: _refreshController,
                         onRefresh: () => reload(fromPullToRefresh: true),
@@ -253,7 +222,7 @@ class _VertretungsPageState extends State<VertretungsPage>
                           list: myListToday,
                         ),
                       ),
-                    if (faecherOn)
+                    if (personalSubstitute)
                       SmartRefresher(
                         controller: _refreshController,
                         onRefresh: () => reload(fromPullToRefresh: true),

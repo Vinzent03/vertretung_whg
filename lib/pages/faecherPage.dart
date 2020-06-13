@@ -27,8 +27,8 @@ class FaecherPage extends StatefulWidget {
 class _FaecherPageState extends State<FaecherPage> {
 
   List<String> names;
-  List<Item> faecher;
-  List<Item> faecherCustom;
+  List<Item> subjects;
+  List<Item> subjectsListCustom;
   List<String> selectedFaecher = [];
   TextEditingController myController;
   String title;
@@ -45,12 +45,12 @@ class _FaecherPageState extends State<FaecherPage> {
   void initState() {
     //names = ModalRoute.of(context).settings.arguments;
     names = widget.names;
-  if (names[0] == Names.faecherList)
+  if (names[0] == Names.subjectsList)
     title = "Whitelist";
   else
     title = "Blacklist";
     myController = TextEditingController(text: "Gib ein Fach ein");
-    faecher = [
+    subjects = [
       Item(
         title: "Ef Vorlagen",
         children: [
@@ -149,15 +149,15 @@ class _FaecherPageState extends State<FaecherPage> {
         ],
       )
     ];
-    faecherCustom = [
+    subjectsListCustom = [
       Item() //für das hinzufüge listtile
     ];
     // wiederherstellen der custom fächer(ohne checken der kästchen, das passiert ein weiter unten)
-    faecher.sort((a, b) => a.title.compareTo(b.title));
+    subjects.sort((a, b) => a.title.compareTo(b.title));
     LocalDatabase().getStringList(names[1]).then((onValue) {
       for (String fach in onValue) {
-        faecherCustom.insert(
-            faecherCustom.length - 1,
+        subjectsListCustom.insert(
+            subjectsListCustom.length - 1,
             Item(
               title: fach,
               isCustom: true,
@@ -169,7 +169,7 @@ class _FaecherPageState extends State<FaecherPage> {
       setState(() {
         selectedFaecher = onValue;
         for (String fach in onValue) {
-          for (Item teil in faecher) {
+          for (Item teil in subjects) {
             for (Item item in teil.children) {
               for (Item kurs in item.children) {
                 if (kurs.title == fach) {
@@ -178,7 +178,7 @@ class _FaecherPageState extends State<FaecherPage> {
               }
             }
           }
-          for (Item item in faecherCustom) {
+          for (Item item in subjectsListCustom) {
             if (item.title != null) {
               if (item.title == fach) {
                 item.isChecked = true;
@@ -222,8 +222,8 @@ class _FaecherPageState extends State<FaecherPage> {
                       isCustom: true,
                       isChecked: true);
                   setState(() {
-                    faecherCustom.insert(
-                        faecherCustom.indexOf(faecherCustom.last), newItem);
+                    subjectsListCustom.insert(
+                        subjectsListCustom.indexOf(subjectsListCustom.last), newItem);
                   });
                   checkItem(newItem, true);
                   myController.clear();
@@ -241,7 +241,7 @@ class _FaecherPageState extends State<FaecherPage> {
                     onPressed: () {
                       setState(() {
                         selectedFaecher.remove(root.title);
-                        faecherCustom
+                        subjectsListCustom
                             .removeWhere((item) => item.title == root.title);
                       });
                     },
@@ -287,8 +287,8 @@ class _FaecherPageState extends State<FaecherPage> {
               ListView.builder(
                 physics: ScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: faecher.length,
-                itemBuilder: (context, index) => buildTiles(faecher[index]),
+                itemCount: subjects.length,
+                itemBuilder: (context, index) => buildTiles(subjects[index]),
               ),
               ExpansionTile(
                 title: Text(
@@ -296,7 +296,7 @@ class _FaecherPageState extends State<FaecherPage> {
                   style:
                       TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
                 ),
-                children: faecherCustom.map<Widget>(buildTiles).toList(),
+                children: subjectsListCustom.map<Widget>(buildTiles).toList(),
               )
             ],
           ),
@@ -309,11 +309,11 @@ class _FaecherPageState extends State<FaecherPage> {
   void dispose() {
     List<String> _list = [];
     LocalDatabase().setStringList(names[0], selectedFaecher);
-    for (Item item in faecherCustom) {
+    for (Item item in subjectsListCustom) {
       if (item.title != null) _list.add(item.title);
     }
     LocalDatabase().setStringList(names[1], _list);
-    if (names[0] == Names.faecherList)
+    if (names[0] == Names.subjectsList)
       CloudDatabase().updateFaecher(list: selectedFaecher, isWhitelist: true);
     else
       CloudDatabase().updateFaecher(list: selectedFaecher, isWhitelist: false);

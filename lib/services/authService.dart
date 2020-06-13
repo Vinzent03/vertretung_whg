@@ -32,14 +32,13 @@ class AuthService {
     var user = await _auth.currentUser();
     try {
       LocalDatabase local = LocalDatabase();
-      local.setString(Names.stufe, "Nicht festgelegt");
-      local.setString(Names.newsAnzahl, "0");
-      local.setStringList(Names.faecherList, []);
-      local.setStringList(Names.faecherNotList, []);
-      local.setStringList(Names.faecherListCustom, []);
-      local.setStringList(Names.faecherNotListCustom, []);
-      local.setBool(Names.faecherOn, false);
-      local.setBool(Names.dark, true);
+      local.setString(Names.schoolClass, "Nicht festgelegt");
+      local.setStringList(Names.subjectsList, []);
+      local.setStringList(Names.subjectsNotList, []);
+      local.setStringList(Names.subjectsListCustom, []);
+      local.setStringList(Names.subjectsNotListCustom, []);
+      local.setBool(Names.personalSubstitute, false);
+      local.setBool(Names.darkmode, true);
       local.setBool(Names.notification, true);
       local.setBool(Names.beta, false);
       if (user.isAnonymous || deleteAccount) {

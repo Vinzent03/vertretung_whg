@@ -18,14 +18,14 @@ class ProviderData with ChangeNotifier {
 
   setDarkTheme() {
     isDark = true;
-    LocalDatabase().setBool(Names.dark, true);
+    LocalDatabase().setBool(Names.darkmode, true);
     _themeData = darkTheme;
     notifyListeners();
   }
 
   setLightTheme() {
     isDark = false;
-    LocalDatabase().setBool(Names.dark, false);
+    LocalDatabase().setBool(Names.darkmode, false);
     _themeData = lightTheme;
     notifyListeners();
   }
