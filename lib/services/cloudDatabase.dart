@@ -204,9 +204,9 @@ class CloudDatabase {
         "frienduid": doc.documentID,
       });
     }
-    // list.sort((m1, m2) {
-    //   return m1["name"].toLowerCase().compareTo(m2["name"].toLowerCase());
-    // });
+    list.sort((m1, m2) {
+      return m1["name"].toLowerCase().compareTo(m2["name"].toLowerCase());
+    });
     return list;
   }
 }

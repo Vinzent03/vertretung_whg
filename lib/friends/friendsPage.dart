@@ -24,10 +24,7 @@ class _FriendsState extends State<Friends> {
   List<FriendFilterModel> friendFilterList = [];
   List<dynamic> selectedFriends = [];
   List<dynamic> friendList = [];
-  @override
-  void initState() {
-    super.initState();
-  }
+
   Future<void> reload() async {
     friendList = await CloudDatabase().getFriendsList();
     if (friendFilterList.isEmpty ||

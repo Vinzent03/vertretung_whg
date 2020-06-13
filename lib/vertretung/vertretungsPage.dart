@@ -108,6 +108,7 @@ class _VertretungsPageState extends State<VertretungsPage>
       setState(() {
         change = dataResult[0];
         //rawListToday = dataResult[1];
+        //rawListTomorrow = dataResult[2];
       });
     }
 

@@ -2,6 +2,7 @@ import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
@@ -80,6 +81,13 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                       ? PopupMenuButton(
                           icon: Icon(Icons.more_vert),
                           onSelected: (selected) async {
+                            if ((await Connectivity().checkConnectivity()) ==
+                                ConnectivityResult.none) {
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text("Keine Verbindung"),
+                              ));
+                              return;
+                            }
                             var result;
                             if (selected == actions.delete) {
                               ProgressDialog pr = ProgressDialog(context,
@@ -90,7 +98,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
 
                               result = await Functions().deleteNews(index);
                               pr.hide();
-                              
+
                               switch (result["code"]) {
                                 case "Successful":
                                   reload();
@@ -142,7 +150,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
       ),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
-            heroTag: "filter",
+              heroTag: "filter",
               child: Icon(Icons.add),
               onPressed: () {
                 Navigator.push(
