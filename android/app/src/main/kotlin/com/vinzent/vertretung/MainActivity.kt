@@ -1,4 +1,4 @@
-package com.whg.vertretung.vertretung
+package com.vinzent.vertretung
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
