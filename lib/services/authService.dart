@@ -108,13 +108,13 @@ class AuthService {
           return "Falsches Passwort";
           break;
         case "ERROR_USER_NOT_FOUND":
-          return "Kein Konto mit der Email gefundend";
+          return "Kein Konto mit der Email gefunden";
           break;
         case "ERROR_USER_DISABLED":
           return "Dieses Konto wurde deaktiviert";
           break;
         case "ERROR_TOO_MANY_REQUESTS":
-          return "ZU viele Anfragen, versuche es später erneut";
+          return "Zu viele Anfragen, versuche es später erneut";
           break;
         case "ERROR_OPERATION_NOT_ALLOWED":
           return "Diese Methode ist nicht aktiviert";
