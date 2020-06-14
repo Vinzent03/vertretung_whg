@@ -1,7 +1,7 @@
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:share/share.dart';
-import 'package:Vertretung/otherWidgets/stufenList.dart';
+import 'package:Vertretung/otherWidgets/SchoolClassSelection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import "package:wiredash/wiredash.dart";
@@ -118,7 +118,7 @@ class _SettingsPageState extends State<SettingsPage> {
               icon: Icon(Icons.share),
               onPressed: () async {
                 String link = await CloudDatabase().getUpdateLink();
-                //Share.share("Hier ist der Link für die Vertretungsapp: $link");
+                //Share.share("Hier ist der Link für die Vertretungsapp: $link");//TODO uncomment this line and remove the following
                 Share.share("https://vertretung.page.link/group");
               },
             )

@@ -1,6 +1,6 @@
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:flutter/material.dart';
-import '../vertretung/vertretungTile.dart';
+import '../substitute//substituteTile.dart';
 import "package:provider/provider.dart";
 
 class GeneralBlueprint extends StatefulWidget {

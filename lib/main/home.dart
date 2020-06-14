@@ -2,7 +2,7 @@ import 'package:Vertretung/friends/friendsPage.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:provider/provider.dart';
 import 'package:Vertretung/news/newsPage.dart';
-import 'package:Vertretung/vertretung/vertretungsPage.dart';
+import 'package:Vertretung/substitute//substitutePage.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:url_launcher/url_launcher.dart';
