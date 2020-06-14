@@ -23,14 +23,19 @@ jobs:
         channel: "stable"
     - run: flutter pub get
     - run: |
-        git clone https://.:${{ secrets.TOKEN}}@github.com/Vinzent03/hidedData
+        git clone https://.:${{ secrets.TOKEN}}@github.com/Vinzent03/hiddenData
     - run: |
-        mv hidedData/key.properties android/
-        mv hidedData/Vertretung.jks android/
-        mv hidedData/google-services.json android/app/
-        mv hidedData/wiredashKeys.dart lib/logic/
+        mv hiddenData/key.properties android/
+        mv hiddenData/Vertretung.jks android/
+        mv hiddenData/google-services.json android/app/
+        mv hiddenData/wiredashKeys.dart lib/logic/
     - run: flutter build apk 
-      continue-on-error: true
+      continue-on-error: true #needed because the output filename is not apk-release as the flutter expects
+    - name: File Existence #check if the build was successfull
+      uses: andstor/file-existence-action@v1.0.1
+      with:
+        files: build/app/outputs/apk/
+        allow_failure: true
     - uses: actions/upload-artifact@v2
       with:
         path: "build/app/outputs/apk/release/*.apk"
