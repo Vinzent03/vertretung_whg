@@ -38,7 +38,6 @@ dependencies:
   intro_slider: ^2.2.9
   provider: ^4.0.5
   pull_to_refresh: ^1.5.7
-  github: ^6.2.2
   fluttertoast: ^4.0.0
   connectivity: ^0.4.8+6
   progress_dialog: ^1.2.4
@@ -71,15 +70,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/icons/ic_launcher_round.png
-    - assets/icons/icon.png
-    - assets/images/GitHub.png
-    - assets/images/Discord-Logo-Color.png
-    - assets/images/Vinzent-Icon.png
-    - assets/images/Twitter-Icon.png
-    - assets/images/Johannes-Icon.png
-    - assets/images/Octocat.png
-    - assets/images/Rairosu-Icon.png
+    - assets/icons/
+    - assets/images/
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
