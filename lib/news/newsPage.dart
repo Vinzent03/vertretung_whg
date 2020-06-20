@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:Vertretung/news/detailsPage.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -8,6 +11,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'editNewsPage.dart';
+import 'newsLogic.dart';
 
 class NewsPage extends StatefulWidget {
   @override
@@ -71,61 +75,45 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
             itemCount: newsList.length,
             itemBuilder: (context, index) {
               return Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15))),
                 elevation: 3,
                 child: ListTile(
                   title: Text(newsList[index]["title"]),
+                  //show only the first 100 chars as subtitle, to see more click on the ListTile
                   subtitle: newsList[index]["text"] != ""
-                      ? Text(newsList[index]["text"])
+                      ? Text(newsList[index]["text"].toString().substring(0,
+                          min(newsList[index]["text"].toString().length, 100)))
                       : null,
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailsPage(
+                          text: newsList[index]["text"],
+                          title: newsList[index]["title"],
+                          index: index,
+                        ),
+                      ),
+                    );
+                    //check if the page have to be reloaded(needed when deleted or edited)
+                    if (result != null) _refreshController.requestRefresh();
+                  },
                   trailing: isAdmin
                       ? PopupMenuButton(
                           icon: Icon(Icons.more_vert),
                           onSelected: (selected) async {
-                            if ((await Connectivity().checkConnectivity()) ==
-                                ConnectivityResult.none) {
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text("Keine Verbindung"),
-                              ));
-                              return;
-                            }
-                            var result;
                             if (selected == actions.delete) {
-                              ProgressDialog pr = ProgressDialog(context,
-                                  type: ProgressDialogType.Normal,
-                                  isDismissible: false,
-                                  showLogs: false);
-                              pr.show();
-
-                              result = await Functions().deleteNews(index);
-                              pr.hide();
-
-                              switch (result["code"]) {
-                                case "Successful":
-                                  reload();
-                                  break;
-                                case "ERROR_NO_ADMIN":
-                                  Scaffold.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          "Du bist kein Admin, bitte melde dich ab und dann wieder an. Wenn du denktst du solltest Admin sein, melde dich bitte bei mir."),
-                                      duration: Duration(minutes: 1),
-                                    ),
-                                  );
-                                  break;
-                              }
+                              if (await NewsLogic().deleteNews(context, index))
+                                _refreshController.requestRefresh();
                             } else {
-                              await Navigator.push(
+                              await NewsLogic().openEditNewsPage(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditNewsPage(),
-                                  settings: RouteSettings(
-                                    arguments: NewsTransmitter(true,
-                                        text: newsList[index]["text"],
-                                        title: newsList[index]["title"]),
-                                  ),
-                                ),
+                                newsList[index]["text"],
+                                newsList[index]["title"],
+                                index,
                               );
-                              reload();
+                              _refreshController.requestRefresh();
                             }
                           },
                           itemBuilder: (BuildContext context) {
@@ -167,12 +155,4 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
           : null,
     );
   }
-}
-
-class NewsTransmitter {
-  final String text;
-  final String title;
-  final bool isEditAction;
-  final int index;
-  NewsTransmitter(this.isEditAction, {this.text, this.title, this.index});
 }

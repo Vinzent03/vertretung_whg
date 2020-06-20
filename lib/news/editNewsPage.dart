@@ -1,4 +1,4 @@
-import 'package:Vertretung/news/newsPage.dart';
+import 'package:Vertretung/news/newsLogic.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -12,17 +12,22 @@ class EditNewsPage extends StatefulWidget {
 class EditNewsPageState extends State<EditNewsPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController textController = TextEditingController();
+
   NewsTransmitter transmitter;
   @override
   Widget build(BuildContext context) {
     transmitter = ModalRoute.of(context).settings.arguments;
+
+    //decide between edit a news or add a new news
     if (transmitter.isEditAction) {
       titleController.text = transmitter.title;
       textController.text = transmitter.text;
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Füge eine Nachricht hinzu"),
+        title: Text(transmitter.isEditAction
+            ? "Bearbeite die Nachricht"
+            : "Füge eine Nachricht hinzu"),
       ),
       body: Builder(builder: (context) {
         return SingleChildScrollView(
@@ -34,6 +39,8 @@ class EditNewsPageState extends State<EditNewsPage> {
                 padding: EdgeInsets.all(10),
               ),
               Card(
+                margin: EdgeInsets.all(10),
+                elevation: 3,
                 child: TextField(
                   controller: titleController,
                 ),
@@ -43,6 +50,8 @@ class EditNewsPageState extends State<EditNewsPage> {
                 padding: EdgeInsets.all(10),
               ),
               Card(
+                margin: EdgeInsets.all(10),
+                elevation: 3,
                 child: Container(
                   height: 300,
                   child: TextField(
@@ -100,7 +109,7 @@ class EditNewsPageState extends State<EditNewsPage> {
                         break;
                     }
                   },
-                  child: Text("Abschicken"),
+                  child: Text("Bestätigen"),
                 ),
               ),
             ],
