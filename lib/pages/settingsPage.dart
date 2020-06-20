@@ -118,8 +118,7 @@ class _SettingsPageState extends State<SettingsPage> {
               icon: Icon(Icons.share),
               onPressed: () async {
                 String link = await CloudDatabase().getUpdateLink();
-                //Share.share("Hier ist der Link für die Vertretungsapp: $link");//TODO uncomment this line and remove the following
-                Share.share("https://vertretung.page.link/group");
+                Share.share("Hier ist der Link für die Vertretungsapp: $link");
               },
             )
           ],
