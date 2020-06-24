@@ -44,7 +44,7 @@ class _FriendRequestsState extends State<FriendRequests> {
                       FlatButton(
                           child: Text("ablehnen"),
                           onPressed: () {
-                            Functions().callDeclineFriendRequest(
+                            Functions().declineFriendRequest(
                                 list[index]["frienduid"]);
                             setState(() {
                               list.remove(list[index]);
@@ -53,7 +53,7 @@ class _FriendRequestsState extends State<FriendRequests> {
                       RaisedButton(
                         child: Text("annhemen"),
                         onPressed: () {
-                          Functions().callAcceptFriendRequest(
+                          Functions().acceptFriendRequest(
                               list[index]["frienduid"]);
                           setState(() {
                             list.remove(list[index]);

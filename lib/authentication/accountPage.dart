@@ -84,8 +84,8 @@ class _AccountPageState extends State<AccountPage> {
                       isDismissible: false,
                       showLogs: false);
                   pr.show();
-
-                  await Functions().callDeleteProfile();
+                  print("Konto gelöscht");
+                  await AuthService().signOut(deleteAccount: true);
                   Navigator.pushNamedAndRemoveUntil(
                       context, Names.wrapper, (r) => false);
                 },

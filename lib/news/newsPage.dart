@@ -98,20 +98,39 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
 
                               result = await Functions().deleteNews(index);
                               pr.hide();
+                              Scaffold.of(context).hideCurrentSnackBar();
 
                               switch (result["code"]) {
-                                case "Successful":
-                                  reload();
+                                case "SUCCESS":
+                                  Navigator.pop(context);
                                   break;
-                                case "ERROR_NO_ADMIN":
+                                case "ERROR_NOT_ADMIN":
                                   Scaffold.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                          "Du bist kein Admin, bitte melde dich ab und dann wieder an. Wenn du denktst du solltest Admin sein, melde dich bitte bei mir."),
+                                      content: Text(result["message"]),
                                       duration: Duration(minutes: 1),
                                     ),
                                   );
                                   break;
+                                case "DEADLINE_EXCEEDED":
+                                  Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "Das hat zu lange gedauert. Versuche es später erneut."),
+                                      duration: Duration(seconds: 5),
+                                    ),
+                                  );
+                                  break;
+                                default:
+                                  Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "Ein unerwarteter Fehler ist aufgetreten: \"" +
+                                              result["code"] +
+                                              "\""),
+                                      duration: Duration(minutes: 1),
+                                    ),
+                                  );
                               }
                             } else {
                               await Navigator.push(

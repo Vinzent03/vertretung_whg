@@ -123,36 +123,55 @@ class _FriendsState extends State<Friends> {
                         ));
                       }
                       var result = await Functions()
-                          .callAddFriendRequest(controller.text);
+                          .addFriendRequest(controller.text);
                       switch (result["code"]) {
-                        case "Successful":
+                        case "SUCCESS":
                           Navigator.pop(context);
                           Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
                             content: Text("Freundesanfrage geschickt"),
                             behavior: SnackBarBehavior.floating,
                           ));
                           break;
-                        case "ERROR_ALREADY_REQUESTED":
+                        case "EXCEPTION_ALREADY_REQUESTED":
                           setState(() {
                             message = result["message"];
                             error = true;
                             _validateInputs();
                           });
                           break;
-                        case "ERROR_ALREADY_FRIEND":
+                        case "EXCEPTION_ALREADY_FRIEND":
                           setState(() {
                             message = result["message"];
                             error = true;
                             _validateInputs();
                           });
                           break;
-                        case "ERROR_CANT_FIND_FRIEND":
+                        case "EXCEPTION_CANT_FIND_FRIEND":
                           setState(() {
                             message = result["message"];
                             error = true;
                             _validateInputs();
                           });
                           break;
+                        case "DEADLINE_EXCEEDED":
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "Das hat zu lange gedauert. Versuche es später erneut."),
+                              duration: Duration(seconds: 5),
+                            ),
+                          );
+                          break;
+                        default:
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "Ein unerwarteter Fehler ist aufgetreten: \"" +
+                                      result["code"] +
+                                      "\""),
+                              duration: Duration(minutes: 1),
+                            ),
+                          );
                       }
                     }
                   }),
@@ -281,7 +300,8 @@ class _FriendsState extends State<Friends> {
           _refreshController.requestRefresh();
         },
         child: Icon(Icons.filter_list),
-        backgroundColor: selectedFriends.length != friendList.length ? Colors.red:null,
+        backgroundColor:
+            selectedFriends.length != friendList.length ? Colors.red : null,
       ),
     );
   }
