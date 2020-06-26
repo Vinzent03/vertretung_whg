@@ -43,7 +43,10 @@ class MyAppSt extends StatelessWidget {
       //used for the feedback function
       child: Wiredash(
         options: WiredashOptionsData(showDebugFloatingEntryPoint: false),
-        theme: WiredashThemeData(brightness: Provider.of<ProviderData>(context).getIsDark()? Brightness.dark:Brightness.light),
+        theme: WiredashThemeData(
+            brightness: Provider.of<ProviderData>(context).getIsDark()
+                ? Brightness.dark
+                : Brightness.light),
         navigatorKey: _navigatorKey,
 
         //replace with your own keys from wiredash.io or remoce the Wiredash Widget

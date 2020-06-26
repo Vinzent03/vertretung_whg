@@ -1,12 +1,11 @@
 import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FriendLogic {
   final Firestore ref = Firestore.instance;
 
-  ///get Vertretung for the given user
+  ///get Substitute for the given user
   Future<List> individual(String frienduid) async {
     DocumentSnapshot snap =
         await ref.collection("userdata").document(frienduid).get();
@@ -24,42 +23,42 @@ class FriendLogic {
   }
 
   Future<dynamic> getFriendVertretung(List<dynamic> users) async {
-    List<Map<String, String>> friendsVertretung = [];
+    List<Map<String, String>> friendsSubstitute = [];
 
     for (var user in users) {
       List<dynamic> list = await individual(user["frienduid"]);
-      for (var vertretung in list) {
-        if (friendsVertretung.isNotEmpty) {
+      for (var substitute in list) {
+        if (friendsSubstitute.isNotEmpty) {
           List<String> temporarilyfriendVertretung = [];
-          for (var st in friendsVertretung) {
+          for (var st in friendsSubstitute) {
             temporarilyfriendVertretung.add(st["ver"]);
           }
 
-          if (temporarilyfriendVertretung.contains(vertretung["ver"])) {
-            //add the name to the list who have this Vertretung
-            for (var oldVer in friendsVertretung) {
-              if (oldVer["ver"] == vertretung["ver"]) {
+          if (temporarilyfriendVertretung.contains(substitute["ver"])) {
+            //add the name to the list who have this Substitute
+            for (var oldVer in friendsSubstitute) {
+              if (oldVer["ver"] == substitute["ver"]) {
                 oldVer["name"] = oldVer["name"] + ", " + user["name"];
               }
             }
           } else {
-            //nobody else has this Vertretung
-            friendsVertretung.add({
+            //nobody else has this Substitute
+            friendsSubstitute.add({
               "name": user["name"],
-              "ver": vertretung["ver"],
-              "subjectPrefix": vertretung["subjectPrefix"]
+              "ver": substitute["ver"],
+              "subjectPrefix": substitute["subjectPrefix"]
             });
           }
         } else {
-          //first Vertretung in the List
-          friendsVertretung.add({
+          //first Substitute in the List
+          friendsSubstitute.add({
             "name": user["name"],
-            "ver": vertretung["ver"],
-            "subjectPrefix": vertretung["subjectPrefix"]
+            "ver": substitute["ver"],
+            "subjectPrefix": substitute["subjectPrefix"]
           });
         }
       }
     }
-    return friendsVertretung;
+    return friendsSubstitute;
   }
 }
