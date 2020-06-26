@@ -9,7 +9,11 @@ class CloudDatabase {
   final Firestore ref = Firestore.instance;
 
   void updateUserData(
-      {personalSubstitute, schoolClass, subjects, subjectsNot, notification}) async {
+      {personalSubstitute,
+      schoolClass,
+      subjects,
+      subjectsNot,
+      notification}) async {
     AuthService _auth = AuthService();
     String token = await PushNotificationsManager().getToken();
     print("data wurde gesettet");
@@ -143,55 +147,56 @@ class CloudDatabase {
     List<dynamic> list = [];
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
-    QuerySnapshot snap = await ref
-        .collection("userFriends")
-        .document(uid)
-        .collection("requests")
-        .getDocuments();
-    for (DocumentSnapshot doc in snap.documents) {
-      DocumentSnapshot friendDoc =
-          await ref.collection("userdata").document(doc.documentID).get();
-      list.add({
-        "name": friendDoc.data["name"],
-        "frienduid": doc.documentID,
-      });
+    DocumentSnapshot snap =
+        await ref.collection("userFriends").document(uid).get();
+    try {
+      for (String friendUid in snap.data["requests"]) {
+        DocumentSnapshot friendDoc =
+            await ref.collection("userdata").document(friendUid).get();
+        list.add({
+          "name": friendDoc.data["name"],
+          "frienduid": friendUid,
+        });
+      }
+      return list;
+    } catch (e) {
+      return [];
     }
-    return list;
   }
 
   Future<void> removeFriend(String frienduid) async {
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
 
-    DocumentReference doc = ref
-        .collection("userFriends")
-        .document(uid)
-        .collection("friends")
-        .document(frienduid);
-    return await doc.delete();
+    DocumentReference doc = ref.collection("userFriends").document(uid);
+    DocumentSnapshot snap = await doc.get();
+    List<dynamic> friends = List<String>.from(snap.data["friends"]);
+    friends.remove(frienduid);
+    return await doc.updateData({"friends": friends});
   }
 
   Future<List<dynamic>> getFriendsList() async {
     List<dynamic> list = [];
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
-    QuerySnapshot snap = await ref
-        .collection("userFriends")
-        .document(uid)
-        .collection("friends")
-        .getDocuments();
-    for (DocumentSnapshot doc in snap.documents) {
-      DocumentSnapshot snap1 =
-          await ref.collection("userdata").document(doc.documentID).get();
-      String st = snap1.data["name"];
-      list.add({
-        "name": st,
-        "frienduid": doc.documentID,
+    DocumentSnapshot snap =
+        await ref.collection("userFriends").document(uid).get();
+    try {
+      for (String friendUid in snap.data["friends"]) {
+        DocumentSnapshot snap1 =
+            await ref.collection("userdata").document(friendUid).get();
+        String st = snap1.data["name"];
+        list.add({
+          "name": st,
+          "frienduid": friendUid,
+        });
+      }
+      list.sort((m1, m2) {
+        return m1["name"].toLowerCase().compareTo(m2["name"].toLowerCase());
       });
+      return list;
+    } catch (e) {
+      return [];
     }
-    list.sort((m1, m2) {
-      return m1["name"].toLowerCase().compareTo(m2["name"].toLowerCase());
-    });
-    return list;
   }
 }

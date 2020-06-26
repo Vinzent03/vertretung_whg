@@ -122,14 +122,13 @@ class _FriendsState extends State<Friends> {
                           behavior: SnackBarBehavior.floating,
                         ));
                       }
-                      var result = await Functions()
-                          .addFriendRequest(controller.text);
+                      var result =
+                          await Functions().addFriendRequest(controller.text);
                       switch (result["code"]) {
                         case "SUCCESS":
                           Navigator.pop(context);
                           Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
                             content: Text("Freundesanfrage geschickt"),
-                            behavior: SnackBarBehavior.floating,
                           ));
                           break;
                         case "EXCEPTION_ALREADY_REQUESTED":
@@ -154,7 +153,8 @@ class _FriendsState extends State<Friends> {
                           });
                           break;
                         case "DEADLINE_EXCEEDED":
-                          Scaffold.of(context).showSnackBar(
+                          Navigator.pop(context);
+                          Scaffold.of(scaffoldContext).showSnackBar(
                             SnackBar(
                               content: Text(
                                   "Das hat zu lange gedauert. Versuche es später erneut."),
@@ -163,7 +163,8 @@ class _FriendsState extends State<Friends> {
                           );
                           break;
                         default:
-                          Scaffold.of(context).showSnackBar(
+                          Navigator.pop(context);
+                          Scaffold.of(scaffoldContext).showSnackBar(
                             SnackBar(
                               content: Text(
                                   "Ein unerwarteter Fehler ist aufgetreten: \"" +

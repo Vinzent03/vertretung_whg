@@ -4,12 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 class Functions {
   CloudFunctions cf;
   Functions() {
-    //used to use the emulated firebaes cloud functions
     cf = CloudFunctions(app: FirebaseApp.instance, region: "europe-west3");
-    cf.useFunctionsEmulator(origin: "http://x.x.x.x:5001");
+    //used to use the emulated firebaes cloud functions
+    //cf.useFunctionsEmulator(origin: "http://x.x.x.x:5001");
   }
 
-  Future<dynamic> addFriendRequest(String frienduid) async {
+  Future<dynamic> addFriendRequest(String frienduid) async { 
     try {
       HttpsCallable call =
           cf.getHttpsCallable(functionName: "addFriendRequest");
