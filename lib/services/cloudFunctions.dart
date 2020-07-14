@@ -9,7 +9,7 @@ class Functions {
     //cf.useFunctionsEmulator(origin: "http://x.x.x.x:5001");
   }
 
-  Future<dynamic> addFriendRequest(String frienduid) async { 
+  Future<dynamic> addFriendRequest(String frienduid) async {
     try {
       HttpsCallable call =
           cf.getHttpsCallable(functionName: "addFriendRequest");

@@ -29,9 +29,9 @@ class _DetailsPageState extends State<DetailsPage> {
           IconButton(
               icon: Icon(Icons.delete),
               onPressed: () async {
-                await NewsLogic().deleteNews(context, widget.index);
-                Navigator.pop(context, true);
-              })
+                if (await NewsLogic().deleteNews(context, widget.index))
+                  Navigator.pop(context, true);
+              }),
         ],
       ),
       body: SingleChildScrollView(

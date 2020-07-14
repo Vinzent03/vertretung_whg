@@ -1,4 +1,4 @@
-import 'package:Vertretung/news/newsLogic.dart';
+import 'package:Vertretung/news/newsTransmitter.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 ///Used to edit and add news
 class EditNewsPage extends StatefulWidget {
+  final NewsTransmitter transmitter;
+  EditNewsPage(this.transmitter);
   @override
   EditNewsPageState createState() => EditNewsPageState();
 }
@@ -17,7 +19,7 @@ class EditNewsPageState extends State<EditNewsPage> {
   NewsTransmitter transmitter;
   @override
   Widget build(BuildContext context) {
-    transmitter = ModalRoute.of(context).settings.arguments;
+    transmitter = widget.transmitter;
 
     //decide between edit a news or add a new news
     if (transmitter.isEditAction) {
@@ -80,7 +82,7 @@ class EditNewsPageState extends State<EditNewsPage> {
                         type: ProgressDialogType.Normal,
                         isDismissible: false,
                         showLogs: false);
-                    pr.show();
+                    await pr.show();
 
                     var result;
                     if (transmitter.isEditAction) {
@@ -95,7 +97,7 @@ class EditNewsPageState extends State<EditNewsPage> {
                       });
                     }
 
-                    pr.hide();
+                    await pr.hide();
                     Scaffold.of(context).hideCurrentSnackBar();
 
                     switch (result["code"]) {

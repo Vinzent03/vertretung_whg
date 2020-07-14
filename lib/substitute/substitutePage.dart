@@ -27,7 +27,8 @@ class _VertretungsPageState extends State<VertretungsPage>
   bool finishedLoading = false;
   bool loadingSuccess = true;
 
-  String change = "Loading"; // The last tine the data on dsb mobile changed
+  ///The last change of the stubstitute
+  String lastChange = "Loading";
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
@@ -84,8 +85,7 @@ class _VertretungsPageState extends State<VertretungsPage>
           }),
     );
     //reload the settings
-    getter.setStringList(Names.substituteToday, rawListToday);
-    getter.setStringList(Names.substituteTomorrow, rawListTomorrow);
+
     getter.getBool(Names.personalSubstitute).then((onValue) {
       setState(() {
         personalSubstitute = onValue;
@@ -100,14 +100,18 @@ class _VertretungsPageState extends State<VertretungsPage>
     if (dataResult.isEmpty) {
       if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
       loadingSuccess = false;
+      lastChange = await getter.getString(Names.lastChange);
     } else {
       loadingSuccess = true;
       Scaffold.of(context).hideCurrentSnackBar();
       setState(() {
-        change = dataResult[0];
+        lastChange = dataResult[0];
         //rawListToday = dataResult[1];
         //rawListTomorrow = dataResult[2];
       });
+      getter.setString(Names.lastChange, lastChange);
+      getter.setStringList(Names.substituteToday, rawListToday);
+      getter.setStringList(Names.substituteTomorrow, rawListTomorrow);
     }
 
     String schoolClass = await LocalDatabase().getString(Names.schoolClass);
@@ -127,7 +131,8 @@ class _VertretungsPageState extends State<VertretungsPage>
     allListToday = await filter.checkForSchoolClass(Names.substituteToday);
     allMyListTomorrow = await filter.checkForSubjects(
         Names.substituteTomorrow, subjectsList, subjectsNotList);
-    allListTomorrow = await filter.checkForSchoolClass(Names.substituteTomorrow);
+    allListTomorrow =
+        await filter.checkForSchoolClass(Names.substituteTomorrow);
 
     setState(() {
       if (mounted) {
@@ -162,7 +167,7 @@ class _VertretungsPageState extends State<VertretungsPage>
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-                "$change  Woche: ${FunctionsForVertretung().getWeekNumber()}"),
+                "$lastChange  Woche: ${FunctionsForVertretung().getWeekNumber()}"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.help_outline),

@@ -1,3 +1,5 @@
+import 'package:Vertretung/news/detailsPage.dart';
+import "newsTransmitter.dart";
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +20,7 @@ class NewsLogic {
 
     ProgressDialog pr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
-    pr.show();
+    await pr.show();
 
     result = await Functions().deleteNews(index);
     await pr.hide();
@@ -57,26 +59,34 @@ class NewsLogic {
     }
   }
 
-  Future<void> openEditNewsPage(
+  Future<dynamic> openEditNewsPage(
       BuildContext context, String text, String title, int index) async {
-    await Navigator.push(
+    return await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditNewsPage(),
-        settings: RouteSettings(
-          arguments:
-              NewsTransmitter(true, text: text, title: title, index: index),
+        builder: (context) => EditNewsPage(
+          NewsTransmitter(
+            true,
+            text: text,
+            title: title,
+            index: index,
+          ),
         ),
       ),
     );
   }
-}
 
-///Informations about the selected news from the main page
-class NewsTransmitter {
-  final String text;
-  final String title;
-  final bool isEditAction;
-  final int index;
-  NewsTransmitter(this.isEditAction, {this.text, this.title, this.index});
+  Future<dynamic> openDetailsPage(
+      BuildContext context, String text, String title, int index) async {
+    return await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailsPage(
+          text: text,
+          title: title,
+          index: index,
+        ),
+      ),
+    );
+  }
 }

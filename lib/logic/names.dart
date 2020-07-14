@@ -44,4 +44,9 @@ class Names {
 
   /// if the user selected to be a beta user
   static const String beta = "beta";
+
+  ///The last change of the stubstitute
+  static const String lastChange = "beta";
+
+
 }

@@ -1,15 +1,12 @@
 import 'dart:math';
 
-import 'package:Vertretung/news/detailsPage.dart';
+import 'package:Vertretung/news/newsTransmitter.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:Vertretung/services/cloudFunctions.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'editNewsPage.dart';
 import 'newsLogic.dart';
 
@@ -86,16 +83,12 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                           min(newsList[index]["text"].toString().length, 100)))
                       : null,
                   onTap: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailsPage(
-                          text: newsList[index]["text"],
-                          title: newsList[index]["title"],
-                          index: index,
-                        ),
-                      ),
-                    );
+                    final result = await NewsLogic().openDetailsPage(
+                        context,
+                        newsList[index]["text"],
+                        newsList[index]["title"],
+                        index);
+
                     //check if the page have to be reloaded(needed when deleted or edited)
                     if (result != null) _refreshController.requestRefresh();
                   },
@@ -144,10 +137,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditNewsPage(),
-                    settings: RouteSettings(
-                      arguments: NewsTransmitter(false),
-                    ),
+                    builder: (context) => EditNewsPage(NewsTransmitter(false)),
                   ),
                 ).then((value) => _refreshController.requestRefresh());
               },

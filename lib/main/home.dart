@@ -94,8 +94,8 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //by this Indexed Stack, the pages are not reloaded every time
       body: IndexedStack(
-        //damit beim page wechsel nichte alles neugeladen werden muss
         children: pages,
         index: currentIndex,
       ),
