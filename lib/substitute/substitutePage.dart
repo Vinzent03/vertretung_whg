@@ -167,7 +167,7 @@ class _VertretungsPageState extends State<VertretungsPage>
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-                "$lastChange  Woche: ${FunctionsForVertretung().getWeekNumber()}"),
+                "$lastChange  W: ${FunctionsForVertretung().getWeekNumber()}"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.help_outline),
