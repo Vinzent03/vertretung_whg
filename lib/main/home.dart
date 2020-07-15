@@ -16,72 +16,72 @@ class _HomeState extends State<Home> {
   Widget usedPage = VertretungsPage();
 
   int currentIndex = 0;
+  Future<void> showUpdateDialog(context) async {
+    CloudDatabase cd = CloudDatabase();
 
-  @override
-  void initState() {
-    Future<void> showUpdateDialog(context) async {
-      CloudDatabase cd = CloudDatabase();
-
-      String updateSituation = await cd.getUpdate();
-      bool force = false;
-      bool updateAvailable = false;
-      String link;
-      List<dynamic> message;
-      // ignore: missing_return
-      if (updateSituation == "updateAvaible") {
-        updateAvailable = true;
-        force = false;
-      } else if (updateSituation == "forceUpdate") {
-        updateAvailable = true;
-        force = true;
-      }
-      link = await cd.getUpdateLink();
-      message = await cd.getUpdateMessage();
-      if (updateAvailable) {
-        if (force)
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return WillPopScope(
-                onWillPop: () {},
-                child: AlertDialog(
-                  title: Text(message[0]),
-                  content: Text(message[1]),
-                  actions: <Widget>[
-                    RaisedButton(
-                      child: Text("Update"),
-                      onPressed: () => launch(link),
-                    )
-                  ],
-                ),
-              );
-            },
-          );
-        else
-          showDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (context) {
-              return AlertDialog(
+    String updateSituation = await cd.getUpdate();
+    bool force = false;
+    bool updateAvailable = false;
+    String link;
+    List<dynamic> message;
+    // ignore: missing_return
+    if (updateSituation == "updateAvaible") {
+      updateAvailable = true;
+      force = false;
+    } else if (updateSituation == "forceUpdate") {
+      updateAvailable = true;
+      force = true;
+    }
+    link = await cd.getUpdateLink();
+    message = await cd.getUpdateMessage();
+    if (updateAvailable) {
+      if (force)
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return WillPopScope(
+              onWillPop: () {},
+              child: AlertDialog(
                 title: Text(message[0]),
                 content: Text(message[1]),
                 actions: <Widget>[
-                  FlatButton(
-                    child: Text("abbrechen"),
-                    onPressed: () => Navigator.pop(context),
-                  ),
                   RaisedButton(
                     child: Text("Update"),
                     onPressed: () => launch(link),
                   )
                 ],
-              );
-            },
-          );
-      }
+              ),
+            );
+          },
+        );
+      else
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(message[0]),
+              content: Text(message[1]),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("abbrechen"),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                RaisedButton(
+                  child: Text("Update"),
+                  onPressed: () => launch(link),
+                )
+              ],
+            );
+          },
+        );
     }
+  }
 
+  @override
+  void initState() {
+    showUpdateDialog(context);
     super.initState();
   }
 

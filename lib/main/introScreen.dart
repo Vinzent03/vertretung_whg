@@ -132,10 +132,8 @@ class _IntroScreenState extends State<IntroScreen> {
             personalSubstitute: false,
             notification: true,
           );
-          db.becomeBetaUser(false);
           LocalDatabase local = LocalDatabase();
           local.setBool(Names.personalSubstitute, false);
-          local.setBool(Names.beta, false);
         },
       ),
     );

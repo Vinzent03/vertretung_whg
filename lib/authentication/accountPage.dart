@@ -1,4 +1,3 @@
-import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -15,7 +14,6 @@ class _AccountPageState extends State<AccountPage> {
   String name = "Laden";
   String email = "Laden";
   bool isAnon = true;
-  bool beta = false;
 
   changeNameAlert(scaffoldContext) {
     final TextEditingController controller = TextEditingController();
@@ -106,38 +104,6 @@ class _AccountPageState extends State<AccountPage> {
       return true;
   }
 
-  void becomeBetaUserAlert() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              beta
-                  ? "Möchtest du wirklich kein Beta Nutzer mehr sein? Falls du irgendwelche Fehler hattest, melde diese doch bitte."
-                  : "Als Beta Nutzer bekommst du früher Updates. Diese sind ggf. fehlerhaft. Bei einem App-Neustart bekommst du dann eine Meldung zu einem verfügbaren Update",
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("abbrechen"),
-                onPressed: () => Navigator.pop(context),
-              ),
-              RaisedButton(
-                color: Colors.red,
-                child: Text("Bestätigen"),
-                onPressed: () async {
-                  CloudDatabase().becomeBetaUser(!beta);
-                  LocalDatabase().setBool(Names.beta, !beta);
-                  setState(() {
-                    beta = !beta;
-                  });
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        });
-  }
-
   void reload() {
     CloudDatabase().getName().then((value) => setState(() {
           name = value;
@@ -154,7 +120,6 @@ class _AccountPageState extends State<AccountPage> {
         });
       }
     });
-    LocalDatabase().getBool(Names.beta).then((value) => beta = value);
   }
 
   @override
@@ -207,18 +172,6 @@ class _AccountPageState extends State<AccountPage> {
                           },
                         )
                     ],
-                  ),
-                ),
-
-                //Beta
-                Card(
-                  elevation: 3,
-                  child: ListTile(
-                    leading: Icon(Icons.warning),
-                    title: Text(beta
-                        ? "Kein Beta Nutzer mehr werden"
-                        : "Beta Nutzer werden"),
-                    onTap: becomeBetaUserAlert,
                   ),
                 ),
                 //Anonym

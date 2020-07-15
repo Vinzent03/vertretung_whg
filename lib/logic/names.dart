@@ -42,11 +42,8 @@ class Names {
   ///notification settings turned on
   static const String notification = "notification";
 
-  /// if the user selected to be a beta user
-  static const String beta = "beta";
-
   ///The last change of the stubstitute
-  static const String lastChange = "beta";
+  static const String lastChange = "lastChange";
 
 
 }

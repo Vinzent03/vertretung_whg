@@ -43,15 +43,6 @@ class CloudDatabase {
       });
   }
 
-  void becomeBetaUser(bool isBeta) async {
-    AuthService _auth = AuthService();
-    DocumentReference doc =
-        ref.collection("userdata").document(await _auth.getUserId());
-    doc.setData({
-      "beta": isBeta,
-    }, merge: true);
-  }
-
   void updateName(String newName) async {
     AuthService _auth = AuthService();
     DocumentReference doc =
@@ -93,22 +84,20 @@ class CloudDatabase {
     local.setStringList(
         Names.subjectsNotList, List<String>.from(snap.data["subjectsNot"]));
     local.setBool(Names.personalSubstitute, snap.data["personalSubstitute"]);
-    local.setBool(Names.notification, snap.data["notification"]);
-    await local.setBool(Names.beta, snap.data["beta"]);
+    await local.setBool(Names.notification, snap.data["notification"]);
   }
 
-  /////// Upddates
+  //Upddates
   Future<String> getUpdate() async {
     PackageInfo pa = await PackageInfo.fromPlatform();
     String version = pa.version;
     bool updateAvaible = true;
     bool forceUpdate;
-    bool beta = await LocalDatabase().getBool(Names.beta);
     DocumentSnapshot snap =
         await ref.collection("details").document("versions").get();
     updateAvaible =
-        snap.data[beta ? "newBetaVersion" : "newVersion"] != version;
-    forceUpdate = snap.data[beta ? "betaForceUpdate" : "forceUpdate"];
+        snap.data["newVersion"] != version;
+    forceUpdate = snap.data["forceUpdate"];
     if (updateAvaible) {
       if (forceUpdate) {
         return "forceUpdate";
@@ -121,21 +110,18 @@ class CloudDatabase {
   }
 
   Future<String> getUpdateLink() async {
-    bool beta = await LocalDatabase().getBool(Names.beta);
     DocumentSnapshot snap =
         await ref.collection("details").document("links").get();
-    return snap.data[beta ? "newBetaLink" : "newLink"];
+    return snap.data["newLink"];
   }
 
   Future<List<dynamic>> getUpdateMessage() async {
-    bool beta = await LocalDatabase().getBool(Names.beta);
     DocumentSnapshot snap =
         await ref.collection("details").document("versions").get();
-    return snap.data[beta ? "betaMessage" : "message"];
+    return snap.data["message"];
   }
 
-  ///////  News
-
+  //News
   Future<List<dynamic>> getNews() async {
     DocumentSnapshot snap =
         await ref.collection("details").document("news").get();

@@ -9,13 +9,7 @@ import 'home.dart';
 class Wrapper extends StatelessWidget {
   Wrapper() {
     PushNotificationsManager().init();
-    //initDynamicLinks();   //not working
-    //AuthService().getAdminStatus();
   }
-  // void initDynamicLinks() async {
-  //   final PendingDynamicLinkData data =
-  //       await FirebaseDynamicLinks.instance.getInitialLink();
-  // }
 
   @override
   Widget build(BuildContext context) {
