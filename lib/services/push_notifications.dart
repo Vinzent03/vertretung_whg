@@ -24,7 +24,6 @@ class PushNotificationsManager {
           content: Text("Neue Inhalte"),
           behavior: SnackBarBehavior.floating,
         );
-
       });
 
       // For testing purposes print the Firebase Messaging token
@@ -34,6 +33,7 @@ class PushNotificationsManager {
       _initialized = true;
     }
   }
+
   void subTopic(String topic) {
     _firebaseMessaging.subscribeToTopic(topic);
   }
@@ -44,5 +44,10 @@ class PushNotificationsManager {
 
   Future<String> getToken() async {
     return await _firebaseMessaging.getToken();
+  }
+
+  Future<void> signOut() async {
+    await _firebaseMessaging.deleteInstanceID();
+    return _initialized = false;
   }
 }

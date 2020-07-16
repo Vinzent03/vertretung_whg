@@ -2,6 +2,7 @@ import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
+import 'package:Vertretung/services/push_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +41,7 @@ class AuthService {
       local.setBool(Names.personalSubstitute, false);
       local.setBool(Names.darkmode, true);
       local.setBool(Names.notification, true);
+      await PushNotificationsManager().signOut();
       if (user.isAnonymous || deleteAccount) {
         print("user deleted");
         return await user.delete();
