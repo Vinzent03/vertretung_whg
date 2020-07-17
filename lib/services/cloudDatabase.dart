@@ -124,7 +124,7 @@ class CloudDatabase {
   //News
   Future<List<dynamic>> getNews() async {
     DocumentSnapshot snap =
-        await ref.collection("details").document("news").get();
+        await ref.collection("news").document("news").get();
     return snap.data["news"];
   }
 

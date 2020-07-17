@@ -20,6 +20,7 @@ enum actions { delete, edit }
 class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   List<dynamic> newsList = [];
   bool isAdmin = false;
+  bool finishedLoading = false;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   AnimationController _controller;
@@ -34,7 +35,6 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
     _controller = AnimationController(
         duration: const Duration(milliseconds: 300), vsync: this, value: 0.1);
     _animation = CurvedAnimation(parent: _controller, curve: Curves.ease);
-    _controller.forward();
     reload();
     super.initState();
   }
@@ -45,8 +45,9 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
       setState(() {
         newsList = onValue;
       });
-      //LocalDatabase().setString(Names.newsAnzahl, newsList.length.toString());  //not used in the moment
     });
+    finishedLoading = true;
+    _controller.forward();
     _refreshController.refreshCompleted();
   }
 
@@ -62,73 +63,81 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
       appBar: AppBar(
         title: Text("Nachrichten"),
       ),
-      body: SmartRefresher(
-        controller: _refreshController,
-        onRefresh: reload,
-        child: ScaleTransition(
-          scale: _animation,
-          child: ListView.builder(
-            physics: ScrollPhysics(),
-            itemCount: newsList.length,
-            itemBuilder: (context, index) {
-              return Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15))),
-                elevation: 3,
-                child: ListTile(
-                  title: Text(newsList[index]["title"]),
-                  //show only the first 100 chars as subtitle, to see more click on the ListTile
-                  subtitle: newsList[index]["text"] != ""
-                      ? Text(newsList[index]["text"].toString().substring(0,
-                          min(newsList[index]["text"].toString().length, 100)))
-                      : null,
-                  onTap: () async {
-                    final result = await NewsLogic().openDetailsPage(
-                        context,
-                        newsList[index]["text"],
-                        newsList[index]["title"],
-                        index);
+      body: finishedLoading
+          ? SmartRefresher(
+              controller: _refreshController,
+              onRefresh: reload,
+              child: ScaleTransition(
+                scale: _animation,
+                child: ListView.builder(
+                  physics: ScrollPhysics(),
+                  itemCount: newsList.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15))),
+                      elevation: 3,
+                      child: ListTile(
+                        title: Text(newsList[index]["title"]),
+                        //show only the first 100 chars as subtitle, to see more click on the ListTile
+                        subtitle: newsList[index]["text"] != ""
+                            ? Text(newsList[index]["text"].toString().substring(
+                                0,
+                                min(newsList[index]["text"].toString().length,
+                                    100)))
+                            : null,
+                        onTap: () async {
+                          final result = await NewsLogic().openDetailsPage(
+                              context,
+                              newsList[index]["text"],
+                              newsList[index]["title"],
+                              index);
 
-                    //check if the page have to be reloaded(needed when deleted or edited)
-                    if (result != null) _refreshController.requestRefresh();
+                          //check if the page have to be reloaded(needed when deleted or edited)
+                          if (result != null)
+                            _refreshController.requestRefresh();
+                        },
+                        trailing: isAdmin
+                            ? PopupMenuButton(
+                                icon: Icon(Icons.more_vert),
+                                onSelected: (selected) async {
+                                  if (selected == actions.delete) {
+                                    if (await NewsLogic()
+                                        .deleteNews(context, index))
+                                      _refreshController.requestRefresh();
+                                  } else {
+                                    await NewsLogic().openEditNewsPage(
+                                      context,
+                                      newsList[index]["text"],
+                                      newsList[index]["title"],
+                                      index,
+                                    );
+                                    _refreshController.requestRefresh();
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) {
+                                  return [
+                                    PopupMenuItem(
+                                      value: actions.delete,
+                                      child: Text("löschen"),
+                                    ),
+                                    PopupMenuItem(
+                                      value: actions.edit,
+                                      child: Text("bearbeiten"),
+                                    ),
+                                  ];
+                                },
+                              )
+                            : null,
+                      ),
+                    );
                   },
-                  trailing: isAdmin
-                      ? PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
-                          onSelected: (selected) async {
-                            if (selected == actions.delete) {
-                              if (await NewsLogic().deleteNews(context, index))
-                                _refreshController.requestRefresh();
-                            } else {
-                              await NewsLogic().openEditNewsPage(
-                                context,
-                                newsList[index]["text"],
-                                newsList[index]["title"],
-                                index,
-                              );
-                              _refreshController.requestRefresh();
-                            }
-                          },
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              PopupMenuItem(
-                                value: actions.delete,
-                                child: Text("löschen"),
-                              ),
-                              PopupMenuItem(
-                                value: actions.edit,
-                                child: Text("bearbeiten"),
-                              ),
-                            ];
-                          },
-                        )
-                      : null,
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
               heroTag: "filter",
