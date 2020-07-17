@@ -1,5 +1,4 @@
 import 'package:Vertretung/logic/localDatabase.dart';
-import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/logic/names.dart';
@@ -29,7 +28,7 @@ class _FaecherPageState extends State<FaecherPage> {
   List<String> names;
   List<Item> subjects;
   List<Item> subjectsListCustom;
-  List<String> selectedFaecher = [];
+  List<String> selectedSubjects = [];
   TextEditingController myController;
   String title;
 
@@ -43,7 +42,6 @@ class _FaecherPageState extends State<FaecherPage> {
 
   @override
   void initState() {
-    //names = ModalRoute.of(context).settings.arguments;
     names = widget.names;
   if (names[0] == Names.subjectsList)
     title = "Whitelist";
@@ -150,9 +148,9 @@ class _FaecherPageState extends State<FaecherPage> {
       )
     ];
     subjectsListCustom = [
-      Item() //für das hinzufüge listtile
+      Item() //is the add ListTile at the bottom
     ];
-    // wiederherstellen der custom fächer(ohne checken der kästchen, das passiert ein weiter unten)
+    //recover custom subjects
     subjects.sort((a, b) => a.title.compareTo(b.title));
     LocalDatabase().getStringList(names[1]).then((onValue) {
       for (String fach in onValue) {
@@ -164,10 +162,10 @@ class _FaecherPageState extends State<FaecherPage> {
             ));
       }
     });
-    // wiederherstellen der schon gecheckten fächer
+    // recover already selected subjects
     LocalDatabase().getStringList(names[0]).then((onValue) {
       setState(() {
-        selectedFaecher = onValue;
+        selectedSubjects = onValue;
         for (String fach in onValue) {
           for (Item teil in subjects) {
             for (Item item in teil.children) {
@@ -192,12 +190,13 @@ class _FaecherPageState extends State<FaecherPage> {
   }
 
   void checkItem(root, isChecked) {
-    if (selectedFaecher.contains(root.title)) {
-      selectedFaecher.remove(root.title);
+    if (selectedSubjects.contains(root.title)) {
+      selectedSubjects.remove(root.title);
     } else {
-      selectedFaecher.add(root.title);
+      selectedSubjects.add(root.title);
     }
-    selectedFaecher.sort();
+    LocalDatabase().setStringList(names[0], selectedSubjects);
+    selectedSubjects.sort();
     setState(() {
       root.isChecked = isChecked;
     });
@@ -206,7 +205,7 @@ class _FaecherPageState extends State<FaecherPage> {
   Widget buildTiles(Item root) {
     if (root.children.isEmpty) {
       if (root.title == null) {
-        //eingebe ListTile
+        //ListTile with TextField
         return ListTile(
           title: TextField(
             controller: myController,
@@ -231,7 +230,7 @@ class _FaecherPageState extends State<FaecherPage> {
               }),
         );
       } else {
-        //chckboxlisttile generell
+        //CheckBoxListTile
         return Card(
           child: CheckboxListTile(
             title: Text(root.title),
@@ -240,7 +239,7 @@ class _FaecherPageState extends State<FaecherPage> {
                 ? IconButton(
                     onPressed: () {
                       setState(() {
-                        selectedFaecher.remove(root.title);
+                        selectedSubjects.remove(root.title);
                         subjectsListCustom
                             .removeWhere((item) => item.title == root.title);
                       });
@@ -253,12 +252,11 @@ class _FaecherPageState extends State<FaecherPage> {
         );
       }
     } else {
-      //expansion listtile generell
+      //expansion ListTile
       return ExpansionTile(
         key: PageStorageKey<Item>(root),
         title: Text(
           root.title,
-          //style: TextStyle(color: Colors.white),
         ),
         children: root.children.map<Widget>(buildTiles).toList(),
       );
@@ -281,7 +279,7 @@ class _FaecherPageState extends State<FaecherPage> {
                   padding: EdgeInsets.all(20),
                   alignment: Alignment.topLeft,
                   child: Text(
-                      " ${selectedFaecher.length} Ausgewählte Fächer: ${selectedFaecher.toString()}"),
+                      " ${selectedSubjects.length} Ausgewählte Fächer: ${selectedSubjects.toString()}"),
                 ),
               ),
               ListView.builder(
@@ -307,16 +305,11 @@ class _FaecherPageState extends State<FaecherPage> {
 
   @override
   void dispose() {
-    List<String> _list = [];
-    LocalDatabase().setStringList(names[0], selectedFaecher);
+    List<String> _customSubjects = [];
     for (Item item in subjectsListCustom) {
-      if (item.title != null) _list.add(item.title);
+      if (item.title != null) _customSubjects.add(item.title);
     }
-    LocalDatabase().setStringList(names[1], _list);
-    if (names[0] == Names.subjectsList)
-      CloudDatabase().updateFaecher(list: selectedFaecher, isWhitelist: true);
-    else
-      CloudDatabase().updateFaecher(list: selectedFaecher, isWhitelist: false);
+    LocalDatabase().setStringList(names[1], _customSubjects);
     super.dispose();
   }
 }

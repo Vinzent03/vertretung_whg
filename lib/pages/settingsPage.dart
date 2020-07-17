@@ -157,8 +157,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         if (!schoolClass.contains(" "))
                           push.unsubTopic(
                               schoolClass); //Beim ersten starten ist die schoolClass "nicht festgelegt" und das geht nicht
-                        await createAlertDialog(
-                            context, "schoolClass", "Bitte wähle deine Stufe/Klasse");
+                        await createAlertDialog(context, "schoolClass",
+                            "Bitte wähle deine Stufe/Klasse");
                         localDb.getString(Names.schoolClass).then((onValue) {
                           setState(() {
                             schoolClass = onValue;
@@ -201,46 +201,39 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ]),
                                 ),
                               );
-                              Future.delayed(Duration(seconds: 2), () {
-                                //Wait for the writing from the page
-                                localDb
-                                    .getStringList(Names.subjectsList)
-                                    .then((onValue) {
-                                  if (mounted)
-                                    setState(() {
-                                      subjectsList = onValue;
-                                    });
-                                  print("hallo bin fächer mit $onValue");
-                                  updateUserdata();
-                                });
+
+                              List<String> _newSubjects = await localDb
+                                  .getStringList(Names.subjectsList);
+                              setState(() {
+                                subjectsList = _newSubjects;
                               });
+                              updateUserdata();
                             },
                     ),
                     ListTile(
-                        title: Text("Fächer anderer(Blacklist)"),
-                        enabled: personalSubstitute,
-                        leading: Icon(Icons.edit),
-                        onTap: !personalSubstitute
-                            ? null
-                            : () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FaecherPage([
-                                      Names.subjectsNotList,
-                                      Names.subjectsNotListCustom
-                                    ]),
-                                  ),
-                                );
-                                localDb
-                                    .getStringList(Names.subjectsNotList)
-                                    .then((onValue) {
-                                  setState(() {
-                                    subjectsNotList = onValue;
-                                  });
-                                  updateUserdata();
-                                });
-                              })
+                      title: Text("Fächer anderer(Blacklist)"),
+                      enabled: personalSubstitute,
+                      leading: Icon(Icons.edit),
+                      onTap: !personalSubstitute
+                          ? null
+                          : () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FaecherPage([
+                                    Names.subjectsNotList,
+                                    Names.subjectsNotListCustom
+                                  ]),
+                                ),
+                              );
+                              List<String> _newSubjects = await localDb
+                                  .getStringList(Names.subjectsNotList);
+                              setState(() {
+                                subjectsNotList = _newSubjects;
+                              });
+                              updateUserdata();
+                            },
+                    )
                   ],
                 ),
               ),
@@ -298,7 +291,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       onTap: () =>
                           Navigator.pushNamed(context, Names.aboutPage),
                     ),
-                    ListTile( 
+                    ListTile(
                       leading: Icon(Icons.feedback),
                       title: Text("Feedback"),
                       onTap: () async {

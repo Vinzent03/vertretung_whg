@@ -29,20 +29,6 @@ class CloudDatabase {
     }, merge: true);
   }
 
-  void updateFaecher({list, bool isWhitelist}) async {
-    AuthService _auth = AuthService();
-    DocumentReference doc =
-        ref.collection("userdata").document(await _auth.getUserId());
-    if (isWhitelist)
-      doc.updateData({
-        "subjects": list,
-      });
-    else
-      doc.updateData({
-        "subjectsNot": list,
-      });
-  }
-
   void updateName(String newName) async {
     AuthService _auth = AuthService();
     DocumentReference doc =

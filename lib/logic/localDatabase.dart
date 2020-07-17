@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalDatabase{
   Future<void> setBool(String st, b) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.setBool(st, b);
+    return await prefs.setBool(st, b);
   }
   Future<bool> getBool(String name) async {
     final prefs = await SharedPreferences.getInstance();
@@ -11,7 +11,7 @@ class LocalDatabase{
   }
   Future<void> setString(String st, String b) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.setString(st, b);
+    return await prefs.setString(st, b);
   }
   Future<String> getString(String st) async {
     final prefs = await SharedPreferences.getInstance();
@@ -19,7 +19,7 @@ class LocalDatabase{
 
   Future<void> setStringList(String st, List<String> b) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.setStringList(st, b);
+    return await prefs.setStringList(st, b);
   }
   Future<List<String>> getStringList(String st) async {
     final prefs = await SharedPreferences.getInstance();
