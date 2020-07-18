@@ -4,6 +4,7 @@ import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:package_info/package_info.dart';
+import 'package:Vertretung/friends/friendModel.dart';
 
 class CloudDatabase {
   final Firestore ref = Firestore.instance;
@@ -16,7 +17,6 @@ class CloudDatabase {
       notification}) async {
     AuthService _auth = AuthService();
     String token = await PushNotificationsManager().getToken();
-    print("data wurde gesettet");
     DocumentReference doc =
         ref.collection("userdata").document(await _auth.getUserId());
     doc.setData({
@@ -43,11 +43,6 @@ class CloudDatabase {
     DocumentSnapshot snap =
         await ref.collection("userdata").document(uid).get();
     return snap.data["name"];
-  }
-
-  void deleteDocument() async {
-    AuthService _auth = AuthService();
-    await ref.collection("userdata").document(await _auth.getUserId()).delete();
   }
 
   Future<void> restoreAccount() async {
@@ -81,8 +76,7 @@ class CloudDatabase {
     bool forceUpdate;
     DocumentSnapshot snap =
         await ref.collection("details").document("versions").get();
-    updateAvaible =
-        snap.data["newVersion"] != version;
+    updateAvaible = snap.data["newVersion"] != version;
     forceUpdate = snap.data["forceUpdate"];
     if (updateAvaible) {
       if (forceUpdate) {
@@ -109,28 +103,26 @@ class CloudDatabase {
 
   //News
   Future<List<dynamic>> getNews() async {
-    DocumentSnapshot snap =
-        await ref.collection("news").document("news").get();
+    DocumentSnapshot snap = await ref.collection("news").document("news").get();
     return snap.data["news"];
   }
 
   // friends
   Future<List<dynamic>> getFriendRequests() async {
-    List<dynamic> list = [];
+    List<FriendModel> friendRequests = [];
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
-    DocumentSnapshot snap =
+    DocumentSnapshot myFriendsDoc =
         await ref.collection("userFriends").document(uid).get();
     try {
-      for (String friendUid in snap.data["requests"]) {
+      for (String friendUid in myFriendsDoc.data["requests"]) {
         DocumentSnapshot friendDoc =
             await ref.collection("userdata").document(friendUid).get();
-        list.add({
-          "name": friendDoc.data["name"],
-          "frienduid": friendUid,
-        });
+        friendRequests.add(
+          FriendModel(name: friendDoc.data["name"], uid: friendUid),
+        );
       }
-      return list;
+      return friendRequests;
     } catch (e) {
       return [];
     }
@@ -147,26 +139,23 @@ class CloudDatabase {
     return await doc.updateData({"friends": friends});
   }
 
-  Future<List<dynamic>> getFriendsList() async {
-    List<dynamic> list = [];
+  Future<List<FriendModel>> getFriendsList() async {
+    List<FriendModel> friendList = [];
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
-    DocumentSnapshot snap =
+    DocumentSnapshot myFriendsDoc =
         await ref.collection("userFriends").document(uid).get();
     try {
-      for (String friendUid in snap.data["friends"]) {
-        DocumentSnapshot snap1 =
+      for (String friendUid in myFriendsDoc.data["friends"]) {
+        DocumentSnapshot friendsDoc =
             await ref.collection("userdata").document(friendUid).get();
-        String st = snap1.data["name"];
-        list.add({
-          "name": st,
-          "frienduid": friendUid,
-        });
+        String friendName = friendsDoc.data["name"];
+        friendList.add(FriendModel(name: friendName, uid: friendUid));
       }
-      list.sort((m1, m2) {
-        return m1["name"].toLowerCase().compareTo(m2["name"].toLowerCase());
+      friendList.sort((friendA, friendB) {
+        return friendA.name.toLowerCase().compareTo(friendB.name.toLowerCase());
       });
-      return list;
+      return friendList;
     } catch (e) {
       return [];
     }

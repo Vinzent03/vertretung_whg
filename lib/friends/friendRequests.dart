@@ -1,3 +1,4 @@
+import 'package:Vertretung/friends/friendModel.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +9,16 @@ class FriendRequests extends StatefulWidget {
 }
 
 class _FriendRequestsState extends State<FriendRequests> {
-  List<dynamic> list = [];
+  List<FriendModel> friendRequests = [];
   bool finishedLoading = false;
 
   @override
   void initState() {
     CloudDatabase().getFriendRequests().then((newList) {
       //When the data loads to slow and the page is closed
-      if (mounted) {  
+      if (mounted) {
         setState(() {
-          list = newList;
+          friendRequests = newList;
           finishedLoading = true;
         });
       }
@@ -34,10 +35,10 @@ class _FriendRequestsState extends State<FriendRequests> {
       body: finishedLoading
           ? ListView.builder(
               shrinkWrap: true,
-              itemCount: list.length,
+              itemCount: friendRequests.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(list[index]["name"]),
+                  title: Text(friendRequests[index].name),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -45,18 +46,18 @@ class _FriendRequestsState extends State<FriendRequests> {
                           child: Text("ablehnen"),
                           onPressed: () {
                             Functions().declineFriendRequest(
-                                list[index]["frienduid"]);
+                                friendRequests[index].name);
                             setState(() {
-                              list.remove(list[index]);
+                              friendRequests.remove(friendRequests[index]);
                             });
                           }),
                       RaisedButton(
                         child: Text("annhemen"),
                         onPressed: () {
-                          Functions().acceptFriendRequest(
-                              list[index]["frienduid"]);
+                          Functions()
+                              .acceptFriendRequest(friendRequests[index].uid);
                           setState(() {
-                            list.remove(list[index]);
+                            friendRequests.remove(friendRequests[index]);
                           });
                         },
                       ),

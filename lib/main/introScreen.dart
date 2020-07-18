@@ -15,6 +15,7 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> {
   TextEditingController nameController = TextEditingController();
+  bool alreadyPressed = false;
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -124,20 +125,23 @@ class _IntroScreenState extends State<IntroScreen> {
         showNextButton: true,
         done: Text("Fertig"),
         onDone: () async {
-          await AuthService().signInAnon();
-          String name = nameController.text;
-          if (name == "") name = "Nicht festgelegt";
-          CloudDatabase db = CloudDatabase();
-          db.updateName(name);
-          db.updateUserData(
-            subjects: [],
-            subjectsNot: [],
-            schoolClass: await LocalDatabase().getString(Names.schoolClass),
-            personalSubstitute: false,
-            notification: true,
-          );
-          LocalDatabase local = LocalDatabase();
-          local.setBool(Names.personalSubstitute, false);
+          if (!alreadyPressed) {
+            alreadyPressed = true;
+            await AuthService().signInAnon();
+            String name = nameController.text;
+            if (name == "") name = "Nicht festgelegt";
+            CloudDatabase db = CloudDatabase();
+            db.updateName(name);
+            db.updateUserData(
+              subjects: [],
+              subjectsNot: [],
+              schoolClass: await LocalDatabase().getString(Names.schoolClass),
+              personalSubstitute: false,
+              notification: true,
+            );
+            LocalDatabase local = LocalDatabase();
+            local.setBool(Names.personalSubstitute, false);
+          }
         },
       ),
     );
