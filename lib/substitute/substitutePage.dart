@@ -122,9 +122,9 @@ class _VertretungsPageState extends State<VertretungsPage>
     List<dynamic> allListTomorrow;
 
     List<String> subjectsList =
-        await LocalDatabase().getStringList(Names.subjectsList);
+        await LocalDatabase().getStringList(Names.subjects);
     List<String> subjectsNotList =
-        await LocalDatabase().getStringList(Names.subjectsNotList);
+        await LocalDatabase().getStringList(Names.subjectsNot);
 
     allMyListToday = await filter.checkForSubjects(
         Names.substituteToday, subjectsList, subjectsNotList);

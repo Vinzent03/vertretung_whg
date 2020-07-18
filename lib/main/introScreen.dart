@@ -139,6 +139,8 @@ class _IntroScreenState extends State<IntroScreen> {
               personalSubstitute: false,
               notification: true,
             );
+            db.updateCustomSubjects(Names.subjectsCustom, []);
+            db.updateCustomSubjects(Names.subjectsNotCustom, []);
             LocalDatabase local = LocalDatabase();
             local.setBool(Names.personalSubstitute, false);
           }

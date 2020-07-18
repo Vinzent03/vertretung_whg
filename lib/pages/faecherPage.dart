@@ -1,4 +1,5 @@
 import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/logic/names.dart';
@@ -24,7 +25,6 @@ class FaecherPage extends StatefulWidget {
 }
 
 class _FaecherPageState extends State<FaecherPage> {
-
   List<String> names;
   List<Item> subjects;
   List<Item> subjectsListCustom;
@@ -43,10 +43,10 @@ class _FaecherPageState extends State<FaecherPage> {
   @override
   void initState() {
     names = widget.names;
-  if (names[0] == Names.subjectsList)
-    title = "Whitelist";
-  else
-    title = "Blacklist";
+    if (names[0] == Names.subjects)
+      title = "Whitelist";
+    else
+      title = "Blacklist";
     myController = TextEditingController(text: "Gib ein Fach ein");
     subjects = [
       Item(
@@ -222,7 +222,8 @@ class _FaecherPageState extends State<FaecherPage> {
                       isChecked: true);
                   setState(() {
                     subjectsListCustom.insert(
-                        subjectsListCustom.indexOf(subjectsListCustom.last), newItem);
+                        subjectsListCustom.indexOf(subjectsListCustom.last),
+                        newItem);
                   });
                   checkItem(newItem, true);
                   myController.clear();
@@ -265,7 +266,6 @@ class _FaecherPageState extends State<FaecherPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Fächer Wahl $title"),
@@ -291,8 +291,10 @@ class _FaecherPageState extends State<FaecherPage> {
               ExpansionTile(
                 title: Text(
                   "Custom",
-                  style:
-                      TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 children: subjectsListCustom.map<Widget>(buildTiles).toList(),
               )
@@ -310,6 +312,7 @@ class _FaecherPageState extends State<FaecherPage> {
       if (item.title != null) _customSubjects.add(item.title);
     }
     LocalDatabase().setStringList(names[1], _customSubjects);
+    CloudDatabase().updateCustomSubjects(names[1],_customSubjects);
     super.dispose();
   }
 }

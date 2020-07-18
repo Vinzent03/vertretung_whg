@@ -20,13 +20,24 @@ class CloudDatabase {
     DocumentReference doc =
         ref.collection("userdata").document(await _auth.getUserId());
     doc.setData({
-      "subjects": subjects,
-      "subjectsNot": subjectsNot,
-      "personalSubstitute": personalSubstitute,
-      "notification": notification,
-      "schoolClass": schoolClass,
+      Names.subjects: subjects,
+      Names.subjectsNot: subjectsNot,
+      Names.personalSubstitute: personalSubstitute,
+      Names.notification: notification,
+      Names.schoolClass: schoolClass,
       "token": token,
     }, merge: true);
+  }
+
+  void updateCustomSubjects(
+      String name, List<String> customSubjectsList) async {
+    //name inicates whether to save as whitelist or blacklist
+    AuthService _auth = AuthService();
+    ref.collection("userdata").document(await _auth.getUserId()).updateData(
+      {
+        name: customSubjectsList,
+      },
+    );
   }
 
   void updateName(String newName) async {
@@ -48,10 +59,9 @@ class CloudDatabase {
   Future<void> restoreAccount() async {
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
-    DocumentSnapshot snap =
+    DocumentSnapshot userdataDoc =
         await ref.collection("userdata").document(uid).get();
 
-    //update the token
     DocumentReference doc = ref.collection("userdata").document(uid);
     String token = await PushNotificationsManager().getToken();
     doc.updateData({
@@ -59,13 +69,18 @@ class CloudDatabase {
     });
 
     LocalDatabase local = LocalDatabase();
-    local.setString(Names.schoolClass, snap.data["schoolClass"]);
+    local.setString(Names.schoolClass, userdataDoc.data[Names.schoolClass]);
     local.setStringList(
-        Names.subjectsList, List<String>.from(snap.data["subjects"]));
+        Names.subjects, List<String>.from(userdataDoc.data[Names.subjects]));
     local.setStringList(
-        Names.subjectsNotList, List<String>.from(snap.data["subjectsNot"]));
-    local.setBool(Names.personalSubstitute, snap.data["personalSubstitute"]);
-    await local.setBool(Names.notification, snap.data["notification"]);
+        Names.subjectsNot, List<String>.from(userdataDoc.data[Names.subjectsNot]));
+    local.setStringList(Names.subjectsCustom,
+        List<String>.from(userdataDoc.data[Names.subjectsCustom]));
+    local.setStringList(Names.subjectsNotCustom,
+        List<String>.from(userdataDoc.data[Names.subjectsNotCustom]));
+    local.setBool(
+        Names.personalSubstitute, userdataDoc.data[Names.personalSubstitute]);
+    await local.setBool(Names.notification, userdataDoc.data[Names.notification]);
   }
 
   //Upddates

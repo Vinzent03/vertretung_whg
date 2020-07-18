@@ -16,10 +16,10 @@ class FriendLogic {
   Future<List> individual(String frienduid) async {
     DocumentSnapshot snap =
         await ref.collection("userdata").document(frienduid).get();
-    Filter filter = Filter(snap["schoolClass"]);
-    if (snap.data["personalSubstitute"]) {
+    Filter filter = Filter(snap[Names.schoolClass]);
+    if (snap.data[Names.personalSubstitute]) {
       var list = await filter.checkForSubjects(Names.substituteToday,
-          snap.data["subjects"], snap.data["subjectsNot"]);
+          snap.data[Names.subjects], snap.data[Names.subjectsNot]);
       return list;
     } else {
       var list = await filter.checkForSchoolClass(

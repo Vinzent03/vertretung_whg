@@ -89,10 +89,10 @@ class _SettingsPageState extends State<SettingsPage> {
       pSchoolClass = st;
     });
 
-    localDb.getStringList(Names.subjectsList).then((List<String> st) {
+    localDb.getStringList(Names.subjects).then((List<String> st) {
       pSubjectsList = st;
     });
-    localDb.getStringList(Names.subjectsNotList).then((List<String> st) {
+    localDb.getStringList(Names.subjectsNot).then((List<String> st) {
       setState(() {
         subjectsNotList = st;
         dark = pdark;
@@ -196,14 +196,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => FaecherPage([
-                                    Names.subjectsList,
-                                    Names.subjectsListCustom
+                                    Names.subjects,
+                                    Names.subjectsCustom
                                   ]),
                                 ),
                               );
 
                               List<String> _newSubjects = await localDb
-                                  .getStringList(Names.subjectsList);
+                                  .getStringList(Names.subjects);
                               setState(() {
                                 subjectsList = _newSubjects;
                               });
@@ -221,13 +221,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => FaecherPage([
-                                    Names.subjectsNotList,
-                                    Names.subjectsNotListCustom
+                                    Names.subjectsNot,
+                                    Names.subjectsNotCustom
                                   ]),
                                 ),
                               );
                               List<String> _newSubjects = await localDb
-                                  .getStringList(Names.subjectsNotList);
+                                  .getStringList(Names.subjectsNot);
                               setState(() {
                                 subjectsNotList = _newSubjects;
                               });

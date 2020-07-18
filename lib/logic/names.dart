@@ -22,10 +22,10 @@ class Names {
   static const String darkmode = "darkmode";
 
   ///yourself written subjects for the whiteList
-  static const String subjectsListCustom = "subjectsListCustom";
+  static const String subjectsCustom = "subjectsCustom";
 
   ///yourself written subjects for the blackList
-  static const String subjectsNotListCustom = "subjectsNotListCustom";
+  static const String subjectsNotCustom = "subjectsNotCustom";
 
   ///the substitute got from the internet for today
   static const String substituteToday = "substituteToday";
@@ -34,10 +34,10 @@ class Names {
   static const String substituteTomorrow = "substituteTomorrow";
 
   ///selected subjects for the whiteList
-  static const String subjectsList = "subjectsList";
+  static const String subjects = "subjects";
 
   ///selected subjects for the blackList
-  static const String subjectsNotList = "subjectsNotList";
+  static const String subjectsNot = "subjectsNot";
 
   ///notification settings turned on
   static const String notification = "notification";

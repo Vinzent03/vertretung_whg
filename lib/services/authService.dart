@@ -32,15 +32,7 @@ class AuthService {
   Future signOut({bool deleteAccount = false}) async {
     var user = await _auth.currentUser();
     try {
-      LocalDatabase local = LocalDatabase();
-      local.setString(Names.schoolClass, "Nicht festgelegt");
-      local.setStringList(Names.subjectsList, []);
-      local.setStringList(Names.subjectsNotList, []);
-      local.setStringList(Names.subjectsListCustom, []);
-      local.setStringList(Names.subjectsNotListCustom, []);
-      local.setBool(Names.personalSubstitute, false);
-      local.setBool(Names.darkmode, true);
-      local.setBool(Names.notification, true);
+      LocalDatabase().clear();
       await PushNotificationsManager().signOut();
       if (user.isAnonymous || deleteAccount) {
         print("user deleted");
