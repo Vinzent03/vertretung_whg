@@ -1,39 +1,44 @@
 import 'package:Vertretung/logic/filter.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'friendModel.dart';
+import 'package:Vertretung/friends/friendModel.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/services.dart';
 
 class FriendLogic {
   final Firestore ref = Firestore.instance;
+  LocalDatabase localDatabase = LocalDatabase();
+  List<String> rawSubstituteList;
 
-  ///get Substitute for the given user
-  Future<List> individual(String frienduid) async {
+  Future<List> _getSubstituteOfFriend(
+      String frienduid) async {
     DocumentSnapshot snap =
         await ref.collection("userdata").document(frienduid).get();
-    Filter filter = Filter(snap[Names.schoolClass]);
+    Filter filter = Filter(snap[Names.schoolClass], rawSubstituteList);
     if (snap.data[Names.personalSubstitute]) {
-      var list = await filter.checkForSubjects(Names.substituteToday,
+      var list = filter.checkForSubjects(Names.substituteToday,
           snap.data[Names.subjects], snap.data[Names.subjectsNot]);
       return list;
     } else {
-      var list = await filter.checkForSchoolClass(
+      var list = filter.checkForSchoolClass(
         Names.substituteToday,
       );
       return list;
     }
   }
 
-  Future<dynamic> getFriendVertretung(List<FriendModel> friends) async {
+  Future<dynamic> getFriendsSubstitute(List<FriendModel> friends) async {
     List<Map<String, String>> friendsSubstitute = [];
-
+    rawSubstituteList =
+        await localDatabase.getStringList(Names.substituteToday);
     for (var friend in friends) {
-      List<dynamic> list = await individual(friend.uid);
+      List<dynamic> list =
+          await _getSubstituteOfFriend(friend.uid);
       for (var substitute in list) {
         if (friendsSubstitute.isNotEmpty) {
           List<String> temporarilyfriendVertretung = [];

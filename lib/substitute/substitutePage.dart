@@ -20,14 +20,14 @@ class VertretungsPage extends StatefulWidget {
 class _VertretungsPageState extends State<VertretungsPage>
     with TickerProviderStateMixin {
   CloudDatabase cd;
-  LocalDatabase getter = LocalDatabase();
+  LocalDatabase localDatabase = LocalDatabase();
 
   ///if the user selected personal substitute(use also subjects in filter)
   bool personalSubstitute = false;
   bool finishedLoading = false;
   bool loadingSuccess = true;
 
-  ///The last change of the stubstitute
+  ///The last change of the substitute
   String lastChange = "Loading";
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -71,36 +71,26 @@ class _VertretungsPageState extends State<VertretungsPage>
     "Q2",
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
-
-  Future<void> reload({bool fromPullToRefresh = false}) async {
+  Future<void> reloadData({bool fromPullToRefresh = false}) async {
     SnackBar snack = SnackBar(
       content: Text("Es werden alte Daten verwendet."),
       duration: Duration(days: 1),
       behavior: SnackBarBehavior.floating,
       action: SnackBarAction(
-          label: "Ausblenden",
-          onPressed: () {
-            Scaffold.of(context).hideCurrentSnackBar();
-            loadingSuccess = true; // make snackbar able to reshow
-          }),
+        label: "Ausblenden",
+        onPressed: () {
+          Scaffold.of(context).hideCurrentSnackBar();
+          loadingSuccess = true; // make snackbar able to reshow
+        },
+      ),
     );
-    //reload the settings
-
-    getter.getBool(Names.personalSubstitute).then((onValue) {
-      setState(() {
-        personalSubstitute = onValue;
-      });
-    });
-
     List<dynamic> dataResult = await FunctionsForVertretung()
         .getData(); //load the data from dsb mobile
 
-    if (fromPullToRefresh) _refreshController.refreshCompleted();
     finishedLoading = true;
     if (dataResult.isEmpty) {
       if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
       loadingSuccess = false;
-      lastChange = await getter.getString(Names.lastChange);
     } else {
       loadingSuccess = true;
       Scaffold.of(context).hideCurrentSnackBar();
@@ -109,52 +99,62 @@ class _VertretungsPageState extends State<VertretungsPage>
         //rawListToday = dataResult[1];
         //rawListTomorrow = dataResult[2];
       });
-      getter.setString(Names.lastChange, lastChange);
-      getter.setStringList(Names.substituteToday, rawListToday);
-      getter.setStringList(Names.substituteTomorrow, rawListTomorrow);
+      await localDatabase.setString(Names.lastChange, lastChange);
+      await localDatabase.setStringList(Names.substituteToday, rawListToday);
+      await localDatabase.setStringList(
+          Names.substituteTomorrow, rawListTomorrow);
     }
+    await reloadFilteredSubstitute();
+    if (fromPullToRefresh) _refreshController.refreshCompleted();
+  }
 
-    String schoolClass = await LocalDatabase().getString(Names.schoolClass);
-    Filter filter = Filter(schoolClass);
-    List<dynamic> allMyListToday;
-    List<dynamic> allListToday;
-    List<dynamic> allMyListTomorrow;
-    List<dynamic> allListTomorrow;
+  void reloadSettings() {
+    localDatabase.getBool(Names.personalSubstitute).then((onValue) {
+      setState(() {
+        personalSubstitute = onValue;
+      });
+    });
+  }
 
+  Future<void> reloadFilteredSubstitute() async {
+    reloadSettings();
+    String schoolClass = await localDatabase.getString(Names.schoolClass);
     List<String> subjectsList =
-        await LocalDatabase().getStringList(Names.subjects);
+        await localDatabase.getStringList(Names.subjects);
     List<String> subjectsNotList =
-        await LocalDatabase().getStringList(Names.subjectsNot);
+        await localDatabase.getStringList(Names.subjectsNot);
+    List<String> rawSubstituteList =
+        await localDatabase.getStringList(Names.substituteToday);
+    String newLastChange = await localDatabase.getString(Names.lastChange);
 
-    allMyListToday = await filter.checkForSubjects(
-        Names.substituteToday, subjectsList, subjectsNotList);
-    allListToday = await filter.checkForSchoolClass(Names.substituteToday);
-    allMyListTomorrow = await filter.checkForSubjects(
-        Names.substituteTomorrow, subjectsList, subjectsNotList);
-    allListTomorrow =
-        await filter.checkForSchoolClass(Names.substituteTomorrow);
+    Filter filter = Filter(schoolClass, rawSubstituteList);
 
     setState(() {
       if (mounted) {
-        myListToday = allMyListToday;
-        listToday = allListToday;
-        myListTomorrow = allMyListTomorrow;
-        listTomorrow = allListTomorrow;
+        myListToday = filter.checkForSubjects(
+            Names.substituteToday, subjectsList, subjectsNotList);
+        listToday = filter.checkForSchoolClass(Names.substituteToday);
+        myListTomorrow = filter.checkForSubjects(
+            Names.substituteTomorrow, subjectsList, subjectsNotList);
+        listTomorrow = filter.checkForSchoolClass(Names.substituteTomorrow);
+        lastChange = newLastChange;
       }
     });
   }
 
   @override
   void initState() {
-    reload();
+    reloadSettings();
+    reloadData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     if (Provider.of<ProviderData>(context).getVertretungReload()) {
-      reload().then((value) => Provider.of<ProviderData>(context, listen: false)
-          .setVertretungReload(false));
+      reloadFilteredSubstitute().then((value) =>
+          Provider.of<ProviderData>(context, listen: false)
+              .setVertretungReload(false));
     }
 
     final theme = Provider.of<ProviderData>(context);
@@ -177,7 +177,7 @@ class _VertretungsPageState extends State<VertretungsPage>
                   icon: Icon(Icons.settings),
                   onPressed: () async {
                     await Navigator.pushNamed(context, Names.settingsPage);
-                    reload();
+                    reloadFilteredSubstitute();
                   })
             ],
             bottom: TabBar(
@@ -222,7 +222,7 @@ class _VertretungsPageState extends State<VertretungsPage>
                     if (personalSubstitute)
                       SmartRefresher(
                         controller: _refreshController,
-                        onRefresh: () => reload(fromPullToRefresh: true),
+                        onRefresh: () => reloadData(fromPullToRefresh: true),
                         child: GeneralBlueprint(
                           list: myListToday,
                         ),
@@ -230,21 +230,21 @@ class _VertretungsPageState extends State<VertretungsPage>
                     if (personalSubstitute)
                       SmartRefresher(
                         controller: _refreshController,
-                        onRefresh: () => reload(fromPullToRefresh: true),
+                        onRefresh: () => reloadData(fromPullToRefresh: true),
                         child: GeneralBlueprint(
                           list: myListTomorrow,
                         ),
                       ),
                     SmartRefresher(
                       controller: _refreshController,
-                      onRefresh: () => reload(fromPullToRefresh: true),
+                      onRefresh: () => reloadData(fromPullToRefresh: true),
                       child: GeneralBlueprint(
                         list: listToday,
                       ),
                     ),
                     SmartRefresher(
                       controller: _refreshController,
-                      onRefresh: () => reload(fromPullToRefresh: true),
+                      onRefresh: () => reloadData(fromPullToRefresh: true),
                       child: GeneralBlueprint(
                         list: listTomorrow,
                       ),

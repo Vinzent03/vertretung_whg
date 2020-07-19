@@ -1,4 +1,4 @@
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:html/parser.dart'; // Contains HTML parsers to generate a Document object
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
@@ -12,11 +12,10 @@ class FunctionsForVertretung {
 
   //replace this for your own situation
   Future<List<dynamic>> getData() async {
-    var client = Client();
     try {
-      Response todayResponse = await client.get(
+      var todayResponse = await http.get(
           "https://app.dsbcontrol.de/data/748a002d-3b4b-44ce-8311-232ed983711d/f3e9a6da-7e76-4949-816c-58c7ee05abc8/f3e9a6da-7e76-4949-816c-58c7ee05abc8.html");
-      Response tomorrowResponse = await client.get(
+      var tomorrowResponse = await http.get(
           "https://app.dsbcontrol.de/data/0c2b6ffe-f068-47b0-833a-07ec15bae1ed/12dcaead-309b-4fc6-904e-5e0bfc1f20b3/12dcaead-309b-4fc6-904e-5e0bfc1f20b3.html");
       dom.Document todayDocument = parse(todayResponse.body);
       dom.Document tomorrowDocument = parse(tomorrowResponse.body);

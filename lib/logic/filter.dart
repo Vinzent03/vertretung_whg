@@ -4,13 +4,13 @@ class Filter {
   LocalDatabase localDatabase = LocalDatabase();
 
   String schoolClass;
-  Filter(this.schoolClass);
+  final List<String> rawList;
+  Filter(this.schoolClass, this.rawList);
 
-  Future<List<dynamic>> checkForSchoolClass(String day) async {
+  List<dynamic> checkForSchoolClass(String day) {
     //filter the specific class:
 
     // 0 bevor the class was found in the list, 1 in the class, 2 out of the class
-    List<String> rawList = await localDatabase.getStringList(day);
     List<String> listWithoutClasses = [];
     int b = 0;
     schoolClass = schoolClass.toLowerCase();
@@ -44,9 +44,9 @@ class Filter {
   }
 
   //check only for the given subjects
-  Future<List<dynamic>> checkForSubjects(String day, List<dynamic> subjectsList,
-      List<dynamic> subjectsNotList) async {
-    List<dynamic> all = await checkForSchoolClass(day);
+  List<dynamic> checkForSubjects(
+      String day, List<dynamic> subjectsList, List<dynamic> subjectsNotList) {
+    List<dynamic> all = checkForSchoolClass(day);
     List<dynamic> listWithoutClasses = all;
     List<dynamic> listWithoutLessons = [];
     if (subjectsList.isEmpty || (subjectsList[0] == "")) {

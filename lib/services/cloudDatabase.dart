@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:package_info/package_info.dart';
 import 'package:Vertretung/friends/friendModel.dart';
 
+enum updateCodes {availableNormal, availableForce, notAvailable}
+
 class CloudDatabase {
   final Firestore ref = Firestore.instance;
 
@@ -83,24 +85,25 @@ class CloudDatabase {
     await local.setBool(Names.notification, userdataDoc.data[Names.notification]);
   }
 
-  //Upddates
-  Future<String> getUpdate() async {
+  //Updates
+  Future<updateCodes> getUpdate() async {
+    
     PackageInfo pa = await PackageInfo.fromPlatform();
     String version = pa.version;
-    bool updateAvaible = true;
+    bool updateAvailable = true;
     bool forceUpdate;
     DocumentSnapshot snap =
         await ref.collection("details").document("versions").get();
-    updateAvaible = snap.data["newVersion"] != version;
+    updateAvailable = snap.data["newVersion"] != version;
     forceUpdate = snap.data["forceUpdate"];
-    if (updateAvaible) {
+    if (updateAvailable) {
       if (forceUpdate) {
-        return "forceUpdate";
+        return updateCodes.availableForce;
       } else {
-        return "updateAvaible";
+        return updateCodes.availableNormal;
       }
     } else {
-      return "noUpdateAvaible";
+      return updateCodes.notAvailable;
     }
   }
 

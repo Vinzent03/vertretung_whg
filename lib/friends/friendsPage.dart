@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
-import 'friendModel.dart';
+import 'package:Vertretung/friends/friendModel.dart';
 
 class Friends extends StatefulWidget {
   @override
@@ -35,7 +35,7 @@ class _FriendsState extends State<Friends> {
     }
 
     await FriendLogic()
-        .getFriendVertretung(selectedFriends)
+        .getFriendsSubstitute(selectedFriends)
         .then((newFriendVertretung) {
       setState(() {
         friendsSubstitute = newFriendVertretung;

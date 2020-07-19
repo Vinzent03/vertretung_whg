@@ -11,36 +11,25 @@ class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
-
 class _HomeState extends State<Home> {
-  Widget usedPage = VertretungsPage();
-
   int currentIndex = 0;
   Future<void> showUpdateDialog(context) async {
+    
     CloudDatabase cd = CloudDatabase();
 
-    String updateSituation = await cd.getUpdate();
-    bool force = false;
-    bool updateAvailable = false;
-    String link;
-    List<dynamic> message;
-    // ignore: missing_return
-    if (updateSituation == "updateAvaible") {
-      updateAvailable = true;
-      force = false;
-    } else if (updateSituation == "forceUpdate") {
-      updateAvailable = true;
-      force = true;
-    }
-    link = await cd.getUpdateLink();
-    message = await cd.getUpdateMessage();
-    if (updateAvailable) {
-      if (force)
+    updateCodes updateSituation = await cd.getUpdate();
+    String link = await cd.getUpdateLink();
+    List<dynamic> message = await cd.getUpdateMessage();
+    
+    
+    if (updateCodes.availableNormal == updateSituation || updateCodes.availableForce == updateSituation) {
+      if (updateCodes.availableForce == updateSituation)
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) {
             return WillPopScope(
+              // ignore: missing_return
               onWillPop: () {},
               child: AlertDialog(
                 title: Text(message[0]),
