@@ -1,6 +1,6 @@
 class Names {
   //Pages
-  static const String splashSceen = "/";
+  static const String splashScreen = "/SplashScreen";
   static const String wrapper = "/wrapper";
   static const String settingsPage = "/settingsPage";
   static const String helpPage = "/helpPage";

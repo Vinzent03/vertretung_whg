@@ -49,16 +49,16 @@ class MyAppSt extends StatelessWidget {
                 : Brightness.light),
         navigatorKey: _navigatorKey,
 
-        //replace with your own keys from wiredash.io or remoce the Wiredash Widget
+        //replace with your own keys from wiredash.io or remove the Wiredash Widget
         secret: WiredashKeys.secret,
         projectId: WiredashKeys.id,
 
         child: MaterialApp(
           navigatorKey: _navigatorKey,
           theme: theme.getTheme(),
-          initialRoute: Names.splashSceen,
+          initialRoute: Names.splashScreen,
           routes: {
-            Names.splashSceen: (context) => Splash(),
+            Names.splashScreen: (context) => Splash(),
             Names.wrapper: (context) => Wrapper(),
             Names.settingsPage: (context) => SettingsPage(),
             Names.helpPage: (context) => HelpPage(),

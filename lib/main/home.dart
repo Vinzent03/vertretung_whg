@@ -16,7 +16,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentIndex = 0;
-  GlobalKey<FriendsState> friendKey = GlobalKey();
+  GlobalKey<FriendsPageState> friendKey = GlobalKey();
   GlobalKey<NewsPageState> newsKey = GlobalKey();
   bool friendsFeature = false;
   List<Widget> pagesWithFriendsPage;
@@ -77,11 +77,11 @@ class _HomeState extends State<Home> {
 
   _HomeState() {
     pagesWithFriendsPage = [
-      VertretungsPage(
+      SubstitutePage(
         reloadFriendsSubstitute: reloadFriendsSubstitute,
         updateFriendFeature: updateFriendFeature,
       ),
-      Friends(
+      FriendsPage(
         key: friendKey,
       ),
       NewsPage(
@@ -89,7 +89,7 @@ class _HomeState extends State<Home> {
       ),
     ];
     pagesWithoutFriendsPage = [
-      VertretungsPage(
+      SubstitutePage(
         reloadFriendsSubstitute: reloadFriendsSubstitute,
         updateFriendFeature: updateFriendFeature,
       ),

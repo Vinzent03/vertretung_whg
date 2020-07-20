@@ -12,7 +12,7 @@ import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
-import 'faecherPage.dart';
+import 'subjectsPage.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -200,7 +200,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => FaecherPage(
+                                  builder: (context) => SubjectsPage(
                                       [Names.subjects, Names.subjectsCustom]),
                                 ),
                               );
@@ -223,7 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => FaecherPage([
+                                  builder: (context) => SubjectsPage([
                                     Names.subjectsNot,
                                     Names.subjectsNotCustom
                                   ]),

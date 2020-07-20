@@ -3,25 +3,25 @@ import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:Vertretung/substitute//FunctionsForSubstitute.dart';
+import 'package:Vertretung/substitute/SubstituteLogic.dart';
 import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:Vertretung/otherWidgets/myTab.dart' as myTab;
 
-class VertretungsPage extends StatefulWidget {
+class SubstitutePage extends StatefulWidget {
   final Function reloadFriendsSubstitute;
   final Function updateFriendFeature;
-  VertretungsPage(
+  SubstitutePage(
       {Key key, this.reloadFriendsSubstitute, this.updateFriendFeature})
       : super(key: key);
 
   @override
-  _VertretungsPageState createState() => _VertretungsPageState();
+  _SubstitutePageState createState() => _SubstitutePageState();
 }
 
-class _VertretungsPageState extends State<VertretungsPage>
+class _SubstitutePageState extends State<SubstitutePage>
     with TickerProviderStateMixin {
   CloudDatabase cd;
   SharedPref sharedPref = SharedPref();
@@ -88,7 +88,7 @@ class _VertretungsPageState extends State<VertretungsPage>
         },
       ),
     );
-    List<dynamic> dataResult = await FunctionsForVertretung()
+    List<dynamic> dataResult = await SubstituteLogic()
         .getData(); //load the data from dsb mobile
 
     finishedLoading = true;
@@ -172,7 +172,7 @@ class _VertretungsPageState extends State<VertretungsPage>
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-                "$lastChange  W: ${FunctionsForVertretung().getWeekNumber()}"),
+                "$lastChange  W: ${SubstituteLogic().getWeekNumber()}"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.help_outline),

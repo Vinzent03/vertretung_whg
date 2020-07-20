@@ -29,7 +29,7 @@ class _IntroScreenState extends State<IntroScreen> {
             title: "Vertretung",
             body: "Der bessere Vertretungsplan!",
             footer: FlatButton(
-              child: Text("Du hast schon ein Acccount?"),
+              child: Text("Du hast schon ein Account?"),
               onPressed: () => Navigator.pushNamed(context, Names.logInPage,
                   arguments: false),
             ),

@@ -33,7 +33,7 @@ class CloudDatabase {
 
   void updateCustomSubjects(
       String name, List<String> customSubjectsList) async {
-    //name inicates whether to save as whitelist or blacklist
+    //name indicates whether to save as whitelist or blacklist
     AuthService _auth = AuthService();
     ref.collection("userdata").document(await _auth.getUserId()).updateData(
       {

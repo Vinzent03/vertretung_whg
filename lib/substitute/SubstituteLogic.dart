@@ -3,7 +3,7 @@ import 'package:html/parser.dart'; // Contains HTML parsers to generate a Docume
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
 
-class FunctionsForVertretung {
+class SubstituteLogic {
   int getWeekNumber() {
     DateTime date = DateTime.now();
     int dayOfYear = int.parse(DateFormat("D").format(date));

@@ -9,14 +9,14 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:share/share.dart';
 import 'package:Vertretung/friends/friendModel.dart';
 
-class Friends extends StatefulWidget {
-  const Friends({Key key}) : super(key: key);
+class FriendsPage extends StatefulWidget {
+  const FriendsPage({Key key}) : super(key: key);
 
   @override
-  FriendsState createState() => FriendsState();
+  FriendsPageState createState() => FriendsPageState();
 }
 
-class FriendsState extends State<Friends> {
+class FriendsPageState extends State<FriendsPage> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
   List<Map<String, String>> friendsSubstitute = [];

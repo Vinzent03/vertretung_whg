@@ -1,6 +1,5 @@
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/logic/names.dart';
 
@@ -17,14 +16,14 @@ class Item {
       this.isCustom = false});
 }
 
-class FaecherPage extends StatefulWidget {
+class SubjectsPage extends StatefulWidget {
   final names;
-  FaecherPage(this.names);
+  SubjectsPage(this.names);
   @override
-  _FaecherPageState createState() => _FaecherPageState();
+  _SubjectsPageState createState() => _SubjectsPageState();
 }
 
-class _FaecherPageState extends State<FaecherPage> {
+class _SubjectsPageState extends State<SubjectsPage> {
   List<String> names;
   List<Item> subjects;
   List<Item> subjectsListCustom;
