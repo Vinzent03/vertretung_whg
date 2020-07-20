@@ -15,6 +15,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int currentIndex = 0;
   GlobalKey<FriendsState> friendKey = GlobalKey();
+  GlobalKey<NewsPageState> newsKey = GlobalKey();
   List<Widget> pages;
   Future<void> showUpdateDialog(context) async {
     CloudDatabase cd = CloudDatabase();
@@ -73,8 +74,12 @@ class _HomeState extends State<Home> {
   _HomeState() {
     pages = [
       VertretungsPage(reloadFriendsSubstitute: reloadFriendsSubstitute),
-      Friends(key: friendKey,),
-      NewsPage(),
+      Friends(
+        key: friendKey,
+      ),
+      NewsPage(
+        key: newsKey,
+      ),
     ];
   }
 
@@ -117,9 +122,12 @@ class _HomeState extends State<Home> {
           ),
         ],
         onTap: (index) {
-          if (index != currentIndex)
+          if (index != currentIndex) {
             Provider.of<ProviderData>(context, listen: false)
                 .setAnimation(true);
+            newsKey.currentState.reAnimate();
+          }
+
           setState(() {
             currentIndex = index;
           });

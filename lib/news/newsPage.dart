@@ -1,23 +1,23 @@
 import 'dart:math';
 
 import 'package:Vertretung/news/newsTransmitter.dart';
-import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:provider/provider.dart';
 import 'editNewsPage.dart';
 import 'newsLogic.dart';
 
 class NewsPage extends StatefulWidget {
+  const NewsPage({Key key}) : super(key: key);
+
   @override
-  _NewsPageState createState() => _NewsPageState();
+  NewsPageState createState() => NewsPageState();
 }
 
 enum actions { delete, edit }
 
-class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
+class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   List<dynamic> newsList = [];
   bool isAdmin = false;
   bool finishedLoading = false;
@@ -51,14 +51,13 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
     _refreshController.refreshCompleted();
   }
 
+  void reAnimate() {
+    _controller.reset();
+    _controller.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ProviderData>(context).getAnimation()) {
-      _controller.reset();
-      _controller.forward().then((value) =>
-          Provider.of<ProviderData>(context, listen: false)
-              .setAnimation(false));
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Nachrichten"),

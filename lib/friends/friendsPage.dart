@@ -1,13 +1,11 @@
 import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 
 import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:Vertretung/friends/friendModel.dart';
 
