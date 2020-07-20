@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/provider/themedata.dart';
@@ -18,14 +18,14 @@ class ProviderData with ChangeNotifier {
 
   setDarkTheme() {
     isDark = true;
-    LocalDatabase().setBool(Names.darkmode, true);
+    SharedPref().setBool(Names.darkmode, true);
     _themeData = darkTheme;
     notifyListeners();
   }
 
   setLightTheme() {
     isDark = false;
-    LocalDatabase().setBool(Names.darkmode, false);
+    SharedPref().setBool(Names.darkmode, false);
     _themeData = lightTheme;
     notifyListeners();
   }

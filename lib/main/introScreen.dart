@@ -4,7 +4,7 @@ import 'package:Vertretung/provider/themedata.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
-import '../logic/localDatabase.dart';
+import '../logic/sharedPref.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
@@ -135,15 +135,15 @@ class _IntroScreenState extends State<IntroScreen> {
             db.updateUserData(
               subjects: [],
               subjectsNot: [],
-              schoolClass: await LocalDatabase().getString(Names.schoolClass),
+              schoolClass: await SharedPref().getString(Names.schoolClass),
               personalSubstitute: false,
               notification: true,
             );
             db.updateCustomSubjects(Names.subjectsCustom, []);
             db.updateCustomSubjects(Names.subjectsNotCustom, []);
-            LocalDatabase local = LocalDatabase();
-            local.setBool(Names.personalSubstitute, false);
-            local.setBool(Names.friendsFeature, true);
+            SharedPref sharedPref = SharedPref();
+            sharedPref.setBool(Names.personalSubstitute, false);
+            sharedPref.setBool(Names.friendsFeature, true);
           }
         },
       ),

@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +30,7 @@ class _FaecherPageState extends State<FaecherPage> {
   List<Item> subjectsListCustom;
   List<String> selectedSubjects = [];
   TextEditingController myController;
+  SharedPref sharedPref = SharedPref();
   String title;
 
   List<Item> buildVariants(stamm, max) {
@@ -152,7 +153,7 @@ class _FaecherPageState extends State<FaecherPage> {
     ];
     //recover custom subjects
     subjects.sort((a, b) => a.title.compareTo(b.title));
-    LocalDatabase().getStringList(names[1]).then((onValue) {
+    sharedPref.getStringList(names[1]).then((onValue) {
       for (String fach in onValue) {
         subjectsListCustom.insert(
             subjectsListCustom.length - 1,
@@ -163,7 +164,7 @@ class _FaecherPageState extends State<FaecherPage> {
       }
     });
     // recover already selected subjects
-    LocalDatabase().getStringList(names[0]).then((onValue) {
+    sharedPref.getStringList(names[0]).then((onValue) {
       setState(() {
         selectedSubjects = onValue;
         for (String fach in onValue) {
@@ -195,7 +196,7 @@ class _FaecherPageState extends State<FaecherPage> {
     } else {
       selectedSubjects.add(root.title);
     }
-    LocalDatabase().setStringList(names[0], selectedSubjects);
+    sharedPref.setStringList(names[0], selectedSubjects);
     selectedSubjects.sort();
     setState(() {
       root.isChecked = isChecked;
@@ -311,8 +312,8 @@ class _FaecherPageState extends State<FaecherPage> {
     for (Item item in subjectsListCustom) {
       if (item.title != null) _customSubjects.add(item.title);
     }
-    LocalDatabase().setStringList(names[1], _customSubjects);
-    CloudDatabase().updateCustomSubjects(names[1],_customSubjects);
+    sharedPref.setStringList(names[1], _customSubjects);
+    CloudDatabase().updateCustomSubjects(names[1], _customSubjects);
     super.dispose();
   }
 }

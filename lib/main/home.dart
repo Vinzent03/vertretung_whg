@@ -1,5 +1,5 @@
 import 'package:Vertretung/friends/friendsPage.dart';
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:provider/provider.dart';
@@ -102,7 +102,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     showUpdateDialog(context);
-    LocalDatabase()
+    SharedPref()
         .getBool(Names.friendsFeature)
         .then((value) => setState(() => friendsFeature = value));
     super.initState();
@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
   }
 
   void updateFriendFeature() {
-    LocalDatabase().getBool(Names.friendsFeature).then((value) {
+    SharedPref().getBool(Names.friendsFeature).then((value) {
       if (value != friendsFeature)
         setState(() {
           friendsFeature = value;

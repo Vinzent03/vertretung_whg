@@ -1,5 +1,5 @@
 import 'package:Vertretung/logic/filter.dart';
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -24,7 +24,7 @@ class VertretungsPage extends StatefulWidget {
 class _VertretungsPageState extends State<VertretungsPage>
     with TickerProviderStateMixin {
   CloudDatabase cd;
-  LocalDatabase localDatabase = LocalDatabase();
+  SharedPref sharedPref = SharedPref();
 
   ///if the user selected personal substitute(use also subjects in filter)
   bool personalSubstitute = false;
@@ -103,9 +103,9 @@ class _VertretungsPageState extends State<VertretungsPage>
         //rawListToday = dataResult[1];
         //rawListTomorrow = dataResult[2];
       });
-      await localDatabase.setString(Names.lastChange, lastChange);
-      await localDatabase.setStringList(Names.substituteToday, rawListToday);
-      await localDatabase.setStringList(
+      await sharedPref.setString(Names.lastChange, lastChange);
+      await sharedPref.setStringList(Names.substituteToday, rawListToday);
+      await sharedPref.setStringList(
           Names.substituteTomorrow, rawListTomorrow);
     }
     await reloadFilteredSubstitute();
@@ -114,7 +114,7 @@ class _VertretungsPageState extends State<VertretungsPage>
   }
 
   void reloadSettings() {
-    localDatabase.getBool(Names.personalSubstitute).then((onValue) {
+    sharedPref.getBool(Names.personalSubstitute).then((onValue) {
       setState(() {
         personalSubstitute = onValue;
       });
@@ -123,14 +123,14 @@ class _VertretungsPageState extends State<VertretungsPage>
 
   Future<void> reloadFilteredSubstitute() async {
     reloadSettings();
-    String schoolClass = await localDatabase.getString(Names.schoolClass);
+    String schoolClass = await sharedPref.getString(Names.schoolClass);
     List<String> subjectsList =
-        await localDatabase.getStringList(Names.subjects);
+        await sharedPref.getStringList(Names.subjects);
     List<String> subjectsNotList =
-        await localDatabase.getStringList(Names.subjectsNot);
+        await sharedPref.getStringList(Names.subjectsNot);
     List<String> rawSubstituteList =
-        await localDatabase.getStringList(Names.substituteToday);
-    String newLastChange = await localDatabase.getString(Names.lastChange);
+        await sharedPref.getStringList(Names.substituteToday);
+    String newLastChange = await sharedPref.getString(Names.lastChange);
 
     Filter filter = Filter(schoolClass, rawSubstituteList);
 

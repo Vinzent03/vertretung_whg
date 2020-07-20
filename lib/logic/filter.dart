@@ -1,7 +1,7 @@
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 
 class Filter {
-  LocalDatabase localDatabase = LocalDatabase();
+  SharedPref sharedPref = SharedPref();
 
   String schoolClass;
   final List<String> rawList;

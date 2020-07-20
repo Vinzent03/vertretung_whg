@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ class StufenList extends StatefulWidget {
 }
 
 class _StufenListState extends State<StufenList> {
-  LocalDatabase localDatabase = LocalDatabase();
+  SharedPref sharedPref = SharedPref();
   String value = "";
   String levelHint = "Wähle eine Stufe";
   String classHint = "Wähle eine Klasse";
@@ -90,7 +90,7 @@ class _StufenListState extends State<StufenList> {
     PushNotificationsManager().unsubTopic(finalClass);
     PushNotificationsManager().subTopic(finalClass);
     FirebaseAnalytics().setUserProperty(name: "schoolClass", value: finalClass);
-    localDatabase.setString(Names.schoolClass, finalClass);
+    sharedPref.setString(Names.schoolClass, finalClass);
   }
 
   @override

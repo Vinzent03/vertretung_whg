@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:Vertretung/logic/wiredashKeys.dart';
 
 import 'authentication/changePasswordPage.dart';
-import 'logic/localDatabase.dart';
+import 'logic/sharedPref.dart';
 import 'logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/provider/themedata.dart';
@@ -24,7 +24,7 @@ import 'pages/settingsPage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  LocalDatabase().getBool(Names.darkmode).then((isDark) {
+  SharedPref().getBool(Names.darkmode).then((isDark) {
     runApp(ChangeNotifierProvider<ProviderData>(
       create: (_) => ProviderData(isDark ? darkTheme : lightTheme, isDark),
       child: MyAppSt(),

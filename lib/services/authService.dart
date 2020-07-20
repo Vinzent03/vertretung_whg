@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -32,7 +32,7 @@ class AuthService {
   Future signOut({bool deleteAccount = false}) async {
     var user = await _auth.currentUser();
     try {
-      LocalDatabase().clear();
+      SharedPref().clear();
       await PushNotificationsManager().signOut();
       if (user.isAnonymous || deleteAccount) {
         print("user deleted");

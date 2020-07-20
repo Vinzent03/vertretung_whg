@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
@@ -70,19 +70,19 @@ class CloudDatabase {
       "token": token,
     });
 
-    LocalDatabase local = LocalDatabase();
-    local.setString(Names.schoolClass, userdataDoc.data[Names.schoolClass]);
-    local.setStringList(
+    SharedPref sharedPref = SharedPref();
+    sharedPref.setString(Names.schoolClass, userdataDoc.data[Names.schoolClass]);
+    sharedPref.setStringList(
         Names.subjects, List<String>.from(userdataDoc.data[Names.subjects]));
-    local.setStringList(
+    sharedPref.setStringList(
         Names.subjectsNot, List<String>.from(userdataDoc.data[Names.subjectsNot]));
-    local.setStringList(Names.subjectsCustom,
+    sharedPref.setStringList(Names.subjectsCustom,
         List<String>.from(userdataDoc.data[Names.subjectsCustom]));
-    local.setStringList(Names.subjectsNotCustom,
+    sharedPref.setStringList(Names.subjectsNotCustom,
         List<String>.from(userdataDoc.data[Names.subjectsNotCustom]));
-    local.setBool(
+    sharedPref.setBool(
         Names.personalSubstitute, userdataDoc.data[Names.personalSubstitute]);
-    await local.setBool(Names.notification, userdataDoc.data[Names.notification]);
+    await sharedPref.setBool(Names.notification, userdataDoc.data[Names.notification]);
   }
 
   //Updates

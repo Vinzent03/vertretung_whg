@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import "package:wiredash/wiredash.dart";
 import 'package:Vertretung/services/authService.dart';
-import '../logic/localDatabase.dart';
+import '../logic/sharedPref.dart';
 import '../logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +30,7 @@ class _SettingsPageState extends State<SettingsPage> {
   List<String> subjectsList = [];
   List<String> subjectsNotList = [];
 
-  LocalDatabase localDb = LocalDatabase();
+  SharedPref sharedPref = SharedPref();
 
   Future<String> createAlertDialog(
       BuildContext context, String situation, String message) {
@@ -78,25 +78,25 @@ class _SettingsPageState extends State<SettingsPage> {
     bool pFriendsFeature;
     String pSchoolClass;
     List<String> pSubjectsList;
-    localDb.getBool(Names.darkmode).then((bool b) {
+    sharedPref.getBool(Names.darkmode).then((bool b) {
       pDark = b;
     });
-    localDb.getBool(Names.personalSubstitute).then((bool b) {
+    sharedPref.getBool(Names.personalSubstitute).then((bool b) {
       pPersonalSubstitute = b;
     });
-    localDb.getBool(Names.notification).then((bool b) {
+    sharedPref.getBool(Names.notification).then((bool b) {
       pNotification = b;
     });
-    localDb.getBool(Names.friendsFeature).then((bool b) {
+    sharedPref.getBool(Names.friendsFeature).then((bool b) {
       pFriendsFeature = b;
     });
-    localDb.getString(Names.schoolClass).then((String st) {
+    sharedPref.getString(Names.schoolClass).then((String st) {
       pSchoolClass = st;
     });
-    localDb.getStringList(Names.subjects).then((List<String> st) {
+    sharedPref.getStringList(Names.subjects).then((List<String> st) {
       pSubjectsList = st;
     });
-    localDb.getStringList(Names.subjectsNot).then((List<String> st) {
+    sharedPref.getStringList(Names.subjectsNot).then((List<String> st) {
       setState(() {
         subjectsNotList = st;
         dark = pDark;
@@ -164,7 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               schoolClass); //Beim ersten starten ist die schoolClass "nicht festgelegt" und das geht nicht
                         await createAlertDialog(context, "schoolClass",
                             "Bitte wähle deine Stufe/Klasse");
-                        localDb.getString(Names.schoolClass).then((onValue) {
+                        sharedPref.getString(Names.schoolClass).then((onValue) {
                           setState(() {
                             schoolClass = onValue;
                           });
@@ -182,7 +182,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       value: personalSubstitute,
                       secondary: Icon(Icons.group),
                       onChanged: (bool b) {
-                        localDb.setBool(Names.personalSubstitute, b);
+                        sharedPref.setBool(Names.personalSubstitute, b);
                         if (mounted)
                           setState(() {
                             personalSubstitute = b;
@@ -206,7 +206,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               );
 
                               List<String> _newSubjects =
-                                  await localDb.getStringList(Names.subjects);
+                                  await sharedPref.getStringList(Names.subjects);
                               setState(() {
                                 subjectsList = _newSubjects;
                               });
@@ -229,7 +229,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ]),
                                 ),
                               );
-                              List<String> _newSubjects = await localDb
+                              List<String> _newSubjects = await sharedPref
                                   .getStringList(Names.subjectsNot);
                               setState(() {
                                 subjectsNotList = _newSubjects;
@@ -252,7 +252,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       secondary: Icon(Icons.group),
                       value: friendsFeature,
                       onChanged: (bool b) {
-                        localDb.setBool(Names.friendsFeature, b);
+                        sharedPref.setBool(Names.friendsFeature, b);
                         setState(() {
                           friendsFeature = b;
                         });
@@ -280,7 +280,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       secondary: Icon(Icons.notifications_active),
                       value: notification,
                       onChanged: (bool b) {
-                        localDb.setBool(Names.notification, b);
+                        sharedPref.setBool(Names.notification, b);
                         setState(() {
                           notification = b;
                         });

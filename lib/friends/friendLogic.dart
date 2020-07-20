@@ -1,5 +1,5 @@
 import 'package:Vertretung/logic/filter.dart';
-import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +12,7 @@ import 'package:flutter/services.dart';
 
 class FriendLogic {
   final Firestore ref = Firestore.instance;
-  LocalDatabase localDatabase = LocalDatabase();
+  SharedPref sharedPref = SharedPref();
   List<String> rawSubstituteList;
   List<FriendModel> friends = [];
 
@@ -44,7 +44,7 @@ class FriendLogic {
   Future<dynamic> getFriendsSubstitute() async {
     List<Map<String, String>> friendsSubstitute = [];
     rawSubstituteList =
-        await localDatabase.getStringList(Names.substituteToday);
+        await sharedPref.getStringList(Names.substituteToday);
 
     for (var friend in friends) {
       List<dynamic> list = _getSubstituteOfFriend(friend);
