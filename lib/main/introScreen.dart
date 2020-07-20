@@ -143,6 +143,7 @@ class _IntroScreenState extends State<IntroScreen> {
             db.updateCustomSubjects(Names.subjectsNotCustom, []);
             LocalDatabase local = LocalDatabase();
             local.setBool(Names.personalSubstitute, false);
+            local.setBool(Names.friendsFeature, true);
           }
         },
       ),

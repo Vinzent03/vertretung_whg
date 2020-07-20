@@ -1,4 +1,6 @@
 import 'package:Vertretung/friends/friendsPage.dart';
+import 'package:Vertretung/logic/localDatabase.dart';
+import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:provider/provider.dart';
 import 'package:Vertretung/news/newsPage.dart';
@@ -16,7 +18,9 @@ class _HomeState extends State<Home> {
   int currentIndex = 0;
   GlobalKey<FriendsState> friendKey = GlobalKey();
   GlobalKey<NewsPageState> newsKey = GlobalKey();
-  List<Widget> pages;
+  bool friendsFeature = false;
+  List<Widget> pagesWithFriendsPage;
+  List<Widget> pagesWithoutFriendsPage;
   Future<void> showUpdateDialog(context) async {
     CloudDatabase cd = CloudDatabase();
 
@@ -72,10 +76,22 @@ class _HomeState extends State<Home> {
   }
 
   _HomeState() {
-    pages = [
-      VertretungsPage(reloadFriendsSubstitute: reloadFriendsSubstitute),
+    pagesWithFriendsPage = [
+      VertretungsPage(
+        reloadFriendsSubstitute: reloadFriendsSubstitute,
+        updateFriendFeature: updateFriendFeature,
+      ),
       Friends(
         key: friendKey,
+      ),
+      NewsPage(
+        key: newsKey,
+      ),
+    ];
+    pagesWithoutFriendsPage = [
+      VertretungsPage(
+        reloadFriendsSubstitute: reloadFriendsSubstitute,
+        updateFriendFeature: updateFriendFeature,
       ),
       NewsPage(
         key: newsKey,
@@ -86,11 +102,23 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     showUpdateDialog(context);
+    LocalDatabase()
+        .getBool(Names.friendsFeature)
+        .then((value) => setState(() => friendsFeature = value));
     super.initState();
   }
 
   void reloadFriendsSubstitute() {
-    friendKey.currentState.reloadFriendsSubstitute();
+    if (friendsFeature) friendKey.currentState.reloadFriendsSubstitute();
+  }
+
+  void updateFriendFeature() {
+    LocalDatabase().getBool(Names.friendsFeature).then((value) {
+      if (value != friendsFeature)
+        setState(() {
+          friendsFeature = value;
+        });
+    });
   }
 
   @override
@@ -98,7 +126,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
       //by this Indexed Stack, the pages are not reloaded every time
       body: IndexedStack(
-        children: pages,
+        children:
+            friendsFeature ? pagesWithFriendsPage : pagesWithoutFriendsPage,
         index: currentIndex,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -112,10 +141,11 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.format_list_bulleted),
             title: Text("Vertretung"),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            title: Text("Freunde"),
-          ),
+          if (friendsFeature)
+            BottomNavigationBarItem(
+              icon: Icon(Icons.group),
+              title: Text("Freunde"),
+            ),
           BottomNavigationBarItem(
             icon: Icon(Icons.inbox),
             title: Text("Nachrichten"),

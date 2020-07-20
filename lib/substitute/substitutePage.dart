@@ -12,7 +12,10 @@ import 'package:Vertretung/otherWidgets/myTab.dart' as myTab;
 
 class VertretungsPage extends StatefulWidget {
   final Function reloadFriendsSubstitute;
-  VertretungsPage({Key key, this.reloadFriendsSubstitute}) : super(key: key);
+  final Function updateFriendFeature;
+  VertretungsPage(
+      {Key key, this.reloadFriendsSubstitute, this.updateFriendFeature})
+      : super(key: key);
 
   @override
   _VertretungsPageState createState() => _VertretungsPageState();
@@ -180,6 +183,7 @@ class _VertretungsPageState extends State<VertretungsPage>
                   onPressed: () async {
                     await Navigator.pushNamed(context, Names.settingsPage);
                     reloadFilteredSubstitute();
+                    widget.updateFriendFeature();
                   })
             ],
             bottom: TabBar(

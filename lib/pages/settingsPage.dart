@@ -25,6 +25,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool personalSubstitute = false;
   bool refresh = false;
   bool notification = false;
+  bool friendsFeature = false;
   String schoolClass = "Nicht Geladen";
   List<String> subjectsList = [];
   List<String> subjectsNotList = [];
@@ -71,33 +72,37 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     manager = CloudDatabase();
-    bool pdark;
+    bool pDark;
     bool pPersonalSubstitute;
-    bool pnotification;
+    bool pNotification;
+    bool pFriendsFeature;
     String pSchoolClass;
     List<String> pSubjectsList;
     localDb.getBool(Names.darkmode).then((bool b) {
-      pdark = b;
+      pDark = b;
     });
     localDb.getBool(Names.personalSubstitute).then((bool b) {
       pPersonalSubstitute = b;
     });
     localDb.getBool(Names.notification).then((bool b) {
-      pnotification = b;
+      pNotification = b;
+    });
+    localDb.getBool(Names.friendsFeature).then((bool b) {
+      pFriendsFeature = b;
     });
     localDb.getString(Names.schoolClass).then((String st) {
       pSchoolClass = st;
     });
-
     localDb.getStringList(Names.subjects).then((List<String> st) {
       pSubjectsList = st;
     });
     localDb.getStringList(Names.subjectsNot).then((List<String> st) {
       setState(() {
         subjectsNotList = st;
-        dark = pdark;
+        dark = pDark;
         personalSubstitute = pPersonalSubstitute;
-        notification = pnotification;
+        notification = pNotification;
+        friendsFeature = pFriendsFeature;
         schoolClass = pSchoolClass;
         subjectsList = pSubjectsList;
       });
@@ -195,15 +200,13 @@ class _SettingsPageState extends State<SettingsPage> {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => FaecherPage([
-                                    Names.subjects,
-                                    Names.subjectsCustom
-                                  ]),
+                                  builder: (context) => FaecherPage(
+                                      [Names.subjects, Names.subjectsCustom]),
                                 ),
                               );
 
-                              List<String> _newSubjects = await localDb
-                                  .getStringList(Names.subjects);
+                              List<String> _newSubjects =
+                                  await localDb.getStringList(Names.subjects);
                               setState(() {
                                 subjectsList = _newSubjects;
                               });
@@ -243,6 +246,20 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: <Widget>[
                     SwitchListTile(
                       title: Text(
+                        "Freunde",
+                        style: TextStyle(fontSize: 17),
+                      ),
+                      secondary: Icon(Icons.group),
+                      value: friendsFeature,
+                      onChanged: (bool b) {
+                        localDb.setBool(Names.friendsFeature, b);
+                        setState(() {
+                          friendsFeature = b;
+                        });
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(
                         "Dark Mode",
                         style: TextStyle(fontSize: 17),
                       ),
@@ -250,14 +267,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       value: dark,
                       onChanged: (bool b) {
                         setState(() {
+                          dark = b;
                           if (b) {
                             _themeChanger.setDarkTheme();
                           } else {
                             _themeChanger.setLightTheme();
                           }
-                        });
-                        setState(() {
-                          dark = b;
                         });
                       },
                     ),
@@ -266,12 +281,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       value: notification,
                       onChanged: (bool b) {
                         localDb.setBool(Names.notification, b);
-                        localDb.getBool(Names.notification).then((bool b) {
-                          setState(() {
-                            notification = b;
-                          });
-                          updateUserdata();
+                        setState(() {
+                          notification = b;
                         });
+                        updateUserdata();
                       },
                       title: Text(
                         "Benachrichtigungen",

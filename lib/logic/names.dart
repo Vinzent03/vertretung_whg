@@ -42,8 +42,9 @@ class Names {
   ///notification settings turned on
   static const String notification = "notification";
 
-  ///The last change of the stubstitute
+  ///The last change of the substitute
   static const String lastChange = "lastChange";
 
-
+  ///If the friendsFeature is turned on
+  static const String friendsFeature = "friendsFeature";
 }
