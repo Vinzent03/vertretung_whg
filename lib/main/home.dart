@@ -11,18 +11,20 @@ class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
+
 class _HomeState extends State<Home> {
   int currentIndex = 0;
+  GlobalKey<FriendsState> friendKey = GlobalKey();
+  List<Widget> pages;
   Future<void> showUpdateDialog(context) async {
-    
     CloudDatabase cd = CloudDatabase();
 
     updateCodes updateSituation = await cd.getUpdate();
     String link = await cd.getUpdateLink();
     List<dynamic> message = await cd.getUpdateMessage();
-    
-    
-    if (updateCodes.availableNormal == updateSituation || updateCodes.availableForce == updateSituation) {
+
+    if (updateCodes.availableNormal == updateSituation ||
+        updateCodes.availableForce == updateSituation) {
       if (updateCodes.availableForce == updateSituation)
         showDialog(
           context: context,
@@ -68,17 +70,23 @@ class _HomeState extends State<Home> {
     }
   }
 
+  _HomeState() {
+    pages = [
+      VertretungsPage(reloadFriendsSubstitute: reloadFriendsSubstitute),
+      Friends(key: friendKey,),
+      NewsPage(),
+    ];
+  }
+
   @override
   void initState() {
     showUpdateDialog(context);
     super.initState();
   }
 
-  final List<Widget> pages = [
-    VertretungsPage(),
-    Friends(),
-    NewsPage(),
-  ];
+  void reloadFriendsSubstitute() {
+    friendKey.currentState.reloadFriendsSubstitute();
+  }
 
   @override
   Widget build(BuildContext context) {

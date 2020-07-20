@@ -14,15 +14,24 @@ class FriendLogic {
   final Firestore ref = Firestore.instance;
   LocalDatabase localDatabase = LocalDatabase();
   List<String> rawSubstituteList;
+  List<FriendModel> friends = [];
 
-  Future<List> _getSubstituteOfFriend(
-      String frienduid) async {
-    DocumentSnapshot snap =
-        await ref.collection("userdata").document(frienduid).get();
-    Filter filter = Filter(snap[Names.schoolClass], rawSubstituteList);
-    if (snap.data[Names.personalSubstitute]) {
-      var list = filter.checkForSubjects(Names.substituteToday,
-          snap.data[Names.subjects], snap.data[Names.subjectsNot]);
+  Future<void> setFriendsSettings() async {
+    for (var friend in friends) {
+      DocumentSnapshot snap =
+          await ref.collection("userdata").document(friend.uid).get();
+      friend.subjects = snap.data[Names.subjects];
+      friend.subjectsNot = snap.data[Names.subjectsNot];
+      friend.personalSubstitute = snap.data[Names.personalSubstitute];
+      friend.schoolClass = snap.data[Names.schoolClass];
+    }
+  }
+
+  List _getSubstituteOfFriend(FriendModel friend) {
+    Filter filter = Filter(friend.schoolClass, rawSubstituteList);
+    if (friend.personalSubstitute) {
+      var list = filter.checkForSubjects(
+          Names.substituteToday, friend.subjects, friend.subjectsNot);
       return list;
     } else {
       var list = filter.checkForSchoolClass(
@@ -32,13 +41,13 @@ class FriendLogic {
     }
   }
 
-  Future<dynamic> getFriendsSubstitute(List<FriendModel> friends) async {
+  Future<dynamic> getFriendsSubstitute() async {
     List<Map<String, String>> friendsSubstitute = [];
     rawSubstituteList =
         await localDatabase.getStringList(Names.substituteToday);
+
     for (var friend in friends) {
-      List<dynamic> list =
-          await _getSubstituteOfFriend(friend.uid);
+      List<dynamic> list = _getSubstituteOfFriend(friend);
       for (var substitute in list) {
         if (friendsSubstitute.isNotEmpty) {
           List<String> temporarilyfriendVertretung = [];
@@ -72,6 +81,11 @@ class FriendLogic {
       }
     }
     return friendsSubstitute;
+  }
+
+  Future<void> updateFriendsList(List<FriendModel> newFriends) async {
+    friends = newFriends;
+    await setFriendsSettings();
   }
 
   addFriendAlert(scaffoldContext) async {

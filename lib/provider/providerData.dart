@@ -37,13 +37,6 @@ class ProviderData with ChangeNotifier {
     notifyListeners();
   }
 
-  getFriendReload() => isFriendReload;
-
-  setFriendReload(newBool) {
-    isFriendReload = newBool;
-    notifyListeners();
-  }
-
   getAnimation() => startAnimation;
 
   setAnimation(newBool) {

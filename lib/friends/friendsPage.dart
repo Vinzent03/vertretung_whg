@@ -12,18 +12,21 @@ import 'package:share/share.dart';
 import 'package:Vertretung/friends/friendModel.dart';
 
 class Friends extends StatefulWidget {
+  const Friends({Key key}) : super(key: key);
+
   @override
-  _FriendsState createState() => _FriendsState();
+  FriendsState createState() => FriendsState();
 }
 
-class _FriendsState extends State<Friends> {
+class FriendsState extends State<Friends> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
   List<Map<String, String>> friendsSubstitute = [];
   List<FriendModel> selectedFriends = [];
   List<FriendModel> friendList = [];
+  FriendLogic friendLogic = FriendLogic();
 
-  Future<void> reload() async {
+  Future<void> reloadAll() async {
     List<FriendModel> newFriendList = await CloudDatabase().getFriendsList();
     if (newFriendList.length != friendList.length) {
       selectedFriends = [];
@@ -33,18 +36,18 @@ class _FriendsState extends State<Friends> {
         selectedFriends.add(friend);
       }
     }
-
-    await FriendLogic()
-        .getFriendsSubstitute(selectedFriends)
-        .then((newFriendVertretung) {
-      setState(() {
-        friendsSubstitute = newFriendVertretung;
-      });
-    });
+    await friendLogic.updateFriendsList(selectedFriends);
+    await reloadFriendsSubstitute();
     _refreshController.refreshCompleted();
   }
 
-  
+  Future<void> reloadFriendsSubstitute() async {
+    List<dynamic> newFriendsSubstitute =
+        await friendLogic.getFriendsSubstitute();
+    setState(() {
+      friendsSubstitute = newFriendsSubstitute;
+    });
+  }
 
   void onCheckboxClicked(bool isChecked, index, Function setState) {
     setState(() {
@@ -58,11 +61,6 @@ class _FriendsState extends State<Friends> {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ProviderData>(context).getFriendReload()) {
-      reload().then((value) => Provider.of<ProviderData>(context, listen: false)
-          .setFriendReload(false));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -102,7 +100,7 @@ class _FriendsState extends State<Friends> {
       ),
       body: SmartRefresher(
         controller: _refreshController,
-        onRefresh: reload,
+        onRefresh: reloadAll,
         child: AnimatedSwitcher(
           key: ValueKey(friendsSubstitute),
           duration: Duration(seconds: 1),
@@ -119,7 +117,7 @@ class _FriendsState extends State<Friends> {
           await showDialog(
             context: context,
             builder: (context) {
-              //to chagne the state
+              //to change the state
               return StatefulBuilder(
                 builder: (context, setState) => AlertDialog(
                   shape: RoundedRectangleBorder(

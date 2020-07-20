@@ -11,7 +11,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:Vertretung/otherWidgets/myTab.dart' as myTab;
 
 class VertretungsPage extends StatefulWidget {
-  VertretungsPage({Key key}) : super(key: key);
+  final Function reloadFriendsSubstitute;
+  VertretungsPage({Key key, this.reloadFriendsSubstitute}) : super(key: key);
 
   @override
   _VertretungsPageState createState() => _VertretungsPageState();
@@ -71,7 +72,7 @@ class _VertretungsPageState extends State<VertretungsPage>
     "Q2",
     "6. - 7. Std. Pl-GK5 im Raum ??? "
   ];
-  Future<void> reloadData({bool fromPullToRefresh = false}) async {
+  Future<void> reloadAll({bool fromPullToRefresh = false}) async {
     SnackBar snack = SnackBar(
       content: Text("Es werden alte Daten verwendet."),
       duration: Duration(days: 1),
@@ -106,6 +107,7 @@ class _VertretungsPageState extends State<VertretungsPage>
     }
     await reloadFilteredSubstitute();
     if (fromPullToRefresh) _refreshController.refreshCompleted();
+    widget.reloadFriendsSubstitute();
   }
 
   void reloadSettings() {
@@ -145,7 +147,7 @@ class _VertretungsPageState extends State<VertretungsPage>
   @override
   void initState() {
     reloadSettings();
-    reloadData();
+    reloadAll();
     super.initState();
   }
 
@@ -222,7 +224,7 @@ class _VertretungsPageState extends State<VertretungsPage>
                     if (personalSubstitute)
                       SmartRefresher(
                         controller: _refreshController,
-                        onRefresh: () => reloadData(fromPullToRefresh: true),
+                        onRefresh: () => reloadAll(fromPullToRefresh: true),
                         child: GeneralBlueprint(
                           list: myListToday,
                         ),
@@ -230,21 +232,21 @@ class _VertretungsPageState extends State<VertretungsPage>
                     if (personalSubstitute)
                       SmartRefresher(
                         controller: _refreshController,
-                        onRefresh: () => reloadData(fromPullToRefresh: true),
+                        onRefresh: () => reloadAll(fromPullToRefresh: true),
                         child: GeneralBlueprint(
                           list: myListTomorrow,
                         ),
                       ),
                     SmartRefresher(
                       controller: _refreshController,
-                      onRefresh: () => reloadData(fromPullToRefresh: true),
+                      onRefresh: () => reloadAll(fromPullToRefresh: true),
                       child: GeneralBlueprint(
                         list: listToday,
                       ),
                     ),
                     SmartRefresher(
                       controller: _refreshController,
-                      onRefresh: () => reloadData(fromPullToRefresh: true),
+                      onRefresh: () => reloadAll(fromPullToRefresh: true),
                       child: GeneralBlueprint(
                         list: listTomorrow,
                       ),
