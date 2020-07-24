@@ -3,6 +3,8 @@ import 'package:Vertretung/friends/friendRequests.dart';
 import 'package:Vertretung/friends/friendsList.dart';
 import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/pages/aboutPage.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import "package:wiredash/wiredash.dart";
 import 'package:Vertretung/pages/helpPage.dart';
 import 'package:Vertretung/main/introScreen.dart';
@@ -13,23 +15,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Vertretung/logic/wiredashKeys.dart';
-
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'authentication/changePasswordPage.dart';
-import 'logic/sharedPref.dart';
 import 'logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/provider/themedata.dart';
 import 'main/splash.dart';
 import 'pages/settingsPage.dart';
+import 'dart:async';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPref().getBool(Names.darkmode).then((isDark) {
+
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  runZoned(() {
     runApp(ChangeNotifierProvider<ProviderData>(
-      create: (_) => ProviderData(isDark ? darkTheme : lightTheme, isDark),
+      create: (_) => ProviderData(themeData: darkTheme),
       child: MyAppSt(),
     ));
-  });
+  }, onError: Crashlytics.instance.recordError);
 }
 
 class MyAppSt extends StatelessWidget {
@@ -39,7 +43,6 @@ class MyAppSt extends StatelessWidget {
     final theme = Provider.of<ProviderData>(context);
     return StreamProvider<FirebaseUser>.value(
       value: AuthService().user,
-
       //used for the feedback function
       child: Wiredash(
         options: WiredashOptionsData(showDebugFloatingEntryPoint: false),
@@ -55,6 +58,9 @@ class MyAppSt extends StatelessWidget {
 
         child: MaterialApp(
           navigatorKey: _navigatorKey,
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
+          ],
           theme: theme.getTheme(),
           initialRoute: Names.splashScreen,
           routes: {

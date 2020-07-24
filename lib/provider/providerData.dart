@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:Vertretung/provider/themedata.dart';
 
 class ProviderData with ChangeNotifier {
-  ThemeData _themeData;
-  ProviderData(this._themeData, this.isDark,
-      {this.isVertretungReload = false, this.isFriendReload =false , this.startAnimation = false});
+  ThemeData themeData;
+  ProviderData({this.themeData, this.isDark = true,
+      this.isVertretungReload = false, this.isFriendReload =false , this.startAnimation = false});
   bool isDark;
   bool isVertretungReload;
   bool isFriendReload;
   bool startAnimation;
-  getTheme() => _themeData;
+  getTheme() => themeData;
 
   /// Return true if the dark mode is activated
   getIsDark() => isDark;
@@ -19,14 +19,14 @@ class ProviderData with ChangeNotifier {
   setDarkTheme() {
     isDark = true;
     SharedPref().setBool(Names.darkmode, true);
-    _themeData = darkTheme;
+    themeData = darkTheme;
     notifyListeners();
   }
 
   setLightTheme() {
     isDark = false;
     SharedPref().setBool(Names.darkmode, false);
-    _themeData = lightTheme;
+    themeData = lightTheme;
     notifyListeners();
   }
 

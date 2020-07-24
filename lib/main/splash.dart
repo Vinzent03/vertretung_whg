@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/provider/providerData.dart';
 import "package:flutter/material.dart";
+import 'package:provider/provider.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -10,6 +13,12 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   void initState() {
+    SharedPref().getBool(Names.darkmode).then((value) {
+      if (value)
+        Provider.of<ProviderData>(context,listen: false).setDarkTheme();
+      else
+        Provider.of<ProviderData>(context,listen: false).setLightTheme();
+    });
     Timer(Duration(milliseconds: 100), () {
       Navigator.of(context).pushReplacementNamed(Names.wrapper);
     });
@@ -38,7 +47,7 @@ class _SplashState extends State<Splash> {
                 alignment: Alignment.center,
                 child: AnimatedOpacity(
                   opacity: 1,
-                  duration: Duration(milliseconds: 100), 
+                  duration: Duration(milliseconds: 100),
                   child: Text(
                     "Vertretung",
                     style: TextStyle(fontSize: 30),

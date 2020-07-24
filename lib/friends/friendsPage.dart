@@ -13,6 +13,11 @@ class FriendsPage extends StatefulWidget {
   const FriendsPage({Key key}) : super(key: key);
 
   @override
+  String toStringShort() {
+    return "FriendsPage";
+  }
+
+  @override
   FriendsPageState createState() => FriendsPageState();
 }
 

@@ -2,6 +2,7 @@ import 'package:Vertretung/friends/friendsPage.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:provider/provider.dart';
 import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/substitute//substitutePage.dart';
@@ -101,6 +102,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    FirebaseAnalytics().setCurrentScreen(screenName: "SubstitutePage");
     showUpdateDialog(context);
     SharedPref()
         .getBool(Names.friendsFeature)
@@ -156,8 +158,11 @@ class _HomeState extends State<Home> {
             Provider.of<ProviderData>(context, listen: false)
                 .setAnimation(true);
             newsKey.currentState.reAnimate();
+            FirebaseAnalytics().setCurrentScreen(
+                screenName: friendsFeature
+                    ? pagesWithFriendsPage[index].toStringShort()
+                    : pagesWithoutFriendsPage[index].toStringShort());
           }
-
           setState(() {
             currentIndex = index;
           });

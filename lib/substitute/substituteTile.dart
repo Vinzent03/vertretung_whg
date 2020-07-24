@@ -36,15 +36,17 @@ class VertretungTile extends StatelessWidget {
             ),
           ),
           trailing: names == null
-              ? //dont show the share button on the friendspage
+              ? //dont show the share button on the friendsPage
               IconButton(
                   icon: Icon(Icons.share),
                   onPressed: () {
                     FirebaseAnalytics analytics = FirebaseAnalytics();
                     analytics.logShare(
-                        contentType: "geshared",
-                        method: "gedrückt halten",
-                        itemId: "42");
+                      contentType:
+                          names == null ? "SubstitutePage" : "FriendsPage",
+                      method: "hold",
+                      itemId: subjectPrefix,
+                    );
                     Share.share("Wir haben Vertretung und zwar: $title");
                   },
                 )
@@ -53,9 +55,10 @@ class VertretungTile extends StatelessWidget {
           onLongPress: () {
             FirebaseAnalytics analytics = FirebaseAnalytics();
             analytics.logShare(
-                contentType: "geshared",
-                itemId: "42",
-                method: "gedrückt halten");
+              contentType: names == null ? "SubstitutePage" : "FriendsPage",
+              method: "button pressed",
+              itemId: subjectPrefix,
+            );
             Share.share("Wir haben Vertretung und zwar: $title");
           },
         ),

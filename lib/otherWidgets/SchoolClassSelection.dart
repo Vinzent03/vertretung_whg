@@ -87,7 +87,6 @@ class _StufenListState extends State<StufenList> {
     setState(() {
       classHint = finalClass;
     });
-    PushNotificationsManager().unsubTopic(finalClass);
     PushNotificationsManager().subTopic(finalClass);
     FirebaseAnalytics().setUserProperty(name: "schoolClass", value: finalClass);
     sharedPref.setString(Names.schoolClass, finalClass);

@@ -1,8 +1,8 @@
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -57,6 +57,7 @@ class AuthService {
         EmailAuthProvider.getCredential(email: email, password: password);
     try {
       AuthResult res = await user.linkWithCredential(credential);
+      FirebaseAnalytics().logSignUp(signUpMethod: "email");
     } catch (e) {
       print(e.toString());
       switch (e.code) {
@@ -87,7 +88,7 @@ class AuthService {
     try {
       AuthResult res = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-
+      FirebaseAnalytics().logLogin(loginMethod: "email");
       await CloudDatabase().restoreAccount();
       return Provider.of<ProviderData>(context, listen: false)
           .setVertretungReload(true);

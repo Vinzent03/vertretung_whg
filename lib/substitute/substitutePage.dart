@@ -16,6 +16,10 @@ class SubstitutePage extends StatefulWidget {
   SubstitutePage(
       {Key key, this.reloadFriendsSubstitute, this.updateFriendFeature})
       : super(key: key);
+  @override
+  String toStringShort() {
+    return "SubstitutePage";
+  }
 
   @override
   _SubstitutePageState createState() => _SubstitutePageState();
@@ -88,8 +92,8 @@ class _SubstitutePageState extends State<SubstitutePage>
         },
       ),
     );
-    List<dynamic> dataResult = await SubstituteLogic()
-        .getData(); //load the data from dsb mobile
+    List<dynamic> dataResult =
+        await SubstituteLogic().getData(); //load the data from dsb mobile
 
     finishedLoading = true;
     if (dataResult.isEmpty) {
@@ -105,8 +109,7 @@ class _SubstitutePageState extends State<SubstitutePage>
       });
       await sharedPref.setString(Names.lastChange, lastChange);
       await sharedPref.setStringList(Names.substituteToday, rawListToday);
-      await sharedPref.setStringList(
-          Names.substituteTomorrow, rawListTomorrow);
+      await sharedPref.setStringList(Names.substituteTomorrow, rawListTomorrow);
     }
     await reloadFilteredSubstitute();
     if (fromPullToRefresh) _refreshController.refreshCompleted();
@@ -124,8 +127,7 @@ class _SubstitutePageState extends State<SubstitutePage>
   Future<void> reloadFilteredSubstitute() async {
     reloadSettings();
     String schoolClass = await sharedPref.getString(Names.schoolClass);
-    List<String> subjectsList =
-        await sharedPref.getStringList(Names.subjects);
+    List<String> subjectsList = await sharedPref.getStringList(Names.subjects);
     List<String> subjectsNotList =
         await sharedPref.getStringList(Names.subjectsNot);
     List<String> rawSubstituteList =
@@ -171,8 +173,7 @@ class _SubstitutePageState extends State<SubstitutePage>
         //key is needed because otherwise the tab length would not be updated
         child: Scaffold(
           appBar: AppBar(
-            title: Text(
-                "$lastChange  W: ${SubstituteLogic().getWeekNumber()}"),
+            title: Text("$lastChange  W: ${SubstituteLogic().getWeekNumber()}"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.help_outline),

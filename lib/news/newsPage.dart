@@ -10,6 +10,10 @@ import 'newsLogic.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key key}) : super(key: key);
+  @override
+  String toStringShort() {
+    return "NewsPage";
+  }
 
   @override
   NewsPageState createState() => NewsPageState();
