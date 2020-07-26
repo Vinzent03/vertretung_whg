@@ -43,8 +43,7 @@ class FriendLogic {
 
   Future<dynamic> getFriendsSubstitute() async {
     List<Map<String, String>> friendsSubstitute = [];
-    rawSubstituteList =
-        await sharedPref.getStringList(Names.substituteToday);
+    rawSubstituteList = await sharedPref.getStringList(Names.substituteToday);
 
     for (var friend in friends) {
       List<dynamic> list = _getSubstituteOfFriend(friend);
@@ -129,93 +128,138 @@ class FriendLogic {
     }
 
     showDialog(
-        context: scaffoldContext,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15))),
-            title: Text("Gib den Token deines Freundes ein"),
-            content: Form(
-              key: _formKey,
-              child: TextFormField(
-                controller: controller,
-                autovalidate: _autoValidate,
-                validator: isValid,
-              ),
+      context: scaffoldContext,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15))),
+          title: Text("Gib den Token deines Freundes ein"),
+          content: Form(
+            key: _formKey,
+            child: TextFormField(
+              controller: controller,
+              autovalidate: _autoValidate,
+              validator: isValid,
             ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("abbrechen"),
-                onPressed: () => Navigator.pop(context),
-              ),
-              RaisedButton(
-                  child: Text("Bestätigen"),
-                  // ignore: missing_return
-                  onPressed: () async {
-                    error = false;
-                    if (_validateInputs()) {
-                      var connectivityResult =
-                          await (Connectivity().checkConnectivity());
-                      if (connectivityResult == ConnectivityResult.none) {
-                        Navigator.pop(context);
-                        return Scaffold.of(scaffoldContext)
-                            .showSnackBar(SnackBar(
-                          content: Text("Keine Verbindung"),
-                          behavior: SnackBarBehavior.floating,
-                        ));
-                      }
-                      await pr.show();
-                      var result =
-                          await Functions().addFriendRequest(controller.text);
-                      await pr.hide();
-                      switch (result["code"]) {
-                        case "SUCCESS":
-                          Navigator.pop(context);
-                          Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
-                            content: Text("Freundesanfrage geschickt"),
-                          ));
-                          break;
-                        case "EXCEPTION_ALREADY_REQUESTED":
-                          message = result["message"];
-                          error = true;
-                          _validateInputs();
-                          break;
-                        case "EXCEPTION_ALREADY_FRIEND":
-                          message = result["message"];
-                          error = true;
-                          _validateInputs();
-                          break;
-                        case "EXCEPTION_CANT_FIND_FRIEND":
-                          message = result["message"];
-                          error = true;
-                          _validateInputs();
-                          break;
-                        case "DEADLINE_EXCEEDED":
-                          Navigator.pop(context);
-                          Scaffold.of(scaffoldContext).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  "Das hat zu lange gedauert. Versuche es später erneut."),
-                              duration: Duration(seconds: 5),
-                            ),
-                          );
-                          break;
-                        default:
-                          Navigator.pop(context);
-                          Scaffold.of(scaffoldContext).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  "Ein unerwarteter Fehler ist aufgetreten: \"" +
-                                      result["code"] +
-                                      "\""),
-                              duration: Duration(minutes: 1),
-                            ),
-                          );
-                      }
-                    }
-                  }),
-            ],
-          );
-        });
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("abbrechen"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            RaisedButton(
+              child: Text("Bestätigen"),
+              // ignore: missing_return
+              onPressed: () async {
+                error = false;
+                if (_validateInputs()) {
+                  var connectivityResult =
+                      await (Connectivity().checkConnectivity());
+                  if (connectivityResult == ConnectivityResult.none) {
+                    Navigator.pop(context);
+                    return Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
+                      content: Text("Keine Verbindung"),
+                      behavior: SnackBarBehavior.floating,
+                    ));
+                  }
+                  await pr.show();
+                  var result =
+                      await Functions().addFriendRequest(controller.text);
+                  await pr.hide();
+                  switch (result["code"]) {
+                    case "SUCCESS":
+                      Navigator.pop(context);
+                      Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
+                        content: Text("Freundesanfrage geschickt"),
+                      ));
+                      break;
+                    case "EXCEPTION_ALREADY_REQUESTED":
+                      message = result["message"];
+                      error = true;
+                      _validateInputs();
+                      break;
+                    case "EXCEPTION_ALREADY_FRIEND":
+                      message = result["message"];
+                      error = true;
+                      _validateInputs();
+                      break;
+                    case "EXCEPTION_CANT_FIND_FRIEND":
+                      message = result["message"];
+                      error = true;
+                      _validateInputs();
+                      break;
+                    case "DEADLINE_EXCEEDED":
+                      Navigator.pop(context);
+                      Scaffold.of(scaffoldContext).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Das hat zu lange gedauert. Versuche es später erneut."),
+                          duration: Duration(seconds: 5),
+                        ),
+                      );
+                      break;
+                    default:
+                      Navigator.pop(context);
+                      Scaffold.of(scaffoldContext).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Ein unerwarteter Fehler ist aufgetreten: \"" +
+                                  result["code"] +
+                                  "\""),
+                          duration: Duration(minutes: 1),
+                        ),
+                      );
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  acceptFriendPerDynamicLink(GlobalKey<NavigatorState> navigatorKey,
+      String friendsShortUid, String name) async {
+    String shortUid = (await AuthService().getUserId()).substring(0, 5);
+    if (friendsShortUid == shortUid)
+      return showDialog(
+        context: navigatorKey.currentState.overlay.context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15))),
+          title: Text(
+              "Dies ist dein eigener Link. Du kannst dir nicht selbst eine Freundesanfrage schicken."),
+          actions: <Widget>[
+            RaisedButton(
+              child: Text("OK"),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+    showDialog(
+      context: navigatorKey.currentState.overlay.context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15))),
+          title: Text("Möchtest du $name eine Freundesanfrage schicken?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Abbrechen"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            RaisedButton(
+              child: Text("Bestätigen"),
+              onPressed: () {
+                Functions().addFriendRequest(friendsShortUid);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -2,9 +2,10 @@ import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-
+import 'package:Vertretung/services/dynamicLink.dart';
 import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:share/share.dart';
 import 'package:Vertretung/friends/friendModel.dart';
@@ -74,10 +75,17 @@ class FriendsPageState extends State<FriendsPage> {
           IconButton(
               icon: Icon(Icons.share),
               onPressed: () async {
+                ProgressDialog pr = ProgressDialog(context,
+                    type: ProgressDialogType.Normal,
+                    isDismissible: false,
+                    showLogs: false);
+                await pr.show();
                 String uid = await AuthService().getUserId();
+                String link = await DynamicLink().createLink();
+                await pr.hide();
                 Share.share("Mein Freundestoken: " +
-                    uid.substring(0,
-                        5)); //If change the message also update the length above in addFriendAlert
+                    uid.substring(0, 5) +
+                    " oder einfach über diesen Link: $link"); //If change the message also update the length above in addFriendAlert
               }),
           Builder(builder: (context) {
             return IconButton(

@@ -9,13 +9,13 @@ class Functions {
     //cf.useFunctionsEmulator(origin: "http://x.x.x.x:5001");
   }
 
-  Future<dynamic> addFriendRequest(String frienduid) async {
+  Future<dynamic> addFriendRequest(String shortUid) async {
     try {
       HttpsCallable call =
           cf.getHttpsCallable(functionName: "addFriendRequest");
-      print(frienduid);
+      print(shortUid);
       HttpsCallableResult result = await call.call(<String, dynamic>{
-        "frienduid": frienduid,
+        "frienduid": shortUid,
       });
       return result.data;
     } catch (e) {
@@ -23,12 +23,12 @@ class Functions {
     }
   }
 
-  Future<dynamic> acceptFriendRequest(String frienduid) async {
+  Future<dynamic> acceptFriendRequest(String shortUid) async {
     try {
       final HttpsCallable call =
           cf.getHttpsCallable(functionName: "acceptFriendRequest");
       call.call(<String, dynamic>{
-        "frienduid": frienduid,
+        "frienduid": shortUid,
       });
     } catch (e) {
       return throwError(e);

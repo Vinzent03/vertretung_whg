@@ -11,10 +11,14 @@ class ProviderData with ChangeNotifier {
   bool isVertretungReload;
   bool isFriendReload;
   bool startAnimation;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
   getTheme() => themeData;
 
   /// Return true if the dark mode is activated
   getIsDark() => isDark;
+
+  GlobalKey<NavigatorState> getNavigatorKey() => _navigatorKey;
 
   setDarkTheme() {
     isDark = true;

@@ -37,7 +37,6 @@ void main() {
 }
 
 class MyAppSt extends StatelessWidget {
-  final _navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ProviderData>(context);
@@ -50,14 +49,14 @@ class MyAppSt extends StatelessWidget {
             brightness: Provider.of<ProviderData>(context).getIsDark()
                 ? Brightness.dark
                 : Brightness.light),
-        navigatorKey: _navigatorKey,
+        navigatorKey: Provider.of<ProviderData>(context).getNavigatorKey(),
 
         //replace with your own keys from wiredash.io or remove the Wiredash Widget
         secret: WiredashKeys.secret,
         projectId: WiredashKeys.id,
 
         child: MaterialApp(
-          navigatorKey: _navigatorKey,
+          navigatorKey: Provider.of<ProviderData>(context).getNavigatorKey(),
           navigatorObservers: [
             FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
           ],
