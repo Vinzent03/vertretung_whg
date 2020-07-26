@@ -1,4 +1,5 @@
 import 'package:Vertretung/news/newsLogic.dart';
+import 'package:Vertretung/services/authService.dart';
 import "package:flutter/material.dart";
 import "package:flutter_linkify/flutter_linkify.dart";
 import 'package:url_launcher/url_launcher.dart';
@@ -13,25 +14,36 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
+  bool isAdmin = false;
+  @override
+  void initState() {
+    AuthService()
+        .getAdminStatus()
+        .then((value) => setState(() => isAdmin = value));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Details"),
         actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () async {
-                await NewsLogic().openEditNewsPage(
-                    context, widget.text, widget.title, widget.index);
-                Navigator.pop(context, true);
-              }),
-          IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () async {
-                if (await NewsLogic().deleteNews(context, widget.index))
+          if (isAdmin)
+            IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () async {
+                  await NewsLogic().openEditNewsPage(
+                      context, widget.text, widget.title, widget.index);
                   Navigator.pop(context, true);
-              }),
+                }),
+          if (isAdmin)
+            IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () async {
+                  if (await NewsLogic().deleteNews(context, widget.index))
+                    Navigator.pop(context, true);
+                }),
         ],
       ),
       body: SingleChildScrollView(
