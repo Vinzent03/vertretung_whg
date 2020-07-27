@@ -31,6 +31,16 @@ class SharedPref {
     return prefs.getStringList(st) ?? [];
   }
 
+  Future<int> getInt(String st) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(st) ?? 0;
+  }
+
+  Future<void> setInt(String st, int newInt) async {
+    final prefs = await SharedPreferences.getInstance();
+    return await prefs.setInt(st,newInt);
+  }
+
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
     return await prefs.clear();

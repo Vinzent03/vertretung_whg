@@ -1,6 +1,4 @@
-import 'package:Vertretung/provider/providerData.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class HelpItem {
   bool isExpanded;
@@ -52,50 +50,47 @@ class _HelpPageState extends State<HelpPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: Provider.of<ProviderData>(context).getTheme(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Help"),
-        ),
-        body: Card(
-          margin: EdgeInsets.only(top: 10, left: 5, right: 5),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              ExpansionPanelList(
-                expansionCallback: (int index, bool isExpanded) {
-                  setState(() {
-                    _items[index].isExpanded = !_items[index].isExpanded;
-                  });
-                },
-                children: _items.map((HelpItem item) {
-                  return ExpansionPanel(
-                      canTapOnHeader: true,
-                      headerBuilder: (BuildContext context, bool isExpanded) {
-                        return Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            item.header,
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.bold),
-                          ),
-                        );
-                      },
-                      isExpanded: item.isExpanded,
-                      body: Container(
-                        padding:
-                            EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                        alignment: Alignment.topLeft,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Help"),
+      ),
+      body: Card(
+        margin: EdgeInsets.only(top: 10, left: 5, right: 5),
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            ExpansionPanelList(
+              expansionCallback: (int index, bool isExpanded) {
+                setState(() {
+                  _items[index].isExpanded = !_items[index].isExpanded;
+                });
+              },
+              children: _items.map((HelpItem item) {
+                return ExpansionPanel(
+                    canTapOnHeader: true,
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return Container(
+                        padding: EdgeInsets.only(left: 10),
                         child: Text(
-                          item.body,
-                          style: TextStyle(fontSize: 15),
+                          item.header,
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
                         ),
-                      ));
-                }).toList(),
-              )
-            ],
-          ),
+                      );
+                    },
+                    isExpanded: item.isExpanded,
+                    body: Container(
+                      padding:
+                          EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        item.body,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ));
+              }).toList(),
+            )
+          ],
         ),
       ),
     );

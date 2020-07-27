@@ -163,105 +163,100 @@ class _SubstitutePageState extends State<SubstitutePage>
           Provider.of<ProviderData>(context, listen: false)
               .setVertretungReload(false));
     }
-
-    final theme = Provider.of<ProviderData>(context);
-    return MaterialApp(
-      theme: theme.getTheme(),
-      home: DefaultTabController(
-        length: personalSubstitute ? 4 : 2,
-        key: Key(personalSubstitute ? "On" : "Off"),
-        //key is needed because otherwise the tab length would not be updated
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text("$lastChange  W: ${SubstituteLogic().getWeekNumber()}"),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.help_outline),
-                onPressed: () => Navigator.pushNamed(context, Names.helpPage),
-              ),
-              IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () async {
-                    await Navigator.pushNamed(context, Names.settingsPage);
-                    reloadFilteredSubstitute();
-                    widget.updateFriendFeature();
-                  })
-            ],
-            bottom: TabBar(
-              tabs: [
-                if (personalSubstitute)
-                  myTab.MyTab(
-                    // Extra tab class, because the default tab height is too high, so I cloned the class
-                    icon: Icon(
-                      Icons.person,
-                    ),
-                    iconMargin: EdgeInsets.all(0),
-                    text: "Heute",
-                  ),
-                if (personalSubstitute)
-                  myTab.MyTab(
-                    icon: Icon(
-                      Icons.person,
-                    ),
-                    iconMargin: EdgeInsets.all(0),
-                    text: "Morgen",
-                  ),
+    return DefaultTabController(
+      length: personalSubstitute ? 4 : 2,
+      key: Key(personalSubstitute ? "On" : "Off"),
+      //key is needed because otherwise the tab length would not be updated
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("$lastChange  W: ${SubstituteLogic().getWeekNumber()}"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.help_outline),
+              onPressed: () => Navigator.pushNamed(context, Names.helpPage),
+            ),
+            IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, Names.settingsPage);
+                  reloadFilteredSubstitute();
+                  widget.updateFriendFeature();
+                })
+          ],
+          bottom: TabBar(
+            tabs: [
+              if (personalSubstitute)
                 myTab.MyTab(
+                  // Extra tab class, because the default tab height is too high, so I cloned the class
                   icon: Icon(
-                    Icons.group,
+                    Icons.person,
                   ),
                   iconMargin: EdgeInsets.all(0),
                   text: "Heute",
                 ),
+              if (personalSubstitute)
                 myTab.MyTab(
                   icon: Icon(
-                    Icons.group,
+                    Icons.person,
                   ),
                   iconMargin: EdgeInsets.all(0),
                   text: "Morgen",
                 ),
-              ],
-            ),
-          ),
-          body: finishedLoading
-              ? TabBarView(
-                  children: [
-                    if (personalSubstitute)
-                      SmartRefresher(
-                        controller: _refreshController,
-                        onRefresh: () => reloadAll(fromPullToRefresh: true),
-                        child: GeneralBlueprint(
-                          list: myListToday,
-                        ),
-                      ),
-                    if (personalSubstitute)
-                      SmartRefresher(
-                        controller: _refreshController,
-                        onRefresh: () => reloadAll(fromPullToRefresh: true),
-                        child: GeneralBlueprint(
-                          list: myListTomorrow,
-                        ),
-                      ),
-                    SmartRefresher(
-                      controller: _refreshController,
-                      onRefresh: () => reloadAll(fromPullToRefresh: true),
-                      child: GeneralBlueprint(
-                        list: listToday,
-                      ),
-                    ),
-                    SmartRefresher(
-                      controller: _refreshController,
-                      onRefresh: () => reloadAll(fromPullToRefresh: true),
-                      child: GeneralBlueprint(
-                        list: listTomorrow,
-                      ),
-                    ),
-                  ],
-                )
-              : Center(
-                  child: CircularProgressIndicator(),
+              myTab.MyTab(
+                icon: Icon(
+                  Icons.group,
                 ),
+                iconMargin: EdgeInsets.all(0),
+                text: "Heute",
+              ),
+              myTab.MyTab(
+                icon: Icon(
+                  Icons.group,
+                ),
+                iconMargin: EdgeInsets.all(0),
+                text: "Morgen",
+              ),
+            ],
+          ),
         ),
+        body: finishedLoading
+            ? TabBarView(
+                children: [
+                  if (personalSubstitute)
+                    SmartRefresher(
+                      controller: _refreshController,
+                      onRefresh: () => reloadAll(fromPullToRefresh: true),
+                      child: GeneralBlueprint(
+                        list: myListToday,
+                      ),
+                    ),
+                  if (personalSubstitute)
+                    SmartRefresher(
+                      controller: _refreshController,
+                      onRefresh: () => reloadAll(fromPullToRefresh: true),
+                      child: GeneralBlueprint(
+                        list: myListTomorrow,
+                      ),
+                    ),
+                  SmartRefresher(
+                    controller: _refreshController,
+                    onRefresh: () => reloadAll(fromPullToRefresh: true),
+                    child: GeneralBlueprint(
+                      list: listToday,
+                    ),
+                  ),
+                  SmartRefresher(
+                    controller: _refreshController,
+                    onRefresh: () => reloadAll(fromPullToRefresh: true),
+                    child: GeneralBlueprint(
+                      list: listTomorrow,
+                    ),
+                  ),
+                ],
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }

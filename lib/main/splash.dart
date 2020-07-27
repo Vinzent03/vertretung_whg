@@ -13,13 +13,10 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  void getTheme() {
-    SharedPref().getBool(Names.darkmode).then((value) {
-      if (value)
-        Provider.of<ProviderData>(context, listen: false).setDarkTheme();
-      else
-        Provider.of<ProviderData>(context, listen: false).setLightTheme();
-    });
+  void initTheme() async {
+    ThemeMode themeMode =
+        ThemeMode.values[await SharedPref().getInt(Names.themeMode)];
+    Provider.of<ProviderData>(context,listen: false).setThemeMode(themeMode);
   }
 
   void initNotification() => PushNotificationsManager().init();
@@ -28,7 +25,7 @@ class _SplashState extends State<Splash> {
 
   @override
   void initState() {
-    getTheme();
+    initTheme();
     initNotification();
     initDynamicLink();
     Timer(Duration(milliseconds: 100), () {
@@ -62,7 +59,7 @@ class _SplashState extends State<Splash> {
                   duration: Duration(milliseconds: 100),
                   child: Text(
                     "Vertretung",
-                    style: TextStyle(fontSize: 30),
+                    style: TextStyle(fontSize: 30,color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                 ),

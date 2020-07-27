@@ -19,7 +19,8 @@ class Names {
   ///if the user selected personal substitute(use also subjects in filter)
   static const String personalSubstitute = "personalSubstitute";
 
-  static const String darkmode = "darkmode";
+  ///whether to use system, dark or light mode
+  static const String themeMode = "themeMode";
 
   ///yourself written subjects for the whiteList
   static const String subjectsCustom = "subjectsCustom";

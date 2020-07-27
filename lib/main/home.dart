@@ -20,6 +20,7 @@ class _HomeState extends State<Home> {
   GlobalKey<FriendsPageState> friendKey = GlobalKey();
   GlobalKey<NewsPageState> newsKey = GlobalKey();
   bool friendsFeature = false;
+  ThemeMode selectedThemeMode;
   List<Widget> pagesWithFriendsPage;
   List<Widget> pagesWithoutFriendsPage;
   Future<void> showUpdateDialog(context) async {
@@ -135,9 +136,10 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         elevation: 10,
         currentIndex: currentIndex,
-        backgroundColor: Provider.of<ProviderData>(context).getIsDark()
-            ? Colors.black
-            : Colors.white,
+        backgroundColor:
+            Provider.of<ProviderData>(context).getUsedTheme() == Brightness.dark
+                ? Colors.black
+                : Colors.white,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.format_list_bulleted),

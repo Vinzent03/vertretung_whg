@@ -1,38 +1,43 @@
-import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/logic/names.dart';
 import 'package:flutter/material.dart';
-import 'package:Vertretung/provider/themedata.dart';
+import 'package:flutter/scheduler.dart';
 
 class ProviderData with ChangeNotifier {
   ThemeData themeData;
-  ProviderData({this.themeData, this.isDark = true,
-      this.isVertretungReload = false, this.isFriendReload =false , this.startAnimation = false});
-  bool isDark;
+  ProviderData(
+      {this.themeData,
+      this.isVertretungReload = false,
+      this.startAnimation = false,
+      this.usedThemeMode = ThemeMode.system});
   bool isVertretungReload;
-  bool isFriendReload;
   bool startAnimation;
+  ThemeMode usedThemeMode;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-  getTheme() => themeData;
+  ThemeMode getThemeMode() => usedThemeMode;
 
-  /// Return true if the dark mode is activated
-  getIsDark() => isDark;
+  setThemeMode(ThemeMode newThemeMode) {
+    usedThemeMode = newThemeMode;
+    notifyListeners();
+  }
+
+  Brightness getUsedTheme() {
+    addListener(getThemeMode);
+    switch (usedThemeMode) {
+      case ThemeMode.dark:
+        return Brightness.dark;
+        break;
+      case ThemeMode.light:
+        return Brightness.light;
+        break;
+      case ThemeMode.system:
+        return SchedulerBinding.instance.window.platformBrightness;
+        break;
+      default:
+        return Brightness.light;
+    }
+  }
 
   GlobalKey<NavigatorState> getNavigatorKey() => _navigatorKey;
-
-  setDarkTheme() {
-    isDark = true;
-    SharedPref().setBool(Names.darkmode, true);
-    themeData = darkTheme;
-    notifyListeners();
-  }
-
-  setLightTheme() {
-    isDark = false;
-    SharedPref().setBool(Names.darkmode, false);
-    themeData = lightTheme;
-    notifyListeners();
-  }
 
   getVertretungReload() => isVertretungReload;
 

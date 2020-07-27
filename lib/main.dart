@@ -39,28 +39,28 @@ void main() {
 class MyAppSt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ProviderData>(context);
+    final provider = Provider.of<ProviderData>(context);
     return StreamProvider<FirebaseUser>.value(
       value: AuthService().user,
       //used for the feedback function
       child: Wiredash(
         options: WiredashOptionsData(showDebugFloatingEntryPoint: false),
         theme: WiredashThemeData(
-            brightness: Provider.of<ProviderData>(context).getIsDark()
-                ? Brightness.dark
-                : Brightness.light),
-        navigatorKey: Provider.of<ProviderData>(context).getNavigatorKey(),
+            brightness: provider.getUsedTheme()),
+        navigatorKey: provider.getNavigatorKey(),
 
         //replace with your own keys from wiredash.io or remove the Wiredash Widget
         secret: WiredashKeys.secret,
         projectId: WiredashKeys.id,
 
         child: MaterialApp(
-          navigatorKey: Provider.of<ProviderData>(context).getNavigatorKey(),
+          navigatorKey: provider.getNavigatorKey(),
           navigatorObservers: [
             FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
           ],
-          theme: theme.getTheme(),
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: provider.getThemeMode(),
           initialRoute: Names.splashScreen,
           routes: {
             Names.splashScreen: (context) => Splash(),
