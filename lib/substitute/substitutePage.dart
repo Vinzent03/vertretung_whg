@@ -3,7 +3,7 @@ import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:Vertretung/substitute/SubstituteLogic.dart';
+import 'package:Vertretung/substitute/substituteLogic.dart';
 import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -9,7 +9,7 @@ Eine Vertretungsapp für das Werner-Heisenberg-Gymnasium.
 
 Die Flutter App ist auf das Werner-Heisenberg-Gymnasium zugeschnitten. Für die Nutzung auf anderen Schulen:
 1. Die App signen [siehe Flutter Dokumentation](https://flutter.dev/docs/deployment/android#signing-the-app)
-2. Die Klasse [Filter](lib/logic/filter.dart) und  die Methode [getData()](lib/vertretung/FunctionsForVertretung.dart) auf die Daten der Schule anpassen. 
+2. Die Klasse [Filter](lib/logic/filter.dart) und  die Methode [getData()](lib/substitute/substituteLogic.dart) auf die Daten der Schule anpassen. 
 3. Eigene google-services.json in [android/app](android/app) einfügen. ([siehe Firebase](https://firebase.google.com/))
 4. In [main.dart](lib/main.dart) eigene Keys für wiredash.io einfügen 
 5. Die dazugehörigen [cloud functions](https://github.com/Vinzent03/cloud-functions-for-vertretung_whg) hinzufügen
