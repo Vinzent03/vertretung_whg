@@ -184,7 +184,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                   ),
                   ListTile(
-                    title: Text("Deine Fächer(Whitelist)"),
+                    title: Text("Deine Fächer (Whitelist)"),
                     enabled: personalSubstitute,
                     leading: Icon(Icons.edit),
                     onTap: !personalSubstitute
@@ -207,7 +207,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           },
                   ),
                   ListTile(
-                    title: Text("Fächer anderer(Blacklist)"),
+                    title: Text("Fächer anderer (Blacklist)"),
                     enabled: personalSubstitute,
                     leading: Icon(Icons.edit),
                     onTap: !personalSubstitute
@@ -240,7 +240,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ThemeModeSelection(_themeChanger.getThemeMode()),
                   SwitchListTile(
                     title: Text(
-                      "Freunde",
+                      "Freundes Funktion",
                       style: TextStyle(fontSize: 17),
                     ),
                     secondary: Icon(Icons.group),

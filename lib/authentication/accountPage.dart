@@ -13,8 +13,9 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   String name = "Laden";
   String email = "Laden";
+  String uid = "Laden";
   bool isAnon = true;
-
+  AuthService authService = AuthService();
   changeNameAlert(scaffoldContext) {
     final TextEditingController controller = TextEditingController();
     showDialog(
@@ -108,12 +109,15 @@ class _AccountPageState extends State<AccountPage> {
     CloudDatabase().getName().then((value) => setState(() {
           name = value;
         }));
-    AuthService().isAnon().then((newIsAnon) {
+    authService
+        .getUserId()
+        .then((value) => setState(() => uid = value.substring(0, 5)));
+    authService.isAnon().then((newIsAnon) {
       setState(() {
         isAnon = newIsAnon;
       });
       if (!isAnon) {
-        AuthService().getEmail().then((newEmail) {
+        authService.getEmail().then((newEmail) {
           setState(() {
             email = newEmail;
           });
@@ -140,13 +144,20 @@ class _AccountPageState extends State<AccountPage> {
               children: <Widget>[
                 Card(
                   elevation: 3,
-                  child: ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text("Dein Name:"),
-                      onTap: () => changeNameAlert(context),
-                      trailing: Padding(
-                          child: Text(name),
-                          padding: EdgeInsets.only(right: 10))),
+                  child: Column(
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.person),
+                        title: Text("Dein Name: $name"),
+                        subtitle: Text("Dein Freundestoken: $uid"),
+                      ),
+                      ListTile(
+                        title: Text("Namen ändern"),
+                        leading: Icon(Icons.edit),
+                        onTap: () => changeNameAlert(context),
+                      )
+                    ],
+                  ),
                 ),
                 Card(
                   elevation: 3,
