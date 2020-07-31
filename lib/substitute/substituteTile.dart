@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:share/share.dart';
 
-class VertretungTile extends StatelessWidget {
+class SubstituteListTile extends StatelessWidget {
   final String title;
   final String subjectPrefix;
   final String names;
 
-  VertretungTile({
+  SubstituteListTile({
     Key key,
     @required this.title,
     @required this.subjectPrefix,

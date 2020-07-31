@@ -3,7 +3,7 @@ import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/dynamicLink.dart';
-import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
+import 'package:Vertretung/otherWidgets/substituteList.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -115,7 +115,7 @@ class FriendsPageState extends State<FriendsPage> {
         child: AnimatedSwitcher(
           key: ValueKey(friendsSubstitute),
           duration: Duration(seconds: 1),
-          child: GeneralBlueprint(
+          child: SubstituteList(
             list: friendsSubstitute,
           ),
         ),

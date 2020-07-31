@@ -1,21 +1,21 @@
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:flutter/material.dart';
-import '../substitute//substituteTile.dart';
+import '../substitute/substituteTile.dart';
 import "package:provider/provider.dart";
 
-class GeneralBlueprint extends StatefulWidget {
+class SubstituteList extends StatefulWidget {
   final List<dynamic> list;
 
-  GeneralBlueprint({
+  SubstituteList({
     Key key,
     this.list = const [],
   }) : super(key: key);
 
   @override
-  _GeneralBlueprintState createState() => _GeneralBlueprintState();
+  _SubstituteListState createState() => _SubstituteListState();
 }
 
-class _GeneralBlueprintState extends State<GeneralBlueprint>
+class _SubstituteListState extends State<SubstituteList>
     with TickerProviderStateMixin {
   AnimationController _controller;
 
@@ -41,26 +41,34 @@ class _GeneralBlueprintState extends State<GeneralBlueprint>
       return ScaleTransition(
         scale: _animation,
         child: ListView.builder(
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: widget.list.length,
-            itemBuilder: (context, index) {
-
-              return VertretungTile(
-                title: widget.list[index]["ver"],
-                subjectPrefix: widget.list[index]["subjectPrefix"],
-                names: widget.list[index]["name"],
-              );
-            }),
+          physics: ScrollPhysics(),
+          itemCount: widget.list.length,
+          itemBuilder: (context, index) {
+            return SubstituteListTile(
+              title: widget.list[index]["ver"],
+              subjectPrefix: widget.list[index]["subjectPrefix"],
+              names: widget.list[index]["name"],
+            );
+          },
+        ),
       );
     else
       return ScaleTransition(
         scale: _animation,
         child: Center(
-          child: Icon(
-            Icons.business_center,
-            color: Colors.blue,
-            size: 200,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(
+                Icons.business_center,
+                color: Colors.blue,
+                size: 200,
+              ),
+              Text(
+                "Leider keine Vertretung",
+                style: TextStyle(fontSize: 19),
+              )
+            ],
           ),
         ),
       );

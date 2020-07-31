@@ -4,7 +4,7 @@ import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/substitute/substituteLogic.dart';
-import 'package:Vertretung/otherWidgets/generalBlueprint.dart';
+import 'package:Vertretung/otherWidgets/substituteList.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -226,7 +226,7 @@ class _SubstitutePageState extends State<SubstitutePage>
                     SmartRefresher(
                       controller: _refreshController,
                       onRefresh: () => reloadAll(fromPullToRefresh: true),
-                      child: GeneralBlueprint(
+                      child: SubstituteList(
                         list: myListToday,
                       ),
                     ),
@@ -234,21 +234,21 @@ class _SubstitutePageState extends State<SubstitutePage>
                     SmartRefresher(
                       controller: _refreshController,
                       onRefresh: () => reloadAll(fromPullToRefresh: true),
-                      child: GeneralBlueprint(
+                      child: SubstituteList(
                         list: myListTomorrow,
                       ),
                     ),
                   SmartRefresher(
                     controller: _refreshController,
                     onRefresh: () => reloadAll(fromPullToRefresh: true),
-                    child: GeneralBlueprint(
+                    child: SubstituteList(
                       list: listToday,
                     ),
                   ),
                   SmartRefresher(
                     controller: _refreshController,
                     onRefresh: () => reloadAll(fromPullToRefresh: true),
-                    child: GeneralBlueprint(
+                    child: SubstituteList(
                       list: listTomorrow,
                     ),
                   ),
