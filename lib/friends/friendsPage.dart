@@ -1,4 +1,5 @@
 import 'package:Vertretung/friends/friendLogic.dart';
+import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -116,6 +117,7 @@ class FriendsPageState extends State<FriendsPage> {
           key: ValueKey(friendsSubstitute),
           duration: Duration(seconds: 1),
           child: SubstituteList(
+            key: MyKeys.friendsTab,
             list: friendsSubstitute,
           ),
         ),

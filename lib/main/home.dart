@@ -1,6 +1,8 @@
 import 'package:Vertretung/friends/friendsPage.dart';
+import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/otherWidgets/substituteList.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +25,12 @@ class _HomeState extends State<Home> {
   ThemeMode selectedThemeMode;
   List<Widget> pagesWithFriendsPage;
   List<Widget> pagesWithoutFriendsPage;
+  List<GlobalKey<SubstituteListState>> keyList = [
+    MyKeys.firstTab,
+    MyKeys.secondTab,
+    MyKeys.thirdTab,
+    MyKeys.fourthTab,
+  ];
   Future<void> showUpdateDialog(context) async {
     CloudDatabase cd = CloudDatabase();
 
@@ -124,6 +132,36 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void animatePages(index) {
+    if (friendsFeature)
+      switch (index) {
+        case 0:
+          for (GlobalKey<SubstituteListState> key in keyList) {
+            if (key.currentState != null) key.currentState.reAnimate();
+          }
+          break;
+        case 1:
+          MyKeys.friendsTab.currentState.reAnimate();
+          break;
+
+        case 2:
+          newsKey.currentState.reAnimate();
+          break;
+      }
+    else
+      switch (index) {
+        case 0:
+          for (GlobalKey<SubstituteListState> key in keyList) {
+            if (key.currentState != null) key.currentState.reAnimate();
+          }
+          break;
+        case 1:
+          newsKey.currentState.reAnimate();
+          break;
+        default:
+      }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,9 +195,7 @@ class _HomeState extends State<Home> {
         ],
         onTap: (index) {
           if (index != currentIndex) {
-            Provider.of<ProviderData>(context, listen: false)
-                .setAnimation(true);
-            newsKey.currentState.reAnimate();
+            animatePages(index);
             FirebaseAnalytics().setCurrentScreen(
                 screenName: friendsFeature
                     ? pagesWithFriendsPage[index].toStringShort()

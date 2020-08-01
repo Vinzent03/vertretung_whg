@@ -1,7 +1,5 @@
-import 'package:Vertretung/provider/providerData.dart';
 import 'package:flutter/material.dart';
 import '../substitute/substituteTile.dart';
-import "package:provider/provider.dart";
 
 class SubstituteList extends StatefulWidget {
   final List<dynamic> list;
@@ -12,10 +10,10 @@ class SubstituteList extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SubstituteListState createState() => _SubstituteListState();
+  SubstituteListState createState() => SubstituteListState();
 }
 
-class _SubstituteListState extends State<SubstituteList>
+class SubstituteListState extends State<SubstituteList>
     with TickerProviderStateMixin {
   AnimationController _controller;
 
@@ -29,14 +27,13 @@ class _SubstituteListState extends State<SubstituteList>
     _controller.forward();
   }
 
+  Future<void> reAnimate() async {
+    _controller.reset();
+    await _controller.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ProviderData>(context).getAnimation()) {
-      _controller.reset();
-      _controller.forward().then((value) =>
-          Provider.of<ProviderData>(context, listen: false)
-              .setAnimation(false));
-    }
     if (widget.list.isNotEmpty)
       return ScaleTransition(
         scale: _animation,

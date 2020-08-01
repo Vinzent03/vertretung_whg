@@ -1,10 +1,8 @@
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -90,8 +88,6 @@ class AuthService {
           email: email, password: password);
       FirebaseAnalytics().logLogin(loginMethod: "email");
       await CloudDatabase().restoreAccount();
-      return Provider.of<ProviderData>(context, listen: false)
-          .setVertretungReload(true);
     } catch (e) {
       print(e.toString());
       switch (e.code) {

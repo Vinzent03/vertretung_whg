@@ -3,15 +3,8 @@ import 'package:flutter/scheduler.dart';
 
 class ProviderData with ChangeNotifier {
   ThemeData themeData;
-  ProviderData(
-      {this.themeData,
-      this.isVertretungReload = false,
-      this.startAnimation = false,
-      this.usedThemeMode = ThemeMode.system});
-  bool isVertretungReload;
-  bool startAnimation;
+  ProviderData({this.themeData, this.usedThemeMode = ThemeMode.system});
   ThemeMode usedThemeMode;
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   ThemeMode getThemeMode() => usedThemeMode;
 
@@ -37,19 +30,4 @@ class ProviderData with ChangeNotifier {
     }
   }
 
-  GlobalKey<NavigatorState> getNavigatorKey() => _navigatorKey;
-
-  getVertretungReload() => isVertretungReload;
-
-  setVertretungReload(newBool) {
-    isVertretungReload = newBool;
-    notifyListeners();
-  }
-
-  getAnimation() => startAnimation;
-
-  setAnimation(newBool) {
-    startAnimation = newBool;
-    notifyListeners();
-  }
 }

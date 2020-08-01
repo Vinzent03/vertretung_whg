@@ -20,8 +20,7 @@ class _SplashState extends State<Splash> {
   }
 
   void initNotification() => PushNotificationsManager().init();
-  void initDynamicLink() => DynamicLink().handleDynamicLink(
-      Provider.of<ProviderData>(context, listen: false).getNavigatorKey());
+  void initDynamicLink() => DynamicLink().handleDynamicLink();
 
   @override
   void initState() {

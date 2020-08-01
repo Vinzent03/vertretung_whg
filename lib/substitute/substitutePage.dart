@@ -1,12 +1,11 @@
 import 'package:Vertretung/logic/filter.dart';
+import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
-import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/substitute/substituteLogic.dart';
 import 'package:Vertretung/otherWidgets/substituteList.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:Vertretung/otherWidgets/myTab.dart' as myTab;
 
@@ -22,10 +21,10 @@ class SubstitutePage extends StatefulWidget {
   }
 
   @override
-  _SubstitutePageState createState() => _SubstitutePageState();
+  SubstitutePageState createState() => SubstitutePageState();
 }
 
-class _SubstitutePageState extends State<SubstitutePage>
+class SubstitutePageState extends State<SubstitutePage>
     with TickerProviderStateMixin {
   CloudDatabase cd;
   SharedPref sharedPref = SharedPref();
@@ -158,11 +157,6 @@ class _SubstitutePageState extends State<SubstitutePage>
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<ProviderData>(context).getVertretungReload()) {
-      reloadFilteredSubstitute().then((value) =>
-          Provider.of<ProviderData>(context, listen: false)
-              .setVertretungReload(false));
-    }
     return DefaultTabController(
       length: personalSubstitute ? 4 : 2,
       key: Key(personalSubstitute ? "On" : "Off"),
@@ -227,6 +221,7 @@ class _SubstitutePageState extends State<SubstitutePage>
                       controller: _refreshController,
                       onRefresh: () => reloadAll(fromPullToRefresh: true),
                       child: SubstituteList(
+                        key: MyKeys.firstTab,
                         list: myListToday,
                       ),
                     ),
@@ -235,6 +230,7 @@ class _SubstitutePageState extends State<SubstitutePage>
                       controller: _refreshController,
                       onRefresh: () => reloadAll(fromPullToRefresh: true),
                       child: SubstituteList(
+                        key: MyKeys.secondTab,
                         list: myListTomorrow,
                       ),
                     ),
@@ -242,6 +238,7 @@ class _SubstitutePageState extends State<SubstitutePage>
                     controller: _refreshController,
                     onRefresh: () => reloadAll(fromPullToRefresh: true),
                     child: SubstituteList(
+                      key: MyKeys.thirdTab,
                       list: listToday,
                     ),
                   ),
@@ -249,6 +246,7 @@ class _SubstitutePageState extends State<SubstitutePage>
                     controller: _refreshController,
                     onRefresh: () => reloadAll(fromPullToRefresh: true),
                     child: SubstituteList(
+                      key: MyKeys.fourthTab,
                       list: listTomorrow,
                     ),
                   ),

@@ -2,12 +2,9 @@ import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter/material.dart';
 
 class DynamicLink {
-  GlobalKey<NavigatorState> navigatorKey;
-  Future handleDynamicLink(GlobalKey<NavigatorState> navi) async {
-    this.navigatorKey = navi;
+  Future handleDynamicLink() async {
     //if app is started from that link
     final PendingDynamicLinkData data =
         await FirebaseDynamicLinks.instance.getInitialLink();
@@ -28,8 +25,7 @@ class DynamicLink {
     final Uri deepLink = data?.link;
     if (deepLink.pathSegments.contains("friendAdd")) {
       var parameters = deepLink.queryParameters;
-      FriendLogic().acceptFriendPerDynamicLink(
-          navigatorKey, parameters["uid"], parameters["name"]);
+      FriendLogic().acceptFriendPerDynamicLink(parameters["uid"], parameters["name"]);
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:Vertretung/logic/filter.dart';
+import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
@@ -219,12 +220,11 @@ class FriendLogic {
     );
   }
 
-  acceptFriendPerDynamicLink(GlobalKey<NavigatorState> navigatorKey,
-      String friendsShortUid, String name) async {
+  acceptFriendPerDynamicLink(String friendsShortUid, String name) async {
     String shortUid = (await AuthService().getUserId()).substring(0, 5);
     if (friendsShortUid == shortUid)
       return showDialog(
-        context: navigatorKey.currentState.overlay.context,
+        context: MyKeys.navigatorKey.currentState.overlay.context,
         builder: (context) => AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -239,7 +239,7 @@ class FriendLogic {
         ),
       );
     showDialog(
-      context: navigatorKey.currentState.overlay.context,
+      context: MyKeys.navigatorKey.currentState.overlay.context,
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(

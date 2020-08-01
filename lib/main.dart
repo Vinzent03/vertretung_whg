@@ -1,6 +1,7 @@
 import 'package:Vertretung/authentication/logInPage.dart';
 import 'package:Vertretung/friends/friendRequests.dart';
 import 'package:Vertretung/friends/friendsList.dart';
+import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/pages/aboutPage.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -45,16 +46,15 @@ class MyAppSt extends StatelessWidget {
       //used for the feedback function
       child: Wiredash(
         options: WiredashOptionsData(showDebugFloatingEntryPoint: false),
-        theme: WiredashThemeData(
-            brightness: provider.getUsedTheme()),
-        navigatorKey: provider.getNavigatorKey(),
+        theme: WiredashThemeData(brightness: provider.getUsedTheme()),
+        navigatorKey: MyKeys.navigatorKey,
 
         //replace with your own keys from wiredash.io or remove the Wiredash Widget
         secret: WiredashKeys.secret,
         projectId: WiredashKeys.id,
 
         child: MaterialApp(
-          navigatorKey: provider.getNavigatorKey(),
+          navigatorKey: MyKeys.navigatorKey,
           navigatorObservers: [
             FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
           ],

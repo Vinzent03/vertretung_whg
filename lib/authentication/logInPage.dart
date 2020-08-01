@@ -1,3 +1,4 @@
+import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:flutter/material.dart';
 
@@ -71,6 +72,8 @@ class _LogInPageState extends State<LogInPage> {
                               Scaffold.of(context).showSnackBar(snack);
                             } else {
                               Navigator.pop(context);
+                              MyKeys.substitutePageKey.currentState
+                                  .reloadFilteredSubstitute();
                             }
                           },
                         ),
