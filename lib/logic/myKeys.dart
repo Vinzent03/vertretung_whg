@@ -1,5 +1,4 @@
 import 'package:Vertretung/otherWidgets/substituteList.dart';
-import 'package:Vertretung/substitute/substitutePage.dart';
 import 'package:flutter/material.dart';
 
 class MyKeys {
@@ -14,10 +13,6 @@ class MyKeys {
       GlobalKey<SubstituteListState>();
   static final GlobalKey<SubstituteListState> fourthTab =
       GlobalKey<SubstituteListState>();
-
-  //SubstitutePage Key
-  static final GlobalKey<SubstitutePageState> substitutePageKey =
-      GlobalKey<SubstitutePageState>();
 
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
