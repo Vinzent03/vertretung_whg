@@ -64,6 +64,61 @@ class FriendsPageState extends State<FriendsPage> {
       selectedFriends.remove(friendList[index]);
   }
 
+  void shareFriendsToken() async {
+    ProgressDialog pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    await pr.show();
+    String uid = await AuthService().getUserId();
+    String link = await DynamicLink().createLink();
+    await pr.hide();
+    Share.share("Mein Freundestoken: " +
+        uid.substring(0, 5) +
+        " oder einfach über diesen Link: $link");
+  }
+
+  showBottomSheet(context) => showModalBottomSheet(
+        context: context,
+        builder: (context) => Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                  title: Text("Deinen Freundestoken teilen"),
+                  leading: Icon(Icons.share),
+                  onTap: () {
+                    Navigator.pop(context);
+                    shareFriendsToken();
+                  }),
+              ListTile(
+                  title: Text("Freundesanfrage schicken"),
+                  leading: Icon(Icons.add),
+                  onTap: () {
+                    Navigator.pop(context);
+                    FriendLogic().addFriendAlert(context);
+                  }),
+              ListTile(
+                title: Text("Freundesliste"),
+                leading: Icon(Icons.list),
+                onTap: () async {
+                  await Navigator.pushNamed(context, Names.friendsList);
+                  Navigator.pop(context);
+                  _refreshController.requestRefresh();
+                },
+              ),
+              ListTile(
+                title: Text("Freundesanfragen"),
+                leading: Icon(Icons.inbox),
+                onTap: () async {
+                  await Navigator.pushNamed(context, Names.friendsList);
+                  Navigator.pop(context);
+                  _refreshController.requestRefresh();
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,41 +128,12 @@ class FriendsPageState extends State<FriendsPage> {
           textAlign: TextAlign.left,
         ),
         actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.share),
-              onPressed: () async {
-                ProgressDialog pr = ProgressDialog(context,
-                    type: ProgressDialogType.Normal,
-                    isDismissible: false,
-                    showLogs: false);
-                await pr.show();
-                String uid = await AuthService().getUserId();
-                String link = await DynamicLink().createLink();
-                await pr.hide();
-                Share.share("Mein Freundestoken: " +
-                    uid.substring(0, 5) +
-                    " oder einfach über diesen Link: $link"); //If change the message also update the length above in addFriendAlert
-              }),
           Builder(builder: (context) {
             return IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => FriendLogic().addFriendAlert(context),
+              icon: Icon(Icons.more_vert),
+              onPressed: () => showBottomSheet(context),
             );
           }),
-          IconButton(
-            icon: Icon(Icons.inbox),
-            onPressed: () async {
-              await Navigator.pushNamed(context, Names.friendRequests);
-              _refreshController.requestRefresh();
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.list),
-            onPressed: () async {
-              await Navigator.pushNamed(context, Names.friendsList);
-              _refreshController.requestRefresh();
-            },
-          ),
         ],
       ),
       body: SmartRefresher(

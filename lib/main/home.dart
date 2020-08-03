@@ -120,7 +120,8 @@ class _HomeState extends State<Home> {
   }
 
   void reloadFriendsSubstitute() {
-    if (friendsFeature) friendKey.currentState.reloadFriendsSubstitute();
+    if (friendsFeature && friendKey.currentState != null)
+      friendKey.currentState.reloadFriendsSubstitute();
   }
 
   void updateFriendFeature() {
@@ -141,11 +142,12 @@ class _HomeState extends State<Home> {
           }
           break;
         case 1:
-          MyKeys.friendsTab.currentState.reAnimate();
+          if (MyKeys.friendsTab.currentState != null)
+            MyKeys.friendsTab.currentState.reAnimate();
           break;
 
         case 2:
-          newsKey.currentState.reAnimate();
+          if (newsKey.currentState != null) newsKey.currentState.reAnimate();
           break;
       }
     else
@@ -156,7 +158,7 @@ class _HomeState extends State<Home> {
           }
           break;
         case 1:
-          newsKey.currentState.reAnimate();
+          if (newsKey.currentState != null) newsKey.currentState.reAnimate();
           break;
         default:
       }
