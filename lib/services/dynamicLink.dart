@@ -8,12 +8,12 @@ class DynamicLink {
     //if app is started from that link
     final PendingDynamicLinkData data =
         await FirebaseDynamicLinks.instance.getInitialLink();
-    if (data != null) _handleDeepLink(data);
+    if (data != null) _handleDeepLink(data, true);
 
     //if app gets to foreground because auf that link
     FirebaseDynamicLinks.instance.onLink(
       onSuccess: (PendingDynamicLinkData dynamicLinkData) async {
-        _handleDeepLink(dynamicLinkData);
+        _handleDeepLink(dynamicLinkData,false);
       },
       onError: (OnLinkErrorException e) {
         print("Error: ${e.message}");
@@ -21,11 +21,14 @@ class DynamicLink {
     );
   }
 
-  _handleDeepLink(PendingDynamicLinkData data) async {
+  _handleDeepLink(PendingDynamicLinkData data, bool fromLaunch) async {
     final Uri deepLink = data?.link;
+    if (fromLaunch) await Future.delayed(Duration(seconds: 1));
+    if (await AuthService().getUserId() == null) return;
     if (deepLink.pathSegments.contains("friendAdd")) {
       var parameters = deepLink.queryParameters;
-      FriendLogic().acceptFriendPerDynamicLink(parameters["uid"], parameters["name"]);
+      FriendLogic()
+          .acceptFriendPerDynamicLink(parameters["uid"], parameters["name"]);
     }
   }
 

@@ -109,7 +109,7 @@ class FriendsPageState extends State<FriendsPage> {
                 title: Text("Freundesanfragen"),
                 leading: Icon(Icons.inbox),
                 onTap: () async {
-                  await Navigator.pushNamed(context, Names.friendsList);
+                  await Navigator.pushNamed(context, Names.friendRequests);
                   Navigator.pop(context);
                   _refreshController.requestRefresh();
                 },

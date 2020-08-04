@@ -1,3 +1,5 @@
+import 'package:Vertretung/logic/myKeys.dart';
+import 'package:Vertretung/logic/names.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -14,17 +16,19 @@ class PushNotificationsManager {
 
   Future<void> init() async {
     if (!_initialized) {
-      // For iOS request permission first.
-      _firebaseMessaging
-          .requestNotificationPermissions(IosNotificationSettings());
       _firebaseMessaging.configure(
-          onMessage: (Map<String, dynamic> message) async {
-        print("$message ist gekommen");
-        final SnackBar snackbar = SnackBar(
-          content: Text("Neue Inhalte"),
-          behavior: SnackBarBehavior.floating,
-        );
-      });
+        onResume: (Map<String, dynamic> message) {
+          if (message["data"]["reason"] == "friendRequest")
+            MyKeys.navigatorKey.currentState.pushNamed(Names.friendRequests);
+        },
+        onLaunch: (Map<String, dynamic> message) {
+          if (message["data"]["reason"] == "friendRequest")
+            Future.delayed(Duration(seconds: 1)).then(
+              (value) => MyKeys.navigatorKey.currentState
+                  .pushNamed(Names.friendRequests),
+            );
+        },
+      );
 
       // For testing purposes print the Firebase Messaging token
       String token = await _firebaseMessaging.getToken();

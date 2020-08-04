@@ -20,7 +20,7 @@ class AuthService {
 
   Future<String> getUserId() async {
     FirebaseUser user = await _auth.currentUser();
-    return user.uid;
+    return user?.uid;
   }
 
   Stream<FirebaseUser> get user {

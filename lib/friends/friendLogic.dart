@@ -4,6 +4,7 @@ import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:Vertretung/friends/friendModel.dart';
@@ -88,7 +89,7 @@ class FriendLogic {
     await setFriendsSettings();
   }
 
-  addFriendAlert(scaffoldContext) async {
+  addFriendAlert(context) async {
     final TextEditingController controller = TextEditingController();
     ClipboardData clipboardData = await Clipboard.getData("text/plain");
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -96,8 +97,7 @@ class FriendLogic {
     String message;
     String uid;
     bool error = false;
-    ProgressDialog pr = ProgressDialog(scaffoldContext,
-        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+
     AuthService().getUserId().then((value) => uid = value.substring(0, 5));
     if (clipboardData != null) {
       if (clipboardData.text.length ==
@@ -129,8 +129,11 @@ class FriendLogic {
     }
 
     showDialog(
-      context: scaffoldContext,
+      context: context,
       builder: (context) {
+        ProgressDialog pr =
+            ProgressDialog(context, isDismissible: false, showLogs: false);
+
         return AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -158,10 +161,10 @@ class FriendLogic {
                       await (Connectivity().checkConnectivity());
                   if (connectivityResult == ConnectivityResult.none) {
                     Navigator.pop(context);
-                    return Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
-                      content: Text("Keine Verbindung"),
-                      behavior: SnackBarBehavior.floating,
-                    ));
+                    return Flushbar(
+                      message: "Keine Verbindung.",
+                      duration: Duration(seconds: 2),
+                    )..show(context);
                   }
                   await pr.show();
                   var result =
@@ -170,9 +173,10 @@ class FriendLogic {
                   switch (result["code"]) {
                     case "SUCCESS":
                       Navigator.pop(context);
-                      Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
-                        content: Text("Freundesanfrage geschickt"),
-                      ));
+                      Flushbar(
+                        message: "Freundesanfrage gesendet.",
+                        duration: Duration(seconds: 2),
+                      )..show(context);
                       break;
                     case "EXCEPTION_ALREADY_REQUESTED":
                       message = result["message"];
@@ -191,25 +195,20 @@ class FriendLogic {
                       break;
                     case "DEADLINE_EXCEEDED":
                       Navigator.pop(context);
-                      Scaffold.of(scaffoldContext).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              "Das hat zu lange gedauert. Versuche es später erneut."),
-                          duration: Duration(seconds: 5),
-                        ),
-                      );
+                      Flushbar(
+                        message:
+                            "Das hat zu lange gedauert. Versuche es später erneut.",
+                        duration: Duration(seconds: 2),
+                      )..show(context);
                       break;
                     default:
                       Navigator.pop(context);
-                      Scaffold.of(scaffoldContext).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              "Ein unerwarteter Fehler ist aufgetreten: \"" +
-                                  result["code"] +
-                                  "\""),
-                          duration: Duration(minutes: 1),
-                        ),
-                      );
+                      Flushbar(
+                        message: "Ein unerwarteter Fehler ist aufgetreten: \"" +
+                            result["code"] +
+                            "\"",
+                        duration: Duration(seconds: 30),
+                      )..show(context);
                   }
                 }
               },
