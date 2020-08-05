@@ -9,8 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/substitute//substitutePage.dart';
 import 'package:flutter/material.dart';
-import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -31,59 +29,6 @@ class _HomeState extends State<Home> {
     MyKeys.thirdTab,
     MyKeys.fourthTab,
   ];
-  Future<void> showUpdateDialog(context) async {
-    CloudDatabase cd = CloudDatabase();
-
-    updateCodes updateSituation = await cd.getUpdate();
-    String link = await cd.getUpdateLink();
-    List<dynamic> message = await cd.getUpdateMessage();
-
-    if (updateCodes.availableNormal == updateSituation ||
-        updateCodes.availableForce == updateSituation) {
-      if (updateCodes.availableForce == updateSituation)
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return WillPopScope(
-              // ignore: missing_return
-              onWillPop: () {},
-              child: AlertDialog(
-                title: Text(message[0]),
-                content: Text(message[1]),
-                actions: <Widget>[
-                  RaisedButton(
-                    child: Text("Update"),
-                    onPressed: () => launch(link),
-                  )
-                ],
-              ),
-            );
-          },
-        );
-      else
-        showDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(message[0]),
-              content: Text(message[1]),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("abbrechen"),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                RaisedButton(
-                  child: Text("Update"),
-                  onPressed: () => launch(link),
-                )
-              ],
-            );
-          },
-        );
-    }
-  }
 
   _HomeState() {
     pagesWithFriendsPage = [
@@ -112,7 +57,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     FirebaseAnalytics().setCurrentScreen(screenName: "SubstitutePage");
-    showUpdateDialog(context);
     SharedPref()
         .getBool(Names.friendsFeature)
         .then((value) => setState(() => friendsFeature = value));
