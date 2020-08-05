@@ -3,13 +3,13 @@ import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
 import 'package:Vertretung/logic/names.dart';
 
-class Item {
+class SubjectModel {
   String title;
   bool isChecked;
   bool isCustom;
-  List<Item> children;
+  List<SubjectModel> children;
 
-  Item(
+  SubjectModel(
       {this.title,
       this.children = const [],
       this.isChecked = false,
@@ -17,130 +17,128 @@ class Item {
 }
 
 class SubjectsPage extends StatefulWidget {
-  final names;
+  ///whether to use data of whitelist or blacklist
+  final List<String> names;
   SubjectsPage(this.names);
   @override
   _SubjectsPageState createState() => _SubjectsPageState();
 }
 
 class _SubjectsPageState extends State<SubjectsPage> {
-  List<String> names;
-  List<Item> subjects;
-  List<Item> subjectsListCustom;
+  List<SubjectModel> subjectsTemplate;
+  List<SubjectModel> subjectsListCustom;
   List<String> selectedSubjects = [];
   TextEditingController myController;
   SharedPref sharedPref = SharedPref();
   String title;
 
-  List<Item> buildVariants(stamm, max) {
-    List<Item> list = [];
-    for (int i = 1; i <= max; i++) {
-      list.add(Item(title: "$stamm$i"));
+  List<SubjectModel> buildVariants(base, count) {
+    List<SubjectModel> list = [];
+    for (int i = 1; i <= count; i++) {
+      list.add(SubjectModel(title: "$base$i"));
     }
     return list;
   }
 
-  @override
-  void initState() {
-    names = widget.names;
-    if (names[0] == Names.subjects)
+  loadData() async {
+    if (widget.names[0] == Names.subjects)
       title = "Whitelist";
     else
       title = "Blacklist";
     myController = TextEditingController(text: "Gib ein Fach ein");
-    subjects = [
-      Item(
+    subjectsTemplate = [
+      SubjectModel(
         title: "Ef Vorlagen",
         children: [
-          Item(
+          SubjectModel(
             title: "D-GK",
             children: buildVariants("D-GK", 5),
           ),
-          Item(
+          SubjectModel(
             title: "DVK-VK",
             children: buildVariants("DVK-VK", 1),
           ),
-          Item(
+          SubjectModel(
             title: "KU-GK",
             children: buildVariants("KU-GK", 3),
           ),
-          Item(
+          SubjectModel(
             title: "MU-GK",
             children: buildVariants("MU-GK", 2),
           ),
-          Item(
+          SubjectModel(
             title: "E5-GK",
             children: buildVariants("E5-GK", 5),
           ),
-          Item(
+          SubjectModel(
             title: "EVK-VK",
             children: buildVariants("EVK-VK", 1),
           ),
-          Item(
+          SubjectModel(
             title: "F6-GK",
             children: buildVariants("F6-GK", 1),
           ),
-          Item(
+          SubjectModel(
             title: "SO-GK",
             children: buildVariants("SO-GK", 2),
           ),
-          Item(
+          SubjectModel(
             title: "L6-GK",
             children: buildVariants("L6-GK", 2),
           ),
-          Item(
+          SubjectModel(
             title: "GE-GK",
             children: buildVariants("GE-GK", 3),
           ),
-          Item(
+          SubjectModel(
             title: "EK-GK",
             children: buildVariants("EK-GK", 3),
           ),
-          Item(
+          SubjectModel(
             title: "PA-GK",
             children: buildVariants("PA-GK", 2),
           ),
-          Item(
+          SubjectModel(
             title: "SW-GK",
             children: buildVariants("SW-GK", 3),
           ),
-          Item(
+          SubjectModel(
             title: "PL-GK",
             children: buildVariants("PL-GK", 2),
           ),
-          Item(
+          SubjectModel(
             title: "M-GK",
             children: buildVariants("M-GK", 4),
           ),
-          Item(
+          SubjectModel(
             title: "MVK-VK",
             children: buildVariants("MVK-VK", 2),
           ),
-          Item(
+          SubjectModel(
             title: "PH-GK",
             children: buildVariants("PH-GK", 3),
           ),
-          Item(
+          SubjectModel(
             title: "BI-GK",
             children: buildVariants("BI-GK", 3),
           ),
-          Item(
+          SubjectModel(
             title: "CH-GK",
             children: buildVariants("CH-GK", 3),
           ),
-          Item(
+          SubjectModel(
             title: "IF-GK",
             children: buildVariants("IF-GK", 2),
           ),
-          Item(
+          SubjectModel(
             title: "KR-GK",
             children: buildVariants("KR-GK", 2),
           ),
-          Item(
+          SubjectModel(
             title: "ER-GK",
             children: buildVariants("ER-GK", 1),
           ),
-          Item(
+          SubjectModel(
             title: "SP-GK",
             children: buildVariants("SP-GK", 4),
           ),
@@ -148,44 +146,50 @@ class _SubjectsPageState extends State<SubjectsPage> {
       )
     ];
     subjectsListCustom = [
-      Item() //is the add ListTile at the bottom
+      SubjectModel() //is the add ListTile at the bottom
     ];
     //recover custom subjects
-    subjects.sort((a, b) => a.title.compareTo(b.title));
-    sharedPref.getStringList(names[1]).then((onValue) {
-      for (String fach in onValue) {
-        subjectsListCustom.insert(
-            subjectsListCustom.length - 1,
-            Item(
-              title: fach,
-              isCustom: true,
-            ));
-      }
-    });
+    subjectsTemplate.sort((a, b) => a.title.compareTo(b.title));
+    List<String> savedSubjectsCustom = await sharedPref.getStringList(widget.names[1]);
+    for (String fach in savedSubjectsCustom) {
+      subjectsListCustom.insert(
+          subjectsListCustom.length - 1,
+          SubjectModel(
+            title: fach,
+            isCustom: true,
+          ));
+    }
     // recover already selected subjects
-    sharedPref.getStringList(names[0]).then((onValue) {
+    sharedPref.getStringList(widget.names[0]).then((newSelectedSubjects) {
       setState(() {
-        selectedSubjects = onValue;
-        for (String fach in onValue) {
-          for (Item teil in subjects) {
-            for (Item item in teil.children) {
-              for (Item kurs in item.children) {
-                if (kurs.title == fach) {
-                  kurs.isChecked = true;
+        selectedSubjects = newSelectedSubjects;
+        for (String selectedSubject in selectedSubjects) {
+          //in the moment only "EF", easier to add more lists in the future
+          for (SubjectModel section in subjectsTemplate) {
+            for (SubjectModel subject in section.children) {
+              for (SubjectModel course in subject.children) {
+                if (course.title == selectedSubject) {
+                  course.isChecked = true;
                 }
               }
             }
           }
-          for (Item item in subjectsListCustom) {
-            if (item.title != null) {
-              if (item.title == fach) {
-                item.isChecked = true;
+          for (SubjectModel customSubject in subjectsListCustom) {
+            //used to ignore the ListTile at the bottom (used to add  subjects)
+            if (customSubject.title != null) {
+              if (customSubject.title == selectedSubject) {
+                customSubject.isChecked = true;
               }
             }
           }
         }
       });
     });
+  }
+
+  @override
+  void initState() {
+    loadData();
     super.initState();
   }
 
@@ -195,14 +199,14 @@ class _SubjectsPageState extends State<SubjectsPage> {
     } else {
       selectedSubjects.add(root.title);
     }
-    sharedPref.setStringList(names[0], selectedSubjects);
+    sharedPref.setStringList(widget.names[0], selectedSubjects);
     selectedSubjects.sort();
     setState(() {
       root.isChecked = isChecked;
     });
   }
 
-  Widget buildTiles(Item root) {
+  Widget buildTiles(SubjectModel root) {
     if (root.children.isEmpty) {
       if (root.title == null) {
         //ListTile with TextField
@@ -216,7 +220,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
               icon: Icon(Icons.add),
               onPressed: () {
                 if (myController.text != "") {
-                  Item newItem = Item(
+                  SubjectModel newItem = SubjectModel(
                       title: myController.text,
                       isCustom: true,
                       isChecked: true);
@@ -255,7 +259,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
     } else {
       //expansion ListTile
       return ExpansionTile(
-        key: PageStorageKey<Item>(root),
+        key: PageStorageKey<SubjectModel>(root),
         title: Text(
           root.title,
         ),
@@ -285,8 +289,9 @@ class _SubjectsPageState extends State<SubjectsPage> {
               ListView.builder(
                 physics: ScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: subjects.length,
-                itemBuilder: (context, index) => buildTiles(subjects[index]),
+                itemCount: subjectsTemplate.length,
+                itemBuilder: (context, index) =>
+                    buildTiles(subjectsTemplate[index]),
               ),
               ExpansionTile(
                 title: Text(
@@ -307,12 +312,12 @@ class _SubjectsPageState extends State<SubjectsPage> {
 
   @override
   void dispose() {
-    List<String> _customSubjects = [];
-    for (Item item in subjectsListCustom) {
-      if (item.title != null) _customSubjects.add(item.title);
+    List<String> _customSubjectsForSaving = [];
+    for (SubjectModel subject in subjectsListCustom) {
+      if (subject.title != null) _customSubjectsForSaving.add(subject.title);
     }
-    sharedPref.setStringList(names[1], _customSubjects);
-    CloudDatabase().updateCustomSubjects(names[1], _customSubjects);
+    sharedPref.setStringList(widget.names[1], _customSubjectsForSaving);
+    CloudDatabase().updateCustomSubjects(widget.names[1], _customSubjectsForSaving);
     super.dispose();
   }
 }
