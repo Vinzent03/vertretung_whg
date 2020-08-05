@@ -35,9 +35,10 @@ class SubstituteListTile extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
           ),
-          trailing: names == null
-              ? //dont show the share button on the friendsPage
-              IconButton(
+          //dont show the share button on the friendsPage
+          trailing: names != null
+              ? null
+              : IconButton(
                   icon: Icon(Icons.share),
                   onPressed: () {
                     FirebaseAnalytics analytics = FirebaseAnalytics();
@@ -49,18 +50,20 @@ class SubstituteListTile extends StatelessWidget {
                     );
                     Share.share("Wir haben Vertretung und zwar: $title");
                   },
-                )
-              : null,
+                ),
           subtitle: names != null ? Text(names) : null,
-          onLongPress: () {
-            FirebaseAnalytics analytics = FirebaseAnalytics();
-            analytics.logShare(
-              contentType: names == null ? "SubstitutePage" : "FriendsPage",
-              method: "button pressed",
-              itemId: subjectPrefix,
-            );
-            Share.share("Wir haben Vertretung und zwar: $title");
-          },
+          onLongPress: names != null
+              ? null
+              : () {
+                  FirebaseAnalytics analytics = FirebaseAnalytics();
+                  analytics.logShare(
+                    contentType:
+                        names == null ? "SubstitutePage" : "FriendsPage",
+                    method: "button pressed",
+                    itemId: subjectPrefix,
+                  );
+                  Share.share("Wir haben Vertretung und zwar: $title");
+                },
         ),
       ),
     );
