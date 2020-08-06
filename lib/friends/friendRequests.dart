@@ -44,21 +44,35 @@ class _FriendRequestsState extends State<FriendRequests> {
                     children: <Widget>[
                       FlatButton(
                           child: Text("ablehnen"),
-                          onPressed: () {
-                            Functions().declineFriendRequest(
+                          onPressed: () async {
+                            Map res = await Functions().declineFriendRequest(
                                 friendRequests[index].name);
+                            if (res == null)
+                              setState(() {
+                                friendRequests.remove(friendRequests[index]);
+                              });
+                            else
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    "Es ist ein unerwarteter Fehler aufgetreten : " +
+                                        res["message"]),
+                              ));
+                          }),
+                      RaisedButton(
+                        child: Text("annehmen"),
+                        onPressed: () async {
+                          Map res = await Functions()
+                              .acceptFriendRequest(friendRequests[index].uid);
+                          if (res == null)
                             setState(() {
                               friendRequests.remove(friendRequests[index]);
                             });
-                          }),
-                      RaisedButton(
-                        child: Text("annhemen"),
-                        onPressed: () {
-                          Functions()
-                              .acceptFriendRequest(friendRequests[index].uid);
-                          setState(() {
-                            friendRequests.remove(friendRequests[index]);
-                          });
+                          else
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "Es ist ein unerwarteter Fehler aufgetreten : " +
+                                      res["message"]),
+                            ));
                         },
                       ),
                     ],

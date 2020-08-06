@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:package_info/package_info.dart';
 import 'package:Vertretung/friends/friendModel.dart';
 
-enum updateCodes {availableNormal, availableForce, notAvailable}
+enum updateCodes { availableNormal, availableForce, notAvailable }
 
 class CloudDatabase {
   final Firestore ref = Firestore.instance;
@@ -55,7 +55,7 @@ class CloudDatabase {
     String uid = await AuthService().getUserId();
     DocumentSnapshot snap =
         await ref.collection("userdata").document(uid).get();
-    return snap.data["name"];
+    return snap.data["name"] ?? "No internet connection";
   }
 
   Future<void> restoreAccount() async {
@@ -71,38 +71,43 @@ class CloudDatabase {
     });
 
     SharedPref sharedPref = SharedPref();
-    sharedPref.setString(Names.schoolClass, userdataDoc.data[Names.schoolClass]);
+    sharedPref.setString(
+        Names.schoolClass, userdataDoc.data[Names.schoolClass]);
     sharedPref.setStringList(
         Names.subjects, List<String>.from(userdataDoc.data[Names.subjects]));
-    sharedPref.setStringList(
-        Names.subjectsNot, List<String>.from(userdataDoc.data[Names.subjectsNot]));
+    sharedPref.setStringList(Names.subjectsNot,
+        List<String>.from(userdataDoc.data[Names.subjectsNot]));
     sharedPref.setStringList(Names.subjectsCustom,
         List<String>.from(userdataDoc.data[Names.subjectsCustom]));
     sharedPref.setStringList(Names.subjectsNotCustom,
         List<String>.from(userdataDoc.data[Names.subjectsNotCustom]));
     sharedPref.setBool(
         Names.personalSubstitute, userdataDoc.data[Names.personalSubstitute]);
-    await sharedPref.setBool(Names.notification, userdataDoc.data[Names.notification]);
+    await sharedPref.setBool(
+        Names.notification, userdataDoc.data[Names.notification]);
   }
 
   //Updates
   Future<updateCodes> getUpdate() async {
-    
     PackageInfo pa = await PackageInfo.fromPlatform();
     String version = pa.version;
     bool updateAvailable = true;
     bool forceUpdate;
-    DocumentSnapshot snap =
-        await ref.collection("details").document("versions").get();
-    updateAvailable = snap.data["newVersion"] != version;
-    forceUpdate = snap.data["forceUpdate"];
-    if (updateAvailable) {
-      if (forceUpdate) {
-        return updateCodes.availableForce;
+    try {
+      DocumentSnapshot snap =
+          await ref.collection("details").document("versions").get();
+      updateAvailable = snap.data["newVersion"] != version;
+      forceUpdate = snap.data["forceUpdate"];
+      if (updateAvailable) {
+        if (forceUpdate) {
+          return updateCodes.availableForce;
+        } else {
+          return updateCodes.availableNormal;
+        }
       } else {
-        return updateCodes.availableNormal;
+        return updateCodes.notAvailable;
       }
-    } else {
+    } catch (e) {
       return updateCodes.notAvailable;
     }
   }
@@ -130,9 +135,9 @@ class CloudDatabase {
     List<FriendModel> friendRequests = [];
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
-    DocumentSnapshot myFriendsDoc =
-        await ref.collection("userFriends").document(uid).get();
     try {
+      DocumentSnapshot myFriendsDoc =
+          await ref.collection("userFriends").document(uid).get();
       for (String friendUid in myFriendsDoc.data["requests"]) {
         DocumentSnapshot friendDoc =
             await ref.collection("userdata").document(friendUid).get();
