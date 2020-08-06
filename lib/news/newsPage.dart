@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:Vertretung/news/newsTransmitter.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'editNewsPage.dart';
@@ -44,15 +45,23 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   }
 
   void reload() async {
-    CloudDatabase manager = CloudDatabase();
-    await manager.getNews().then((onValue) {
+    CloudDatabase cloudDatabase = CloudDatabase();
+    try {
+      List<String> newNews = await cloudDatabase.getNews();
       setState(() {
-        newsList = onValue;
+        newsList = newNews;
       });
-    });
-    finishedLoading = true;
-    _controller.forward();
-    _refreshController.refreshCompleted();
+      finishedLoading = true;
+      _controller.forward();
+      _refreshController.refreshCompleted();
+    } catch (e) {
+      finishedLoading = true;
+      Flushbar(
+        message: "Es ist ein Fehler beim Laden der Nachrichten aufgetreten.",
+        duration: Duration(seconds: 3),
+      )..show(context);
+      _refreshController.refreshFailed();
+    }
   }
 
   void reAnimate() {

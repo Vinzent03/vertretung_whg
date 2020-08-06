@@ -5,6 +5,7 @@ import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/dynamicLink.dart';
 import 'package:Vertretung/otherWidgets/substituteList.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -32,18 +33,27 @@ class FriendsPageState extends State<FriendsPage> {
   FriendLogic friendLogic = FriendLogic();
 
   Future<void> reloadAll() async {
-    List<FriendModel> newFriendList = await CloudDatabase().getFriendsList();
-    if (newFriendList.length != friendList.length) {
-      selectedFriends = [];
-      friendList = newFriendList;
-      for (var friend in friendList) {
-        friend.isChecked = true;
-        selectedFriends.add(friend);
+    try {
+      List<FriendModel> newFriendList = await CloudDatabase().getFriendsList();
+      if (newFriendList.length != friendList.length) {
+        selectedFriends = [];
+        friendList = newFriendList;
+        for (var friend in friendList) {
+          friend.isChecked = true;
+          selectedFriends.add(friend);
+        }
       }
+      await friendLogic.updateFriendsList(selectedFriends);
+      await reloadFriendsSubstitute();
+      _refreshController.refreshCompleted();
+    } catch (e) {
+      Flushbar(
+        message:
+            "Es ist ein Fehler beim Laden der Vertretung von Freunden aufgetreten.",
+        duration: Duration(seconds: 3),
+      )..show(context);
+      _refreshController.refreshFailed();
     }
-    await friendLogic.updateFriendsList(selectedFriends);
-    await reloadFriendsSubstitute();
-    _refreshController.refreshCompleted();
   }
 
   Future<void> reloadFriendsSubstitute() async {
