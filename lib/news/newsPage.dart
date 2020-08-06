@@ -47,7 +47,7 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   void reload() async {
     CloudDatabase cloudDatabase = CloudDatabase();
     try {
-      List<String> newNews = await cloudDatabase.getNews();
+      List<dynamic> newNews = await cloudDatabase.getNews();
       setState(() {
         newsList = newNews;
       });
