@@ -1,7 +1,6 @@
 import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 
 class PushNotificationsManager {
   PushNotificationsManager._();

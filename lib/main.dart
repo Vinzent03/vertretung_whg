@@ -3,7 +3,7 @@ import 'package:Vertretung/friends/friendRequests.dart';
 import 'package:Vertretung/friends/friendsList.dart';
 import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/news/newsPage.dart';
-import 'package:Vertretung/pages/aboutPage.dart';
+import 'package:Vertretung/settings/aboutPage.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import "package:wiredash/wiredash.dart";
@@ -21,8 +21,8 @@ import 'authentication/changePasswordPage.dart';
 import 'logic/names.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/provider/themedata.dart';
+import 'package:Vertretung/settings/settingsPage.dart';
 import 'main/splash.dart';
-import 'pages/settingsPage.dart';
 import 'dart:async';
 
 void main() {

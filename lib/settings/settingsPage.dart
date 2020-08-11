@@ -1,3 +1,5 @@
+import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/otherWidgets/themeModeSelection.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -7,13 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import "package:wiredash/wiredash.dart";
 import 'package:Vertretung/services/authService.dart';
-import '../logic/sharedPref.dart';
-import '../logic/names.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
-import 'subjectsPage.dart';
+import 'subjectsSelection/subjectsPage.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
