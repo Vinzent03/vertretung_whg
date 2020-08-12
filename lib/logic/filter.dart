@@ -7,7 +7,7 @@ class Filter {
   final List<String> rawList;
   Filter(this.schoolClass, this.rawList);
 
-  List<dynamic> checkForSchoolClass(String day) {
+  List<dynamic> checkForSchoolClass() {
     //filter the specific class:
 
     // 0 bevor the class was found in the list, 1 in the class, 2 out of the class
@@ -18,7 +18,11 @@ class Filter {
       String stk = part.toLowerCase();
       if (stk.contains("std.")) {
         if (b == 1) {
-          listWithoutClasses.add(part);
+          if (part.contains(
+              "ÃMI")) //THis is really not good implemented, but i don't know how to handle the encoding
+            listWithoutClasses.add(part.replaceAll("ÃMI", "ÜMI"));
+          else
+            listWithoutClasses.add(part);
         }
       } else {
         if (stk.contains(schoolClass)) {
@@ -45,8 +49,8 @@ class Filter {
 
   //check only for the given subjects
   List<dynamic> checkForSubjects(
-      String day, List<dynamic> subjectsList, List<dynamic> subjectsNotList) {
-    List<dynamic> all = checkForSchoolClass(day);
+      List<dynamic> subjectsList, List<dynamic> subjectsNotList) {
+    List<dynamic> all = checkForSchoolClass();
     List<dynamic> listWithoutClasses = all;
     List<dynamic> listWithoutLessons = [];
     if (subjectsList.isEmpty || (subjectsList[0] == "")) {
@@ -99,7 +103,9 @@ List<dynamic> mergeList(var list) {
 //get the name of the subject
 String getSubjectPrefix(String st) {
   int beginn = st.indexOf("Std. ") + 5;
-  int luecke = st.indexOf(" ", beginn);
+  int luecke = st.indexOf(" ", beginn) == -1
+      ? st.length
+      : st.indexOf(" ", beginn); //if the subject stands at the end
   int minus = st.indexOf("-", beginn) == -1
       ? 20
       : st.indexOf("-", beginn); // if no "-" is provided

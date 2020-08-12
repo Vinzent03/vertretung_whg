@@ -32,13 +32,10 @@ class FriendLogic {
   List _getSubstituteOfFriend(FriendModel friend) {
     Filter filter = Filter(friend.schoolClass, rawSubstituteList);
     if (friend.personalSubstitute) {
-      var list = filter.checkForSubjects(
-          Names.substituteToday, friend.subjects, friend.subjectsNot);
+      var list = filter.checkForSubjects(friend.subjects, friend.subjectsNot);
       return list;
     } else {
-      var list = filter.checkForSchoolClass(
-        Names.substituteToday,
-      );
+      var list = filter.checkForSchoolClass();
       return list;
     }
   }

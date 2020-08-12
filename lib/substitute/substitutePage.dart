@@ -45,39 +45,8 @@ class SubstitutePageState extends State<SubstitutePage>
   List<dynamic> myListTomorrow = [];
   List<dynamic> listTomorrow = [];
 
-  List<String> rawListToday = [
-    "6a",
-    "4. Std. BI bei MK im Raum H024 ",
-    "07A, 07B, 07C",
-    "6. Std. F6 bei ??? im Raum H111  statt bei VT",
-    "08A, 08B, 08C, 08F",
-    "4. Std. WW im Raum ??? ",
-    "EF",
-    "4. - 5. Std. M-GK1 bei SI im Raum H216  statt bei SE",
-    "4. - 5. Std. L6-GK2 im Raum ??? ",
-    "Q1",
-    "8. Std. S0-GK1 bei + im Raum H137  statt bei VT",
-    "9. Std. S0-GK1 bei + im Raum H137  statt bei VT",
-    "Q2",
-    "6. - 7. Std. L6-GK1 im Raum ??? ",
-    "6. - 7. Std. L6-GK1 im Raum ??? ",
-  ];
-  List<String> rawListTomorrow = [
-    "6a",
-    "4. Std. Wy bei Mu im Raum H024 ",
-    "07A, 07B, 07C",
-    "3. Std. Ku bei ??? im Raum H111  statt bei Kn",
-    "08A, 08B, 08C, 08F",
-    "2. Std. L6 im Raum ??? ",
-    "EF",
-    "4. - 5. Std. Mu-GK1 bei SI im Raum H216  statt bei We",
-    "4. - 5. Std. M-GK2 im Raum ??? ",
-    "Q1",
-    "8. Std. S0-GK1 bei + im Raum H137  statt bei VT",
-    "9. Std. S0-GK1 bei + im Raum H137  statt bei VT",
-    "Q2",
-    "6. - 7. Std. Pl-GK5 im Raum ??? "
-  ];
+  List<String> rawListToday = [];
+  List<String> rawListTomorrow = [];
   Future<void> reloadAll({bool fromPullToRefresh = false}) async {
     SnackBar snack = SnackBar(
       content: Text("Es werden alte Daten verwendet."),
@@ -103,8 +72,8 @@ class SubstitutePageState extends State<SubstitutePage>
       Scaffold.of(context).hideCurrentSnackBar();
       setState(() {
         lastChange = dataResult[0];
-        //rawListToday = dataResult[1];
-        //rawListTomorrow = dataResult[2];
+        rawListToday = dataResult[1];
+        rawListTomorrow = dataResult[2];
       });
       await sharedPref.setString(Names.lastChange, lastChange);
       await sharedPref.setStringList(Names.substituteToday, rawListToday);
@@ -129,20 +98,23 @@ class SubstitutePageState extends State<SubstitutePage>
     List<String> subjectsList = await sharedPref.getStringList(Names.subjects);
     List<String> subjectsNotList =
         await sharedPref.getStringList(Names.subjectsNot);
-    List<String> rawSubstituteList =
+    List<String> rawSubstituteToday =
         await sharedPref.getStringList(Names.substituteToday);
+    List<String> rawSubstituteListTomorrow =
+        await sharedPref.getStringList(Names.substituteTomorrow);
     String newLastChange = await sharedPref.getString(Names.lastChange);
 
-    Filter filter = Filter(schoolClass, rawSubstituteList);
+    Filter filterToday = Filter(schoolClass, rawSubstituteToday);
+    Filter filterTomorrow = Filter(schoolClass, rawSubstituteListTomorrow);
 
     setState(() {
       if (mounted) {
-        myListToday = filter.checkForSubjects(
-            Names.substituteToday, subjectsList, subjectsNotList);
-        listToday = filter.checkForSchoolClass(Names.substituteToday);
-        myListTomorrow = filter.checkForSubjects(
-            Names.substituteTomorrow, subjectsList, subjectsNotList);
-        listTomorrow = filter.checkForSchoolClass(Names.substituteTomorrow);
+        myListToday =
+            filterToday.checkForSubjects(subjectsList, subjectsNotList);
+        listToday = filterToday.checkForSchoolClass();
+        myListTomorrow =
+            filterTomorrow.checkForSubjects(subjectsList, subjectsNotList);
+        listTomorrow = filterTomorrow.checkForSchoolClass();
         lastChange = newLastChange;
       }
     });

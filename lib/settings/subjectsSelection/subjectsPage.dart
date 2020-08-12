@@ -188,7 +188,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                   padding: EdgeInsets.all(20),
                   alignment: Alignment.topLeft,
                   child: Text(
-                      " ${selectedSubjects.length} Ausgewählte Fächer: ${selectedSubjects.toString()}"),
+                      " ${selectedSubjects.length} ausgewählte Fächer: ${selectedSubjects.toString()}"),
                 ),
               ),
               ListView.builder(

@@ -30,10 +30,15 @@ class SubstituteListTile extends StatelessWidget {
           ),
           leading: CircleAvatar(
             backgroundColor: Colors.white,
-            child: Text(
-              subjectPrefix,
-              style: TextStyle(fontSize: 18),
-            ),
+            child: subjectPrefix.isEmpty
+                ? Text(
+                    "?",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    subjectPrefix,
+                    style: TextStyle(fontSize: 18),
+                  ),
           ),
           //dont show the share button on the friendsPage
           trailing: names != null

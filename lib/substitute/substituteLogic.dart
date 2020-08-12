@@ -14,9 +14,9 @@ class SubstituteLogic {
   Future<List<dynamic>> getData() async {
     try {
       var todayResponse = await http.get(
-          "https://app.dsbcontrol.de/data/748a002d-3b4b-44ce-8311-232ed983711d/f3e9a6da-7e76-4949-816c-58c7ee05abc8/f3e9a6da-7e76-4949-816c-58c7ee05abc8.html");
+          "https://app.dsbcontrol.de/data/15fddc3b-5b2e-4339-847b-66d2e291b04a/ebfdb6c0-e2c4-4da1-ab90-ffc51b684903/ebfdb6c0-e2c4-4da1-ab90-ffc51b684903.html");
       var tomorrowResponse = await http.get(
-          "https://app.dsbcontrol.de/data/0c2b6ffe-f068-47b0-833a-07ec15bae1ed/12dcaead-309b-4fc6-904e-5e0bfc1f20b3/12dcaead-309b-4fc6-904e-5e0bfc1f20b3.html");
+          "https://app.dsbcontrol.de/data/15fddc3b-5b2e-4339-847b-66d2e291b04a/12dcaead-309b-4fc6-904e-5e0bfc1f20b3/12dcaead-309b-4fc6-904e-5e0bfc1f20b3.html");
       dom.Document todayDocument = parse(todayResponse.body);
       dom.Document tomorrowDocument = parse(tomorrowResponse.body);
       String lastChange = todayDocument.querySelectorAll('h2').first.text;
