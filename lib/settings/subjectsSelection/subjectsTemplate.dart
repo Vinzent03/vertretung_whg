@@ -74,7 +74,7 @@ class SubjectsTemplate {
           ),
           CourseTileModel(
             title: "IF-GK",
-            children: _buildVariants("IF-GK", 1),
+            children: _buildVariants("IF-GK", 2),
           ),
           CourseTileModel(
             title: "KR-GK",
