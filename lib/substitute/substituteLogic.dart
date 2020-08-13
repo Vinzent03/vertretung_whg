@@ -30,11 +30,13 @@ class SubstituteLogic {
 
       List<String> vertretungTodayList = [];
       vertretungToday.forEach((element) {
-        vertretungTodayList.add(element.text);
+        vertretungTodayList
+            .add(element.text.replaceAll("ã", "ü").replaceAll("Ã", "Ü"));//needed to fix problem with encoding, not a good solution, but I don't get a better solution
       });
       List<String> vertretungTomorrowList = [];
       vertretungTomorrow.forEach((element) {
-        vertretungTomorrowList.add(element.text);
+        vertretungTomorrowList
+            .add(element.text.replaceAll("ã", "ü").replaceAll("Ã", "Ü"));
       });
       return [lastChangeFinal, vertretungTodayList, vertretungTomorrowList];
     } catch (e) {

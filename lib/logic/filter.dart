@@ -18,11 +18,7 @@ class Filter {
       String stk = part.toLowerCase();
       if (stk.contains("std.")) {
         if (b == 1) {
-          if (part.contains(
-              "ÃMI")) //THis is really not good implemented, but i don't know how to handle the encoding
-            listWithoutClasses.add(part.replaceAll("ÃMI", "ÜMI"));
-          else
-            listWithoutClasses.add(part);
+          listWithoutClasses.add(part);
         }
       } else {
         if (stk.contains(schoolClass)) {
