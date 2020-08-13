@@ -1,7 +1,8 @@
+import 'package:Vertretung/authentication/deleteAccountPage.dart';
+import 'package:Vertretung/authentication/logInPage.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 
@@ -61,38 +62,6 @@ class _AccountPageState extends State<AccountPage> {
         });
   }
 
-  void deleteAccountAlert() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-                "Möchtest du dein Account wirklich löschen? Das kann nicht Rückgängig gemacht werden!"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("abbrechen"),
-                onPressed: () => Navigator.pop(context),
-              ),
-              RaisedButton(
-                color: Colors.red,
-                child: Text("Bestätigen"),
-                onPressed: () async {
-                  ProgressDialog pr = ProgressDialog(context,
-                      type: ProgressDialogType.Normal,
-                      isDismissible: false,
-                      showLogs: false);
-                  pr.show();
-                  print("Konto gelöscht");
-                  await AuthService().signOut(deleteAccount: true);
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, Names.wrapper, (r) => false);
-                },
-              )
-            ],
-          );
-        });
-  }
-
   Future<bool> checkConnectivity(context) async {
     ConnectivityResult res = await Connectivity().checkConnectivity();
     if (res == ConnectivityResult.none) {
@@ -135,10 +104,11 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Dein Account"),
-        ),
-        body: Builder(builder: (context) {
+      appBar: AppBar(
+        title: Text("Dein Account"),
+      ),
+      body: Builder(
+        builder: (context) {
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
@@ -205,9 +175,14 @@ class _AccountPageState extends State<AccountPage> {
                               child: Text("Registrieren"),
                               onPressed: () async {
                                 if (await checkConnectivity(context))
-                                  await Navigator.pushNamed(
-                                      context, Names.logInPage,
-                                      arguments: true);
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          LogInPage(
+                                              authType: AuthTypes.registration),
+                                    ),
+                                  );
                                 reload();
                               }),
                         )
@@ -232,7 +207,13 @@ class _AccountPageState extends State<AccountPage> {
                       child: Text("Konto löschen"),
                       onPressed: () async {
                         if (await checkConnectivity(context))
-                          deleteAccountAlert();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  DeleteAccountPage(),
+                            ),
+                          );
                       },
                     ),
                   ),
@@ -240,6 +221,8 @@ class _AccountPageState extends State<AccountPage> {
               ],
             ),
           );
-        }));
+        },
+      ),
+    );
   }
 }

@@ -10,7 +10,6 @@ class Names {
   static const String accountPage = "/accountPage";
   static const String friendRequests = "/friendRequests";
   static const String friendsList = "/friendsList";
-  static const String logInPage = "/logInPage";
   static const String changePasswordPage = "/changePasswordPage";
 
   //variables

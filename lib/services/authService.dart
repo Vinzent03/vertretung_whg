@@ -30,17 +30,14 @@ class AuthService {
   Future signOut({bool deleteAccount = false}) async {
     var user = await _auth.currentUser();
     try {
-      SharedPref().clear();
       await PushNotificationsManager().signOut();
       if (user.isAnonymous || deleteAccount) {
-        print("user deleted");
-        return await user.delete();
+        await user.delete();
       }
-      print("ausgeloggt");
-      return await _auth.signOut();
+      await _auth.signOut();
+      SharedPref().clear();
     } catch (e) {
-      print("Couldnt log out");
-      return null;
+      return e.toString();
     }
   }
 
@@ -115,10 +112,10 @@ class AuthService {
     }
   }
 
-  Future<String> changePassword({oldPassword, newPassword}) async {
+  reAuthenticate(password) async {
     FirebaseUser user = await _auth.currentUser();
-    AuthCredential credential = EmailAuthProvider.getCredential(
-        email: user.email, password: oldPassword);
+    AuthCredential credential =
+        EmailAuthProvider.getCredential(email: user.email, password: password);
     try {
       AuthResult res = await user.reauthenticateWithCredential(credential);
     } catch (e) {
@@ -142,6 +139,10 @@ class AuthService {
           return "An undefined Error happened.";
       }
     }
+  }
+
+  Future<String> changePassword({oldPassword, newPassword}) async {
+    FirebaseUser user = await _auth.currentUser();
     try {
       await user.updatePassword(newPassword);
     } catch (e) {

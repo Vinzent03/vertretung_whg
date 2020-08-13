@@ -54,6 +54,7 @@ class ChangePasswordPage extends StatelessWidget {
                       title: RaisedButton(
                         child: Text("Bestätigen"),
                         onPressed: () async {
+                          AuthService auth = AuthService();
                           if (newPasswordController.text !=
                               newPasswordConfirmController.text)
                             return Scaffold.of(context).showSnackBar(SnackBar(
@@ -62,18 +63,23 @@ class ChangePasswordPage extends StatelessWidget {
                               behavior: SnackBarBehavior.floating,
                               backgroundColor: Colors.red,
                             ));
-                          String err = await AuthService().changePassword(
+                          String authRes = await auth
+                              .reAuthenticate(oldPasswordController.text);
+                          if (authRes != null) {
+                            return Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(authRes),
+                              backgroundColor: Colors.red,
+                            ));
+                          }
+                          String changePasswordRes = await auth.changePassword(
                               oldPassword: oldPasswordController.text,
                               newPassword: newPasswordController.text);
-                          if (err != null) {
-                            final SnackBar snack = SnackBar(
-                              content: Text(err),
+                          if (changePasswordRes != null)
+                            return Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(changePasswordRes),
                               backgroundColor: Colors.red,
-                            );
-                            Scaffold.of(context).showSnackBar(snack);
-                          } else {
-                            Navigator.pop(context);
-                          }
+                            ));
+                          Navigator.pop(context);
                         },
                       ),
                     )

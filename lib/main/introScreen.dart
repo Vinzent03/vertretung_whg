@@ -1,3 +1,4 @@
+import 'package:Vertretung/authentication/logInPage.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/otherWidgets/SchoolClassSelection.dart';
 import 'package:Vertretung/provider/themedata.dart';
@@ -30,8 +31,13 @@ class _IntroScreenState extends State<IntroScreen> {
             body: "Der bessere Vertretungsplan!",
             footer: FlatButton(
               child: Text("Du hast schon ein Account?"),
-              onPressed: () => Navigator.pushNamed(context, Names.logInPage,
-                  arguments: false),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      LogInPage(authType: AuthTypes.logIn),
+                ),
+              ),
             ),
             decoration: PageDecoration(
               imagePadding: EdgeInsets.symmetric(vertical: 30),

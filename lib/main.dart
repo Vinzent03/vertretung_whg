@@ -1,4 +1,3 @@
-import 'package:Vertretung/authentication/logInPage.dart';
 import 'package:Vertretung/friends/friendRequests.dart';
 import 'package:Vertretung/friends/friendsList.dart';
 import 'package:Vertretung/logic/myKeys.dart';
@@ -73,7 +72,6 @@ class MyAppSt extends StatelessWidget {
             Names.accountPage: (context) => AccountPage(),
             Names.friendRequests: (context) => FriendRequests(),
             Names.friendsList: (context) => FriendsList(),
-            Names.logInPage: (context) => LogInPage(),
             Names.changePasswordPage: (context) => ChangePasswordPage(),
           },
         ),

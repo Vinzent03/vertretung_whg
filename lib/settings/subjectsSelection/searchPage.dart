@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'courseTileModel.dart';
 
 class SearchPage extends StatefulWidget {
-  Function checkItem;
-  List<CourseTileModel> templateList;
+  final Function checkItem;
+  final List<CourseTileModel> templateList;
   SearchPage({this.checkItem, this.templateList, Key key}) : super(key: key);
 
   @override
