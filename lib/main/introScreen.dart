@@ -109,7 +109,7 @@ class _IntroScreenState extends State<IntroScreen> {
                   style: TextStyle(fontSize: 19),
                 ),
                 Text(
-                  "Außerdem bist du damit einverstanden, dass deine Einstellungen in der Cloud (Firebase) gespeichert werden. Dies ist für die  Bereitstellung der Benachrichtigungen und des Freundes Feature nötig.",
+                  "Den Rest der Einstellungen, wie deine Fächer, sowie Hilfe, zu verschiedenen Themen findest du unter Vertretung oben rechts. \n\n",
                   style: TextStyle(fontSize: 14),
                 ),
               ],

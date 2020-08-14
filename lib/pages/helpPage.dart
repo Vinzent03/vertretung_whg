@@ -42,7 +42,7 @@ class _HelpPageState extends State<HelpPage> {
       HelpItem(
         header: "Datenschutz",
         body:
-            "Deine Einstellungen, Freunde und dein Name werden in der Cloud (in Frankfurt) gespeichert, um Dienste wie Benachrichtigungen und Freunde zu ermöglichen.",
+            "Den Rest der Einstellungen, wie deine Fächer, sowie Hilfe, zu verschiedenen Themen findest du unter Vertretung oben rechts. \n\n",
       ),
     ];
     super.initState();
@@ -80,8 +80,7 @@ class _HelpPageState extends State<HelpPage> {
                     },
                     isExpanded: item.isExpanded,
                     body: Container(
-                      padding:
-                          EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                      padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                       alignment: Alignment.topLeft,
                       child: Text(
                         item.body,
