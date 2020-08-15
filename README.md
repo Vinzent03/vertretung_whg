@@ -1,20 +1,21 @@
-![](https://img.shields.io/github/workflow/status/Vinzent03/vertretung_whg/Build_APK_based_on_Commit)
-![Plattform](https://img.shields.io/badge/Plattform-Android-blue)
+![build status](https://img.shields.io/github/workflow/status/Vinzent03/vertretung_whg/Build_APK_based_on_Commit)
+![Platform](https://img.shields.io/badge/Plattform-Android-blue)
 ![Flutter](https://img.shields.io/badge/Flutter%20-based-blue)
 
 # Vertretung
 
-Eine Vertretungsapp für das Werner-Heisenberg-Gymnasium.
+A German Flutter app to show the substitution of teachers in schools and share news. 
 
-# Eigene Verwendung
+# Getting started
+**Important: The UI of this app is in german, so if you don't speak german you would have to translate all UI texts.**
 
-Die Flutter App ist auf das Werner-Heisenberg-Gymnasium zugeschnitten. Für die Nutzung auf anderen Schulen:
+This app is specially designed for Werner Heisenberg Gymnasium Germany, but can be used with some changes at other schools too:
 
-1. Die App signen [siehe Flutter Dokumentation](https://flutter.dev/docs/deployment/android#signing-the-app)
-2. Die Klasse [Filter](lib/logic/filter.dart) und  die Methode [getData()](lib/substitute/substituteLogic.dart) auf die Daten der Schule anpassen. 
-3. Eigene google-services.json in [android/app](android/app) einfügen. ([siehe Firebase](https://firebase.google.com/))
-4. In [main.dart](lib/main.dart) eigene Keys für wiredash.io einfügen 
-5. Die dazugehörigen [cloud functions](https://github.com/Vinzent03/cloud-functions-for-vertretung_whg) hinzufügen
+1. Change the class [Filter](lib/logic/filter.dart) and the method [getData()](lib/substitute/substituteLogic.dart) to your needs. 
+2. Put your `google-services.json` from [Firebase](https://firebase.google.com/) into [android/app](android/app)
+3. Set your Wiredash keys in [main.dart](lib/main.dart) from wiredash.io
+4. Sign the app ([see documentation](https://flutter.dev/docs/deployment/android#signing-the-app)).
+5. Deploy needed cloud functions from  [cloud-functions-for-vertretung_whg](https://github.com/Vinzent03/cloud-functions-for-vertretung_whg) to your firebase project.
 
 # Screenshots
 
@@ -53,18 +54,22 @@ Die Flutter App ist auf das Werner-Heisenberg-Gymnasium zugeschnitten. Für die 
 
 # Features
 
-## Personalisierte Vertretung
+## Personal Substitute
 
-Du kannst deine Fächer auswählen, anschließend siehst du einen extra Bereich für deine eigene Vertretung, dein eigener Bereich also.
+You can select you subjects and you will see in an extra tab just substitute for your selected subjects. So you don't have to see any information that is not important to you.
 
-## Benachrichtigungen
+## Notification
 
-Wenn du Benachrichtigungen einschaltest, bekommst du Benachrichtigungen wenn sich etwas für dich verändert.
+If you turn on notifications, you will be notified for new substitute.
 
-## Freunde
+## Friends
 
-Wenn du Freunde hinzufügst siehst du einen Bereich mit der Vertretung deiner Freunde. So weißt so immer wann sie frei haben.
+If you add friends, you will see the substitute of you friends, so you don't have to ask them if they are free too.
+
+## News
+
+In the news tab you can see news and you will be notified when a news in added. They can only be added by admins ([see cloud functions](https://github.com/Vinzent03/cloud-functions-for-vertretung_whg#admins)).
 
 ## Authentication
 
-Wenn du dich anmeldest(freiwillig) kannst du dich an einem anderen Gerät anmelden und musst nicht alles neu einstellen.
+If your create an account, which is not necessary, you can transfer you settings from one device to another. You can be signed in on two devices simultaneously, but the settings wont be synced. Your settings will only be synced from cloud to client on signIn. In addition an email account is required to be admin.
