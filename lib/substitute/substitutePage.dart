@@ -26,7 +26,7 @@ class SubstitutePage extends StatefulWidget {
 
 class SubstitutePageState extends State<SubstitutePage>
     with TickerProviderStateMixin {
-  CloudDatabase cd;
+  CloudDatabase cd = CloudDatabase();
   SharedPref sharedPref = SharedPref();
 
   ///if the user selected personal substitute(use also subjects in filter)
@@ -106,7 +106,7 @@ class SubstitutePageState extends State<SubstitutePage>
 
     Filter filterToday = Filter(schoolClass, rawSubstituteToday);
     Filter filterTomorrow = Filter(schoolClass, rawSubstituteListTomorrow);
-
+    List<dynamic> tempList = (personalSubstitute ? myListToday : listToday);
     setState(() {
       if (mounted) {
         myListToday =
@@ -118,6 +118,10 @@ class SubstitutePageState extends State<SubstitutePage>
         lastChange = newLastChange;
       }
     });
+    if (tempList.toString() !=
+        (personalSubstitute ? myListToday : listToday)
+            .toString()) //used to decrease Firestore writes.
+      cd.updateLastNotification(personalSubstitute ? myListToday : listToday);
   }
 
   @override

@@ -42,6 +42,16 @@ class CloudDatabase {
     );
   }
 
+  void updateLastNotification(List<dynamic> substitute) async {
+    List<String> justSubstitute = [];
+    for(Map item in substitute){
+      justSubstitute.add(item["ver"]);
+    }
+    DocumentReference doc =
+        ref.collection("userdata").document(await AuthService().getUserId());
+    doc.setData({"lastNotification": justSubstitute}, merge: true);
+  }
+
   void updateName(String newName) async {
     AuthService _auth = AuthService();
     DocumentReference doc =
