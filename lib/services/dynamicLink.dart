@@ -1,7 +1,9 @@
-import 'package:Vertretung/friends/friendLogic.dart';
+import 'package:Vertretung/friends/addFriendPerDynamicLink.dart';
+import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter/material.dart';
 
 class DynamicLink {
   Future handleDynamicLink() async {
@@ -13,7 +15,7 @@ class DynamicLink {
     //if app gets to foreground because auf that link
     FirebaseDynamicLinks.instance.onLink(
       onSuccess: (PendingDynamicLinkData dynamicLinkData) async {
-        _handleDeepLink(dynamicLinkData,false);
+        _handleDeepLink(dynamicLinkData, false);
       },
       onError: (OnLinkErrorException e) {
         print("Error: ${e.message}");
@@ -27,8 +29,13 @@ class DynamicLink {
     if (await AuthService().getUserId() == null) return;
     if (deepLink.pathSegments.contains("friendAdd")) {
       var parameters = deepLink.queryParameters;
-      FriendLogic()
-          .acceptFriendPerDynamicLink(parameters["uid"], parameters["name"]);
+      showDialog(
+        context: MyKeys.navigatorKey.currentState.overlay.context,
+        builder: (context) => AddFriendPerDynamicLink(
+          friendUid: parameters["uid"],
+          name: parameters["name"],
+        ),
+      );
     }
   }
 

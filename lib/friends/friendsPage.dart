@@ -1,3 +1,4 @@
+import 'package:Vertretung/friends/addFriendDialog.dart';
 import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/names.dart';
@@ -80,10 +81,11 @@ class FriendsPageState extends State<FriendsPage> {
     await pr.show();
     String uid = await AuthService().getUserId();
     String link = await DynamicLink().createLink();
+    String name = await CloudDatabase().getName();
     await pr.hide();
-    Share.share("Mein Freundestoken: " +
+    Share.share("Hier ist der Freundestoken von $name: '" +
         uid.substring(0, 5) +
-        " oder einfach über diesen Link: $link");
+        "' Dieser muss nun unter 'als Freund eintagen' eingegeben werden. Oder einfach auf diesen Link klicken: $link");
   }
 
   showBottomSheet(context) => showModalBottomSheet(
@@ -100,26 +102,19 @@ class FriendsPageState extends State<FriendsPage> {
                     shareFriendsToken();
                   }),
               ListTile(
-                  title: Text("Freundesanfrage schicken"),
+                  title: Text("Als Freund eintragen"),
                   leading: Icon(Icons.add),
                   onTap: () {
                     Navigator.pop(context);
-                    FriendLogic().addFriendAlert(context);
+                    showDialog(
+                        context: context,
+                        builder: (context) => AddFriendDialog());
                   }),
               ListTile(
                 title: Text("Freundesliste"),
                 leading: Icon(Icons.list),
                 onTap: () async {
                   await Navigator.pushNamed(context, Names.friendsList);
-                  Navigator.pop(context);
-                  _refreshController.requestRefresh();
-                },
-              ),
-              ListTile(
-                title: Text("Freundesanfragen"),
-                leading: Icon(Icons.inbox),
-                onTap: () async {
-                  await Navigator.pushNamed(context, Names.friendRequests);
                   Navigator.pop(context);
                   _refreshController.requestRefresh();
                 },
@@ -172,18 +167,21 @@ class FriendsPageState extends State<FriendsPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15))),
                   title: Text("Wähle deine Freunde"),
-                  content: ListView.builder(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return CheckboxListTile(
-                        title: Text(friendList[index].name),
-                        value: friendList[index].isChecked,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (isChecked) =>
-                            onCheckboxClicked(isChecked, index, setState),
-                      );
-                    },
-                    itemCount: friendList.length,
+                  content: Container(
+                    width: 10,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return CheckboxListTile(
+                          title: Text(friendList[index].name),
+                          value: friendList[index].isChecked,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          onChanged: (isChecked) =>
+                              onCheckboxClicked(isChecked, index, setState),
+                        );
+                      },
+                      itemCount: friendList.length,
+                    ),
                   ),
                   actions: <Widget>[
                     FlatButton(

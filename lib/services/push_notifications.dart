@@ -17,14 +17,14 @@ class PushNotificationsManager {
     if (!_initialized) {
       _firebaseMessaging.configure(
         onResume: (Map<String, dynamic> message) {
-          if (message["data"]["reason"] == "friendRequest")
-            MyKeys.navigatorKey.currentState.pushNamed(Names.friendRequests);
+          if (message["data"]["reason"] == "friendAdded")
+            MyKeys.navigatorKey.currentState.pushNamed(Names.friendsList);
         },
         onLaunch: (Map<String, dynamic> message) {
           if (message["data"]["reason"] == "friendRequest")
             Future.delayed(Duration(seconds: 1)).then(
               (value) => MyKeys.navigatorKey.currentState
-                  .pushNamed(Names.friendRequests),
+                  .pushNamed(Names.friendsList),
             );
         },
       );

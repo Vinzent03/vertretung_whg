@@ -44,7 +44,7 @@ class CloudDatabase {
 
   void updateLastNotification(List<dynamic> substitute) async {
     List<String> justSubstitute = [];
-    for(Map item in substitute){
+    for (Map item in substitute) {
       justSubstitute.add(item["ver"]);
     }
     DocumentReference doc =
@@ -141,31 +141,11 @@ class CloudDatabase {
   }
 
   // friends
-  Future<List<dynamic>> getFriendRequests() async {
-    List<FriendModel> friendRequests = [];
-    AuthService _auth = AuthService();
-    String uid = await _auth.getUserId();
-    try {
-      DocumentSnapshot myFriendsDoc =
-          await ref.collection("userFriends").document(uid).get();
-      for (String friendUid in myFriendsDoc.data["requests"]) {
-        DocumentSnapshot friendDoc =
-            await ref.collection("userdata").document(friendUid).get();
-        friendRequests.add(
-          FriendModel(name: friendDoc.data["name"], uid: friendUid),
-        );
-      }
-      return friendRequests;
-    } catch (e) {
-      return [];
-    }
-  }
-
   Future<void> removeFriend(String frienduid) async {
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
 
-    DocumentReference doc = ref.collection("userFriends").document(uid);
+    DocumentReference doc = ref.collection("userdata").document(uid);
     DocumentSnapshot snap = await doc.get();
     List<dynamic> friends = List<String>.from(snap.data["friends"]);
     friends.remove(frienduid);
@@ -177,7 +157,7 @@ class CloudDatabase {
     AuthService _auth = AuthService();
     String uid = await _auth.getUserId();
     DocumentSnapshot myFriendsDoc =
-        await ref.collection("userFriends").document(uid).get();
+        await ref.collection("userdata").document(uid).get();
     try {
       for (String friendUid in myFriendsDoc.data["friends"]) {
         DocumentSnapshot friendsDoc =

@@ -1,4 +1,3 @@
-import 'package:Vertretung/friends/friendRequests.dart';
 import 'package:Vertretung/friends/friendsList.dart';
 import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/news/newsPage.dart';
@@ -70,7 +69,6 @@ class MyAppSt extends StatelessWidget {
             Names.newsPage: (context) => NewsPage(),
             Names.aboutPage: (context) => AboutPage(),
             Names.accountPage: (context) => AccountPage(),
-            Names.friendRequests: (context) => FriendRequests(),
             Names.friendsList: (context) => FriendsList(),
             Names.changePasswordPage: (context) => ChangePasswordPage(),
           },

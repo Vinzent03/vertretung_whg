@@ -5,43 +5,17 @@ class Functions {
   CloudFunctions cf;
   Functions() {
     cf = CloudFunctions(app: FirebaseApp.instance, region: "europe-west3");
-    //used to use the emulated firebaes cloud functions
+    //used to use the emulated firebase cloud functions
     //cf.useFunctionsEmulator(origin: "http://x.x.x.x:5001");
   }
 
-  Future<dynamic> addFriendRequest(String shortUid) async {
+  Future<dynamic> addFriend(String shortFriendUid, bool addFriendToYourself) async {
     try {
-      HttpsCallable call =
-          cf.getHttpsCallable(functionName: "addFriendRequest");
-      print(shortUid);
-      HttpsCallableResult result = await call.call(<String, dynamic>{
-        "frienduid": shortUid,
-      });
-      return result.data;
-    } catch (e) {
-      return throwError(e);
-    }
-  }
-
-  Future<dynamic> acceptFriendRequest(String shortUid) async {
-    try {
-      final HttpsCallable call =
-          cf.getHttpsCallable(functionName: "acceptFriendRequest");
-      call.call(<String, dynamic>{
-        "frienduid": shortUid,
-      });
-    } catch (e) {
-      return throwError(e);
-    }
-  }
-
-  Future<dynamic> declineFriendRequest(String frienduid) async {
-    try {
-      final HttpsCallable call =
-          cf.getHttpsCallable(functionName: "declineFriendRequest");
-      call.call(<String, dynamic>{
-        "frienduid": frienduid,
-      });
+      final HttpsCallable call = cf.getHttpsCallable(functionName: "addFriend");
+      return( await call.call(<String, dynamic>{
+        "friendUid": shortFriendUid,
+        "addFriendToYourself": addFriendToYourself.toString(),
+      })).data;
     } catch (e) {
       return throwError(e);
     }
