@@ -23,13 +23,19 @@ class FriendLogic {
 
   List _getSubstituteOfFriend(FriendModel friend) {
     Filter filter = Filter(friend.schoolClass, rawSubstituteList);
+    List substitute;
+    List justCancelledLessons = [];
     if (friend.personalSubstitute) {
       var list = filter.checkForSubjects(friend.subjects, friend.subjectsNot);
-      return list;
+      substitute = list;
     } else {
       var list = filter.checkForSchoolClass();
-      return list;
+      substitute = list;
     }
+    for (Map<String, String> item in substitute) {
+      if (item["ver"].contains("Entfall")) justCancelledLessons.add(item);
+    }
+    return justCancelledLessons;
   }
 
   Future<dynamic> getFriendsSubstitute() async {
