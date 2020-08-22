@@ -1,5 +1,6 @@
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/otherWidgets/OpenContainerWrapper.dart';
 import 'package:Vertretung/otherWidgets/themeModeSelection.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
@@ -183,52 +184,38 @@ class _SettingsPageState extends State<SettingsPage> {
                       updateUserdata();
                     },
                   ),
-                  ListTile(
-                    title: Text("Deine Fächer (Whitelist)"),
-                    enabled: personalSubstitute,
-                    leading: Icon(Icons.edit),
-                    onTap: !personalSubstitute
-                        ? null
-                        : () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SubjectsPage(
-                                    [Names.subjects, Names.subjectsCustom]),
-                              ),
-                            );
-
-                            List<String> _newSubjects =
-                                await sharedPref.getStringList(Names.subjects);
-                            setState(() {
-                              subjectsList = _newSubjects;
-                            });
-                            updateUserdata();
-                          },
+                  OpenContainerWrapper(
+                    tappable: personalSubstitute,
+                    openBuilder: (BuildContext context, VoidCallback _) =>
+                        SubjectsPage([Names.subjects, Names.subjectsCustom]),
+                    closedBuilder: (context, action) => ListTile(
+                      title: Text("Deine Fächer (Whitelist)"),
+                      enabled: personalSubstitute,
+                      leading: Icon(Icons.edit),
+                    ),
+                    onClosed: (data) async {
+                      List<String> _newSubjects =
+                          await sharedPref.getStringList(Names.subjects);
+                      setState(() => subjectsList = _newSubjects);
+                      updateUserdata();
+                    },
                   ),
-                  ListTile(
-                    title: Text("Fächer anderer (Blacklist)"),
-                    enabled: personalSubstitute,
-                    leading: Icon(Icons.edit),
-                    onTap: !personalSubstitute
-                        ? null
-                        : () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SubjectsPage([
-                                  Names.subjectsNot,
-                                  Names.subjectsNotCustom
-                                ]),
-                              ),
-                            );
-                            List<String> _newSubjects = await sharedPref
-                                .getStringList(Names.subjectsNot);
-                            setState(() {
-                              subjectsNotList = _newSubjects;
-                            });
-                            updateUserdata();
-                          },
+                  OpenContainerWrapper(
+                    tappable: personalSubstitute,
+                    openBuilder: (BuildContext context, VoidCallback _) =>
+                        SubjectsPage(
+                            [Names.subjectsNot, Names.subjectsNotCustom]),
+                    closedBuilder: (context, action) => ListTile(
+                      title: Text("Fächer anderer (Blacklist)"),
+                      enabled: personalSubstitute,
+                      leading: Icon(Icons.edit),
+                    ),
+                    onClosed: (data) async {
+                      List<String> _newSubjects =
+                          await sharedPref.getStringList(Names.subjectsNot);
+                      setState(() => subjectsNotList = _newSubjects);
+                      updateUserdata();
+                    },
                   )
                 ],
               ),
