@@ -91,7 +91,43 @@ class _IntroScreenState extends State<IntroScreen> {
                 ),
               ),
             ),
-            footer: Text("Für das Freunde Feature nötig."),
+            footer: Text("Dies ist für das Freunde Feature nötig \nund wird deinen Freunden angezeigt."),
+            decoration: PageDecoration(
+              titlePadding: EdgeInsets.symmetric(vertical: 100),
+              titleTextStyle: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          PageViewModel(
+            title: "Deine Fächer (Whitelist)",
+            body:
+                "Hier kannst du deine Fächer eingeben. So wird nur Vertretung von Fächern angezeigt, die du dort eingetragen hast. Dies ist hauptsächlich für die Oberstufe gedacht.",
+            decoration: PageDecoration(
+              titlePadding: EdgeInsets.symmetric(vertical: 100),
+              titleTextStyle: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          PageViewModel(
+            title: "Fächer anderer (Blacklist)",
+            body:
+                "Hier kannst du die Fächer deiner Mitschüler eingeben. So wird nur Vertretung von anderen Fächern angezeigt. Dies ist hauptsächlich für die Unterstufe gedacht.",
+            decoration: PageDecoration(
+              titlePadding: EdgeInsets.symmetric(vertical: 100),
+              titleTextStyle: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          PageViewModel(
+            title: "Freunde",
+            body:
+                "Wenn du Freunde hinzufügst, siehst du wann deine Freunde Entfall haben. So weißt du immer wann du dich mit ihnen treffen kannst \n\nUm Freunde hinzuzufügen, schickst du deinen Freundestoken/Link an einen Freund. Die Person muss den Token dann eingeben oder auf den Link klicken.",
             decoration: PageDecoration(
               titlePadding: EdgeInsets.symmetric(vertical: 100),
               titleTextStyle: TextStyle(
@@ -127,6 +163,7 @@ class _IntroScreenState extends State<IntroScreen> {
             ),
           ),
         ],
+        dotsFlex: 2,
         next: Icon(Icons.arrow_forward),
         showNextButton: true,
         done: Text("Fertig"),

@@ -37,7 +37,7 @@ class _HelpPageState extends State<HelpPage> {
       HelpItem(
         header: "Freunde",
         body:
-            "Du kannst Freunde über einen Token hinzufügen. Diesen bekommt man über das Share Symbol auf der Freundes Seite. Um ein Freund hinzuzufügen muss man die Freundesanfrage annehmen. Anschließend siehst du auf der Freudes Seite die Vertretung deiner Freunde.",
+            "Du kannst Freunde über einen Token hinzufügen. Diesen bekommt man über das Share Symbol auf der Freundes Seite. Um ein Freund hinzuzufügen muss man die Freundesanfrage annehmen. Anschließend siehst du auf der Freundes Seite die Vertretung deiner Freunde.",
       ),
       HelpItem(
         header: "Datenschutz",
