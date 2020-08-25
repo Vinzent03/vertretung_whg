@@ -9,6 +9,7 @@ class FriendLogic {
   SharedPref sharedPref = SharedPref();
   List<String> rawSubstituteList;
   List<FriendModel> friends = [];
+  bool friendsLoaded = false;
 
   Future<void> setFriendsSettings() async {
     for (var friend in friends) {
@@ -38,7 +39,9 @@ class FriendLogic {
     return justCancelledLessons;
   }
 
-  Future<dynamic> getFriendsSubstitute() async {
+  Future<List<Map<String, String>>> getFriendsSubstitute() async {
+    if(!friendsLoaded)
+     return [];
     List<Map<String, String>> friendsSubstitute = [];
     rawSubstituteList = await sharedPref.getStringList(Names.substituteToday);
 
@@ -82,5 +85,6 @@ class FriendLogic {
   Future<void> updateFriendsList(List<FriendModel> newFriends) async {
     friends = newFriends;
     await setFriendsSettings();
+    friendsLoaded = true;
   }
 }

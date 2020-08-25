@@ -58,7 +58,7 @@ class FriendsPageState extends State<FriendsPage> {
   }
 
   Future<void> reloadFriendsSubstitute() async {
-    List<dynamic> newFriendsSubstitute =
+    List<Map<String, String>> newFriendsSubstitute =
         await friendLogic.getFriendsSubstitute();
     setState(() {
       friendsSubstitute = newFriendsSubstitute;
