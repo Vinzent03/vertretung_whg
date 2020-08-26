@@ -30,7 +30,7 @@ class _SplashState extends State<Splash> {
 
     if (updateCodes.availableNormal == updateSituation ||
         updateCodes.availableForce == updateSituation) {
-      String link = await cd.getUpdateLink();
+      Map<String, String> links = await cd.getUpdateLinks();
       List<dynamic> message = await cd.getUpdateMessage();
       if (updateCodes.availableForce == updateSituation)
         showDialog(
@@ -45,8 +45,12 @@ class _SplashState extends State<Splash> {
                 content: Text(message[1]),
                 actions: <Widget>[
                   RaisedButton(
-                    child: Text("Update"),
-                    onPressed: () => launch(link),
+                    child: Text("Changelog"),
+                    onPressed: () => launch(links["changelog"]),
+                  ),
+                  RaisedButton(
+                    child: Text("Download"),
+                    onPressed: () => launch(links["download"]),
                   )
                 ],
               ),
@@ -67,9 +71,13 @@ class _SplashState extends State<Splash> {
                   onPressed: () => Navigator.pop(context),
                 ),
                 RaisedButton(
-                  child: Text("Update"),
-                  onPressed: () => launch(link),
-                )
+                  child: Text("Changelog"),
+                  onPressed: () => launch(links["changelog"]),
+                ),
+                RaisedButton(
+                  child: Text("Download"),
+                  onPressed: () => launch(links["download"]),
+                ),
               ],
             );
           },

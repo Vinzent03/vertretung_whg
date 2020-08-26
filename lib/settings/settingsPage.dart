@@ -117,8 +117,9 @@ class _SettingsPageState extends State<SettingsPage> {
           IconButton(
             icon: Icon(Icons.share),
             onPressed: () async {
-              String link = await CloudDatabase().getUpdateLink();
-              Share.share("Hier ist der Link für die Vertretungsapp: $link");
+              Map<String,String> links = await CloudDatabase().getUpdateLinks();
+              Share.share(
+                  "Hier ist der Download Link für die Vertretungsapp: ${links["download"]}");
             },
           )
         ],

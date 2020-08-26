@@ -122,10 +122,13 @@ class CloudDatabase {
     }
   }
 
-  Future<String> getUpdateLink() async {
+  Future<Map<String, String>> getUpdateLinks() async {
     DocumentSnapshot snap =
         await ref.collection("details").document("links").get();
-    return snap.data["newLink"];
+    return {
+      "download": snap.data["downloadLink"],
+      "changelog": snap.data["changelogLink"]
+    };
   }
 
   Future<List<dynamic>> getUpdateMessage() async {
