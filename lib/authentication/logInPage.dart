@@ -13,7 +13,6 @@ class LogInPage extends StatefulWidget {
 enum AuthTypes { logIn, registration }
 
 class _LogInPageState extends State<LogInPage> {
-  bool isRegistration = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
@@ -27,6 +26,7 @@ class _LogInPageState extends State<LogInPage> {
         ),
         Text("Email:"),
         TextFormField(
+          autofillHints: [AutofillHints.email],
           controller: emailController,
         ),
         SizedBox(
@@ -35,6 +35,7 @@ class _LogInPageState extends State<LogInPage> {
         Text("Passwort:"),
         TextFormField(
           obscureText: true,
+          autofillHints: [AutofillHints.password],
           controller: passwordController,
         ),
         SizedBox(
@@ -90,6 +91,7 @@ class _LogInPageState extends State<LogInPage> {
         ),
         Text("Email:"),
         TextFormField(
+          autofillHints: [AutofillHints.email],
           controller: emailController,
         ),
         SizedBox(
@@ -97,6 +99,7 @@ class _LogInPageState extends State<LogInPage> {
         ),
         Text("Passwort:"),
         TextFormField(
+          autofillHints: [AutofillHints.newPassword],
           obscureText: true,
           controller: passwordController,
         ),
@@ -144,7 +147,7 @@ class _LogInPageState extends State<LogInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isRegistration ? "Registrieren" : "Anmelden"),
+        title: Text(widget.authType == AuthTypes.registration ? "Registrieren" : "Anmelden"),
       ),
       body: Builder(
         builder: (context) {

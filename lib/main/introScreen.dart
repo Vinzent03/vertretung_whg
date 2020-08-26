@@ -163,7 +163,7 @@ class _IntroScreenState extends State<IntroScreen> {
             ),
           ),
         ],
-        dotsFlex: 2,
+        dotsFlex: 3,
         next: Icon(Icons.arrow_forward),
         showNextButton: true,
         done: Text("Fertig"),
