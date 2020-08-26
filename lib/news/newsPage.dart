@@ -87,17 +87,22 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                   physics: ScrollPhysics(),
                   itemCount: newsList.length,
                   itemBuilder: (context, index) {
-                    return OpenContainerWrapper(
-                      openBuilder: (context, action) => DetailsPage(
-                        index: index,
-                        text: newsList[index]["text"],
-                        title: newsList[index]["title"],
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15))),
+                      elevation: 3,
+                      child: OpenContainerWrapper(
+                        openBuilder: (context, action) => DetailsPage(
+                          index: index,
+                          text: newsList[index]["text"],
+                          title: newsList[index]["title"],
+                        ),
+                        closedBuilder: (context, action) =>
+                            buildListItem(index, action),
+                        onClosed: (data) => data != null
+                            ? _refreshController.requestRefresh()
+                            : null,
                       ),
-                      closedBuilder: (context, action) =>
-                          buildListItem(index, action),
-                      onClosed: (data) => data != null
-                          ? _refreshController.requestRefresh()
-                          : null,
                     );
                   },
                 ),
@@ -124,53 +129,48 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   }
 
   Widget buildListItem(int index, Function action) {
-    return Card(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15))),
-      elevation: 3,
-      child: ListTile(
-        title: Text(newsList[index]["title"]),
-        //show only the first 100 chars as subtitle, to see more click on the ListTile
-        subtitle: newsList[index]["text"] != ""
-            ? Text(newsList[index]["text"].toString().substring(
-                0, min(newsList[index]["text"].toString().length, 100)))
-            : null,
-        onTap: () async {
-          action();
-          //check if the page have to be reloaded(needed when deleted or edited)
-        },
-        trailing: isAdmin
-            ? PopupMenuButton(
-                icon: Icon(Icons.more_vert),
-                onSelected: (selected) async {
-                  if (selected == actions.delete) {
-                    if (await NewsLogic().deleteNews(context, index))
-                      _refreshController.requestRefresh();
-                  } else {
-                    await NewsLogic().openEditNewsPage(
-                      context,
-                      newsList[index]["text"],
-                      newsList[index]["title"],
-                      index,
-                    );
+    return ListTile(
+      title: Text(newsList[index]["title"]),
+      //show only the first 100 chars as subtitle, to see more click on the ListTile
+      subtitle: newsList[index]["text"] != ""
+          ? Text(newsList[index]["text"].toString().substring(
+              0, min(newsList[index]["text"].toString().length, 100)))
+          : null,
+      onTap: () async {
+        action();
+        //check if the page have to be reloaded(needed when deleted or edited)
+      },
+      trailing: isAdmin
+          ? PopupMenuButton(
+              icon: Icon(Icons.more_vert),
+              onSelected: (selected) async {
+                if (selected == actions.delete) {
+                  if (await NewsLogic().deleteNews(context, index))
                     _refreshController.requestRefresh();
-                  }
-                },
-                itemBuilder: (BuildContext context) {
-                  return [
-                    PopupMenuItem(
-                      value: actions.delete,
-                      child: Text("löschen"),
-                    ),
-                    PopupMenuItem(
-                      value: actions.edit,
-                      child: Text("bearbeiten"),
-                    ),
-                  ];
-                },
-              )
-            : null,
-      ),
+                } else {
+                  await NewsLogic().openEditNewsPage(
+                    context,
+                    newsList[index]["text"],
+                    newsList[index]["title"],
+                    index,
+                  );
+                  _refreshController.requestRefresh();
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    value: actions.delete,
+                    child: Text("löschen"),
+                  ),
+                  PopupMenuItem(
+                    value: actions.edit,
+                    child: Text("bearbeiten"),
+                  ),
+                ];
+              },
+            )
+          : null,
     );
   }
 }
