@@ -124,7 +124,7 @@ class SubstitutePageState extends State<SubstitutePage>
             .toString()) //used to decrease Firestore writes.
       cd.updateLastNotification(personalSubstitute
           ? myListToday
-          : listToday); //TODO Problem ist, dass das ausgefuehrt wird wegen pop until wrapper, dabei wird das aktuallisiert, obwohl der nutzer nicht mehr eingeloggt ist
+          : listToday);
   }
 
   @override

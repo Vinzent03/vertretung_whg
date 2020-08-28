@@ -79,16 +79,33 @@ class _AccountPageState extends State<AccountPage> {
           name = value;
         }));
     setState(() => uid = authService.getUserId().substring(0, 5));
-    authService.isAnon().then((newIsAnon) {
+    setState(() => isAnon = authService.isAnon());
+    if (!isAnon) {
       setState(() {
-        isAnon = newIsAnon;
+        email = authService.getEmail();
       });
-      if (!isAnon) {
-        setState(() {
-          email = authService.getEmail();
-        });
-      }
-    });
+    }
+  }
+
+  void deleteAccountAlert() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Account löschen"),
+        content: Text(
+            "Möchtest du dein Account wirklich löschen?\nDies kann nicht rückgängig gemacht werden!"),
+        actions: [
+          RaisedButton(
+            child: Text("Bestätigen"),
+            color: Colors.red,
+            onPressed: () async {
+              await authService.signOut();
+              Navigator.popUntil(context, ModalRoute.withName(Names.wrapper));
+            },
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -189,8 +206,8 @@ class _AccountPageState extends State<AccountPage> {
                               child: Text("Abmelden"),
                               onPressed: () async {
                                 await AuthService().signOut();
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context, Names.wrapper, (r) => false);
+                                Navigator.popUntil(context,
+                                    ModalRoute.withName(Names.wrapper));
                               }),
                         ),
                 ),
@@ -202,7 +219,10 @@ class _AccountPageState extends State<AccountPage> {
                       elevation: 0,
                       child: Text("Konto löschen"),
                       onPressed: () async {
-                        if (await checkConnectivity(context))
+                        if (await checkConnectivity(context)) if (authService
+                            .isAnon())
+                          deleteAccountAlert();
+                        else
                           Navigator.push(
                             context,
                             MaterialPageRoute(

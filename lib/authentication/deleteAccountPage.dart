@@ -39,7 +39,9 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                         height: 20,
                       ),
                       Text(
-                          "Dieser Vorgang kann nicht rückgängig gemacht werden!",style: TextStyle(fontWeight: FontWeight.bold),),
+                        "Dieser Vorgang kann nicht rückgängig gemacht werden!",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -61,15 +63,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                                 backgroundColor: Colors.red,
                               ));
                             }
-                            String signOutRes =
-                                await auth.signOut(deleteAccount: true);
-                            if (signOutRes != null) {
-                              await pr.hide();
-                              return Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text(signOutRes),
-                                backgroundColor: Colors.red,
-                              ));
-                            }
+                            await auth.signOut(deleteAccount: true);
                             await pr.hide();
                             Navigator.popUntil(
                                 context, ModalRoute.withName(Names.wrapper));

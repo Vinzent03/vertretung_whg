@@ -27,16 +27,17 @@ class AuthService {
     return _auth.authStateChanges();
   }
 
-  Future signOut({bool deleteAccount = false}) async {
+  Future<void> signOut({bool deleteAccount = false}) async {
     var user = _auth.currentUser;
     await PushNotificationsManager().signOut();
-    if (user.isAnonymous || deleteAccount) {
+    if (user.isAnonymous || deleteAccount)
       await user.delete();
-    }
+    else
+      _auth.signOut();
     await SharedPref().clear();
   }
 
-  Future<bool> isAnon() async {
+  bool isAnon() {
     User user = _auth.currentUser;
     return user.isAnonymous;
   }
