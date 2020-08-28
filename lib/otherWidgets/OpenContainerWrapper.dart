@@ -8,8 +8,8 @@ class OpenContainerWrapper extends StatelessWidget {
   final Function closedBuilder;
   final Function onClosed;
   final bool tappable;
-
-  const OpenContainerWrapper({
+  Brightness usedBrightness;
+  OpenContainerWrapper({
     Key key,
     this.openBuilder(
       BuildContext context,
@@ -21,12 +21,13 @@ class OpenContainerWrapper extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    usedBrightness = Provider.of<ProviderData>(context).getUsedTheme();
     return OpenContainer(
         tappable: tappable,
         closedColor:
-            Provider.of<ProviderData>(context).getUsedTheme() == Brightness.dark
-                ? Colors.grey[900]
-                : Colors.white,
+            usedBrightness == Brightness.dark ? Colors.grey[900] : Colors.white,
+        openColor:
+            usedBrightness == Brightness.dark ? Colors.black : Colors.white,
         closedElevation: 0,
         transitionType: ContainerTransitionType.fade,
         onClosed: onClosed,
