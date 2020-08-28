@@ -4,18 +4,20 @@ import 'package:firebase_core/firebase_core.dart';
 class Functions {
   CloudFunctions cf;
   Functions() {
-    cf = CloudFunctions(app: FirebaseApp.instance, region: "europe-west3");
+    cf = CloudFunctions(app: Firebase.app(), region: "europe-west3");
     //used to use the emulated firebase cloud functions
     //cf.useFunctionsEmulator(origin: "http://x.x.x.x:5001");
   }
 
-  Future<dynamic> addFriend(String shortFriendUid, bool addFriendToYourself) async {
+  Future<dynamic> addFriend(
+      String shortFriendUid, bool addFriendToYourself) async {
     try {
       final HttpsCallable call = cf.getHttpsCallable(functionName: "addFriend");
-      return( await call.call(<String, dynamic>{
+      return (await call.call(<String, dynamic>{
         "friendUid": shortFriendUid,
         "addFriendToYourself": addFriendToYourself.toString(),
-      })).data;
+      }))
+          .data;
     } catch (e) {
       return throwError(e);
     }

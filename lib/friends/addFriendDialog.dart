@@ -41,7 +41,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
                 controller.text = value.text //if the user has just the code
             }
         });
-    AuthService().getUserId().then((value) => uid = value.substring(0, 5));
+        uid = AuthService().getUserId().substring(0, 5);
   }
 
   String isValid(st) {

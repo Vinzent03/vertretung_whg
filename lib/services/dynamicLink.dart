@@ -26,7 +26,7 @@ class DynamicLink {
   _handleDeepLink(PendingDynamicLinkData data, bool fromLaunch) async {
     final Uri deepLink = data?.link;
     if (fromLaunch) await Future.delayed(Duration(seconds: 1));
-    if (await AuthService().getUserId() == null) return;
+    if (AuthService().getUserId() == null) return;
     if (deepLink.pathSegments.contains("friendAdd")) {
       var parameters = deepLink.queryParameters;
       showDialog(
@@ -41,7 +41,7 @@ class DynamicLink {
 
   Future createLink() async {
     String name = await CloudDatabase().getName();
-    String shortUid = (await AuthService().getUserId()).substring(0, 5);
+    String shortUid = (AuthService().getUserId()).substring(0, 5);
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: "https://vertretung.page.link",
       link: Uri.parse(

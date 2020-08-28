@@ -79,7 +79,7 @@ class FriendsPageState extends State<FriendsPage> {
     ProgressDialog pr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
     await pr.show();
-    String uid = await AuthService().getUserId();
+    String uid = AuthService().getUserId();
     String link = await DynamicLink().createLink();
     String name = await CloudDatabase().getName();
     await pr.hide();

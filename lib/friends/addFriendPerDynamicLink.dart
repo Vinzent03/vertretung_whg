@@ -19,7 +19,7 @@ class _AddFriendPerDynamicLinkState extends State<AddFriendPerDynamicLink> {
   @override
   void initState() {
     super.initState();
-    AuthService().getUserId().then((value) => setState(() => uid = value));
+    setState(() => uid = AuthService().getUserId());
   }
 
   @override

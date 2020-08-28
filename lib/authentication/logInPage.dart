@@ -66,15 +66,7 @@ class _LogInPageState extends State<LogInPage> {
           title: FlatButton(
             child: Text("Passwort vergessen"),
             onPressed: () async {
-              String err =
-                  await AuthService().resetPassword(emailController.text);
-              if (err != null) {
-                final SnackBar snack = SnackBar(
-                  content: Text(err),
-                  backgroundColor: Colors.red,
-                );
-                Scaffold.of(context).showSnackBar(snack);
-              }
+              await AuthService().resetPassword(emailController.text);
             },
           ),
         ),
@@ -147,7 +139,9 @@ class _LogInPageState extends State<LogInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.authType == AuthTypes.registration ? "Registrieren" : "Anmelden"),
+        title: Text(widget.authType == AuthTypes.registration
+            ? "Registrieren"
+            : "Anmelden"),
       ),
       body: Builder(
         builder: (context) {

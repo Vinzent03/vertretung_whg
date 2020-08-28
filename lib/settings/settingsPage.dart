@@ -275,7 +275,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           buildVersion:
                               (await PackageInfo.fromPlatform()).version);
                       Wiredash.of(context).setUserProperties(
-                          userId: await AuthService().getUserId());
+                          userId: AuthService().getUserId());
                       Wiredash.of(context).show();
                     },
                   )

@@ -78,18 +78,14 @@ class _AccountPageState extends State<AccountPage> {
     CloudDatabase().getName().then((value) => setState(() {
           name = value;
         }));
-    authService
-        .getUserId()
-        .then((value) => setState(() => uid = value.substring(0, 5)));
+    setState(() => uid = authService.getUserId().substring(0, 5));
     authService.isAnon().then((newIsAnon) {
       setState(() {
         isAnon = newIsAnon;
       });
       if (!isAnon) {
-        authService.getEmail().then((newEmail) {
-          setState(() {
-            email = newEmail;
-          });
+        setState(() {
+          email = authService.getEmail();
         });
       }
     });

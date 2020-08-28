@@ -9,8 +9,8 @@ class AuthService {
 
   Future signInAnon() async {
     try {
-      AuthResult result = await _auth.signInAnonymously();
-      FirebaseUser user = result.user;
+      UserCredential result = await _auth.signInAnonymously();
+      User user = result.user;
       return user;
     } catch (e) {
       print(e.toString());
@@ -18,55 +18,46 @@ class AuthService {
     }
   }
 
-  Future<String> getUserId() async {
-    FirebaseUser user = await _auth.currentUser();
+  String getUserId() {
+    User user = _auth.currentUser;
     return user?.uid;
   }
 
-  Stream<FirebaseUser> get user {
-    return _auth.onAuthStateChanged;
+  Stream<User> get user {
+    return _auth.authStateChanges();
   }
 
   Future signOut({bool deleteAccount = false}) async {
-    var user = await _auth.currentUser();
-    try {
-      await PushNotificationsManager().signOut();
-      if (user.isAnonymous || deleteAccount) {
-        await user.delete();
-      }
-      await _auth.signOut();
-      SharedPref().clear();
-    } catch (e) {
-      return e.toString();
+    var user = _auth.currentUser;
+    await PushNotificationsManager().signOut();
+    if (user.isAnonymous || deleteAccount) {
+      await user.delete();
     }
+    await SharedPref().clear();
   }
 
   Future<bool> isAnon() async {
-    FirebaseUser user = await _auth.currentUser();
+    User user = _auth.currentUser;
     return user.isAnonymous;
   }
 
   Future<String> signUp({email, password}) async {
-    FirebaseUser user = await _auth.currentUser();
+    User user = _auth.currentUser;
     AuthCredential credential =
-        EmailAuthProvider.getCredential(email: email, password: password);
+        EmailAuthProvider.credential(email: email, password: password);
     try {
-      AuthResult res = await user.linkWithCredential(credential);
+      await user.linkWithCredential(credential);
       FirebaseAnalytics().logSignUp(signUpMethod: "email");
     } catch (e) {
-      print(e.toString());
       switch (e.code) {
-        case "ERROR_WEAK_PASSWORD":
+        case "weak-password":
           return "Das Passwort ist zu schwach.";
           break;
-        case "ERROR_EMAIL_ALREADY_IN_USE  ":
+        case "email-already-in-use":
           return "Diese Email wird bereits genutzt.";
           break;
-        case "ERROR_INVALID_EMAIL":
+        case "invalid-email":
           return "Dies scheint keine richte E-Mail zu sein.";
-          break;
-        case "ERROR_USER_DISABLED":
-          return "Dieses Konto wurde deaktiviert";
           break;
         default:
           return "Ein unerwarteter Fehler ist aufgetreten.";
@@ -74,37 +65,28 @@ class AuthService {
     }
   }
 
-  Future<String> getEmail() async {
-    FirebaseUser user = await _auth.currentUser();
-    return user.email;
+  String getEmail() {
+    return _auth.currentUser.email;
   }
 
   Future<String> signInEmail({email, password, context}) async {
     try {
-      AuthResult res = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseAnalytics().logLogin(loginMethod: "email");
       await CloudDatabase().restoreAccount();
-    } catch (e) {
-      print(e.toString());
+    } on FirebaseAuthException catch (e) {
       switch (e.code) {
-        case "ERROR_INVALID_EMAIL":
+        case "invalid-email":
           return "Dies scheint keine richte E-Mail zu sein.";
           break;
-        case "ERROR_WRONG_PASSWORD":
+        case "wrong-password":
           return "Falsches Passwort";
           break;
-        case "ERROR_USER_NOT_FOUND":
+        case "user-not-found":
           return "Kein Konto mit der Email gefunden";
           break;
-        case "ERROR_USER_DISABLED":
+        case "user-disabled":
           return "Dieses Konto wurde deaktiviert";
-          break;
-        case "ERROR_TOO_MANY_REQUESTS":
-          return "Zu viele Anfragen, versuche es später erneut";
-          break;
-        case "ERROR_OPERATION_NOT_ALLOWED":
-          return "Diese Methode ist nicht aktiviert";
           break;
         default:
           return "An undefined Error happened.";
@@ -113,80 +95,45 @@ class AuthService {
   }
 
   reAuthenticate(password) async {
-    FirebaseUser user = await _auth.currentUser();
+    User user = _auth.currentUser;
     AuthCredential credential =
-        EmailAuthProvider.getCredential(email: user.email, password: password);
+        EmailAuthProvider.credential(email: user.email, password: password);
     try {
-      AuthResult res = await user.reauthenticateWithCredential(credential);
+      await user.reauthenticateWithCredential(credential);
     } catch (e) {
       switch (e.code) {
-        case "ERROR_INVALID_CREDENTIAL":
-          return "Deine Anmeldung ist ausgelaufen";
-          break;
-        case "ERROR_WRONG_PASSWORD":
+        case "wrong-password":
           return "Falsches Passwort";
           break;
-        case "ERROR_USER_DISABLED":
-          return "Dieser Account wurde deaktiviert";
-          break;
-        case "ERROR_USER_NOT_FOUND":
-          return "Dieses Konto wurde gelöscht";
-          break;
-        case "ERROR_OPERATION_NOT_ALLOWED":
-          return "Das geht leider nicht, melde dich bei den Entwicklern";
-          break;
         default:
-          return "An undefined Error happened.";
+          return "Ein unerwarteter Fehler ist aufgetreten.";
       }
     }
   }
 
   Future<String> changePassword({oldPassword, newPassword}) async {
-    FirebaseUser user = await _auth.currentUser();
+    User user = _auth.currentUser;
     try {
       await user.updatePassword(newPassword);
     } catch (e) {
       switch (e.code) {
-        case "ERROR_WEAK_PASSWORD":
+        case "weak-password":
           return "Das Passwort ist nicht stark genug";
           break;
-        case "ERROR_USER_DISABLED":
-          return "Dieser Account wurde deaktiviert";
-          break;
-        case "ERROR_USER_NOT_FOUND":
-          return "Dieses Konto wurde gelöscht";
-          break;
-        case "ERROR_OPERATION_NOT_ALLOWED":
-          return "Das geht leider nicht, melde dich bei den Entwicklern";
-          break;
         default:
-          return "An undefined Error happened.";
+          return "Ein unerwarteter Fehler ist aufgetreten.";
       }
     }
   }
 
   Future<String> resetPassword(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      switch (e.code) {
-        case "ERROR_INVALID_EMAIL":
-          return "Dies scheint keine richte E-Mail zu sein.";
-          break;
-        case "ERROR_USER_NOT_FOUND":
-          return "Dieses Konto wurde gelöscht";
-          break;
-        default:
-          return "An undefined Error happened.";
-      }
-    }
+    await _auth.sendPasswordResetEmail(email: email);
   }
 
   Future<bool> getAdminStatus() async {
     //prevent internet issue
     try {
-      FirebaseUser user = await _auth.currentUser();
-      var claims = await user.getIdToken();
+      IdTokenResult claims = await _auth.currentUser.getIdTokenResult(true);
       return claims.claims["admin"] ?? false;
     } catch (e) {
       return false;

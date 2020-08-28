@@ -2,6 +2,7 @@ import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/substitute/substituteLogic.dart';
 import 'package:Vertretung/otherWidgets/substituteList.dart';
@@ -63,7 +64,6 @@ class SubstitutePageState extends State<SubstitutePage>
     List<dynamic> dataResult =
         await SubstituteLogic().getData(); //load the data from dsb mobile
 
-    finishedLoading = true;
     if (dataResult.isEmpty) {
       if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
       loadingSuccess = false;
@@ -80,6 +80,7 @@ class SubstitutePageState extends State<SubstitutePage>
       await sharedPref.setStringList(Names.substituteTomorrow, rawListTomorrow);
     }
     await reloadFilteredSubstitute();
+    finishedLoading = true;
     if (fromPullToRefresh) _refreshController.refreshCompleted();
     widget.reloadFriendsSubstitute();
   }
@@ -121,7 +122,9 @@ class SubstitutePageState extends State<SubstitutePage>
     if (tempList.toString() !=
         (personalSubstitute ? myListToday : listToday)
             .toString()) //used to decrease Firestore writes.
-      cd.updateLastNotification(personalSubstitute ? myListToday : listToday);
+      cd.updateLastNotification(personalSubstitute
+          ? myListToday
+          : listToday); //TODO Problem ist, dass das ausgefuehrt wird wegen pop until wrapper, dabei wird das aktuallisiert, obwohl der nutzer nicht mehr eingeloggt ist
   }
 
   @override
@@ -149,7 +152,8 @@ class SubstitutePageState extends State<SubstitutePage>
                 icon: Icon(Icons.settings),
                 onPressed: () async {
                   await Navigator.pushNamed(context, Names.settingsPage);
-                  reloadFilteredSubstitute();
+                  if (AuthService().getUserId() != null)
+                    reloadFilteredSubstitute();
                   widget.updateFriendFeature();
                 })
           ],

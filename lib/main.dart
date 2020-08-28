@@ -4,6 +4,7 @@ import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/settings/aboutPage.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_core/firebase_core.dart';
 import "package:wiredash/wiredash.dart";
 import 'package:Vertretung/pages/helpPage.dart';
 import 'package:Vertretung/main/introScreen.dart';
@@ -28,10 +29,14 @@ void main() {
 
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runZoned(() {
-    runApp(ChangeNotifierProvider<ProviderData>(
-      create: (_) => ProviderData(themeData: darkTheme),
-      child: MyAppSt(),
-    ));
+    Firebase.initializeApp().then(
+      (value) => runApp(
+        ChangeNotifierProvider<ProviderData>(
+          create: (_) => ProviderData(themeData: darkTheme),
+          child: MyAppSt(),
+        ),
+      ),
+    );
   }, onError: Crashlytics.instance.recordError);
 }
 
@@ -39,7 +44,7 @@ class MyAppSt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ProviderData>(context);
-    return StreamProvider<FirebaseUser>.value(
+    return StreamProvider<User>.value(
       value: AuthService().user,
       //used for the feedback function
       child: Wiredash(

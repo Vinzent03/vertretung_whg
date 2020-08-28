@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Vertretung/friends/friendModel.dart';
 
 class FriendLogic {
-  final Firestore ref = Firestore.instance;
+  final FirebaseFirestore ref = FirebaseFirestore.instance;
   SharedPref sharedPref = SharedPref();
   List<String> rawSubstituteList;
   List<FriendModel> friends = [];
@@ -14,11 +14,11 @@ class FriendLogic {
   Future<void> setFriendsSettings() async {
     for (var friend in friends) {
       DocumentSnapshot snap =
-          await ref.collection("userdata").document(friend.uid).get();
-      friend.subjects = snap.data[Names.subjects];
-      friend.subjectsNot = snap.data[Names.subjectsNot];
-      friend.personalSubstitute = snap.data[Names.personalSubstitute];
-      friend.schoolClass = snap.data[Names.schoolClass];
+          await ref.collection("userdata").doc(friend.uid).get();
+      friend.subjects = snap.data()[Names.subjects];
+      friend.subjectsNot = snap.data()[Names.subjectsNot];
+      friend.personalSubstitute = snap.data()[Names.personalSubstitute];
+      friend.schoolClass = snap.data()[Names.schoolClass];
     }
   }
 
@@ -40,8 +40,7 @@ class FriendLogic {
   }
 
   Future<List<Map<String, String>>> getFriendsSubstitute() async {
-    if(!friendsLoaded)
-     return [];
+    if (!friendsLoaded) return [];
     List<Map<String, String>> friendsSubstitute = [];
     rawSubstituteList = await sharedPref.getStringList(Names.substituteToday);
 

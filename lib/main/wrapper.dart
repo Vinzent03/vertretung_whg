@@ -8,10 +8,10 @@ import 'home.dart';
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
-    if(user == null) {
+    final user = Provider.of<User>(context);
+    if (user == null) {
       return IntroScreen();
-    }else{
+    } else {
       return Home();
     }
   }
