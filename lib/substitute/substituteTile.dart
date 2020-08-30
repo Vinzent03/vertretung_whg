@@ -1,17 +1,14 @@
+import 'package:Vertretung/models/substituteModel.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:share/share.dart';
 
 class SubstituteListTile extends StatelessWidget {
-  final String title;
-  final String subjectPrefix;
-  final String names;
+  final SubstituteModel substitute;
 
-  SubstituteListTile({
+  SubstituteListTile(
+    this.substitute, {
     Key key,
-    @required this.title,
-    @required this.subjectPrefix,
-    this.names,
   }) : super(key: key);
 
   @override
@@ -25,49 +22,53 @@ class SubstituteListTile extends StatelessWidget {
         child: ListTile(
           onTap: () {},
           title: Text(
-            title,
+            substitute.title,
             style: TextStyle(fontSize: 16),
           ),
           leading: CircleAvatar(
             backgroundColor: Colors.white,
-            child: subjectPrefix.isEmpty
+            child: substitute.subjectPrefix.isEmpty
                 ? Text(
                     "?",
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   )
                 : Text(
-                    subjectPrefix,
+                    substitute.subjectPrefix,
                     style: TextStyle(fontSize: 18),
                   ),
           ),
           //dont show the share button on the friendsPage
-          trailing: names != null
+          trailing: substitute.names != null
               ? null
               : IconButton(
                   icon: Icon(Icons.share),
                   onPressed: () {
                     FirebaseAnalytics analytics = FirebaseAnalytics();
                     analytics.logShare(
-                      contentType:
-                          names == null ? "SubstitutePage" : "FriendsPage",
+                      contentType: substitute.names == null
+                          ? "SubstitutePage"
+                          : "FriendsPage",
                       method: "hold",
-                      itemId: subjectPrefix,
+                      itemId: substitute.subjectPrefix,
                     );
-                    Share.share("Wir haben Vertretung und zwar: $title");
+                    Share.share(
+                        "Wir haben Vertretung und zwar: ${substitute.title}");
                   },
                 ),
-          subtitle: names != null ? Text(names) : null,
-          onLongPress: names != null
+          subtitle: substitute.names != null ? Text(substitute.names) : null,
+          onLongPress: substitute.names != null
               ? null
               : () {
                   FirebaseAnalytics analytics = FirebaseAnalytics();
                   analytics.logShare(
-                    contentType:
-                        names == null ? "SubstitutePage" : "FriendsPage",
+                    contentType: substitute.names == null
+                        ? "SubstitutePage"
+                        : "FriendsPage",
                     method: "button pressed",
-                    itemId: subjectPrefix,
+                    itemId: substitute.subjectPrefix,
                   );
-                  Share.share("Wir haben Vertretung und zwar: $title");
+                  Share.share(
+                      "Wir haben Vertretung und zwar: ${substitute.title}");
                 },
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/models/substituteModel.dart';
 
 class Filter {
   SharedPref sharedPref = SharedPref();
@@ -7,7 +8,7 @@ class Filter {
   final List<String> rawList;
   Filter(this.schoolClass, this.rawList);
 
-  List<dynamic> checkForSchoolClass() {
+  List<SubstituteModel> checkForSchoolClass() {
     //filter the specific class:
 
     // 0 bevor the class was found in the list, 1 in the class, 2 out of the class
@@ -46,9 +47,8 @@ class Filter {
   //check only for the given subjects
   List<dynamic> checkForSubjects(
       List<dynamic> subjectsList, List<dynamic> subjectsNotList) {
-    List<dynamic> all = checkForSchoolClass();
-    List<dynamic> listWithoutClasses = all;
-    List<dynamic> listWithoutLessons = [];
+    List<SubstituteModel> listWithoutClasses = checkForSchoolClass();
+    List<String> listWithoutLessons = [];
     if (subjectsList.isEmpty || (subjectsList[0] == "")) {
       // Wenn man bei der Eingabe alles weg macht
       subjectsList = [""];
@@ -59,7 +59,7 @@ class Filter {
 
     if (listWithoutClasses.isNotEmpty) {
       for (var st in listWithoutClasses) {
-        String stLower = st["ver"].toLowerCase();
+        String stLower = st.title.toLowerCase();
 
         for (String fach in subjectsList) {
           fach = fach.toLowerCase();
@@ -79,7 +79,7 @@ class Filter {
             }
           }
           if (i == 1) {
-            listWithoutLessons.add(st["ver"]);
+            listWithoutLessons.add(st.title);
           }
         }
       }
@@ -88,10 +88,11 @@ class Filter {
   }
 }
 
-List<dynamic> mergeList(var list) {
-  List<dynamic> finalList = [];
+List<SubstituteModel> mergeList(var list) {
+  List<SubstituteModel> finalList = [];
   for (String item in list) {
-    finalList.add({"ver": item, "subjectPrefix": getSubjectPrefix(item)});
+    finalList.add(SubstituteModel(item, getSubjectPrefix(item)));
+    // finalList.add({"ver": item, "subjectPrefix": getSubjectPrefix(item)});
   }
   return finalList;
 }

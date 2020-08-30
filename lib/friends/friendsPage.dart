@@ -2,6 +2,7 @@ import 'package:Vertretung/friends/addFriendDialog.dart';
 import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/models/substituteModel.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/dynamicLink.dart';
@@ -11,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:share/share.dart';
-import 'package:Vertretung/friends/friendModel.dart';
+import 'package:Vertretung/models/friendModel.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({Key key}) : super(key: key);
@@ -28,7 +29,7 @@ class FriendsPage extends StatefulWidget {
 class FriendsPageState extends State<FriendsPage> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
-  List<Map<String, String>> friendsSubstitute = [];
+  List<SubstituteModel> friendsSubstitute = [];
   List<FriendModel> selectedFriends = [];
   List<FriendModel> friendList = [];
   FriendLogic friendLogic = FriendLogic();
@@ -58,7 +59,7 @@ class FriendsPageState extends State<FriendsPage> {
   }
 
   Future<void> reloadFriendsSubstitute() async {
-    List<Map<String, String>> newFriendsSubstitute =
+    List<SubstituteModel> newFriendsSubstitute =
         await friendLogic.getFriendsSubstitute();
     setState(() {
       friendsSubstitute = newFriendsSubstitute;

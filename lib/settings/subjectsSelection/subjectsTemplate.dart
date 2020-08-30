@@ -1,4 +1,4 @@
-import 'courseTileModel.dart';
+import '../../models/courseTileModel.dart';
 
 class SubjectsTemplate {
   List<CourseTileModel> subjectsTemplate;

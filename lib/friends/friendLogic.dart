@@ -1,8 +1,9 @@
 import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/models/substituteModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:Vertretung/friends/friendModel.dart';
+import 'package:Vertretung/models/friendModel.dart';
 
 class FriendLogic {
   final FirebaseFirestore ref = FirebaseFirestore.instance;
@@ -22,10 +23,10 @@ class FriendLogic {
     }
   }
 
-  List _getSubstituteOfFriend(FriendModel friend) {
+  List<SubstituteModel> _getSubstituteOfFriend(FriendModel friend) {
     Filter filter = Filter(friend.schoolClass, rawSubstituteList);
-    List substitute;
-    List justCancelledLessons = [];
+    List<SubstituteModel> substitute;
+    List<SubstituteModel> justCancelledLessons = [];
     if (friend.personalSubstitute) {
       var list = filter.checkForSubjects(friend.subjects, friend.subjectsNot);
       substitute = list;
@@ -33,48 +34,42 @@ class FriendLogic {
       var list = filter.checkForSchoolClass();
       substitute = list;
     }
-    for (Map<String, String> item in substitute) {
-      if (item["ver"].contains("Entfall")) justCancelledLessons.add(item);
+    for (SubstituteModel item in substitute) {
+      if (item.title.contains("Entfall")) justCancelledLessons.add(item);
     }
     return justCancelledLessons;
   }
 
-  Future<List<Map<String, String>>> getFriendsSubstitute() async {
+  Future<List<SubstituteModel>> getFriendsSubstitute() async {
     if (!friendsLoaded) return [];
-    List<Map<String, String>> friendsSubstitute = [];
+    List<SubstituteModel> friendsSubstitute = [];
     rawSubstituteList = await sharedPref.getStringList(Names.substituteToday);
 
     for (var friend in friends) {
-      List<dynamic> list = _getSubstituteOfFriend(friend);
-      for (var substitute in list) {
+      List<SubstituteModel> list = _getSubstituteOfFriend(friend);
+      for (SubstituteModel substitute in list) {
         if (friendsSubstitute.isNotEmpty) {
           List<String> temporarilyfriendVertretung = [];
           for (var st in friendsSubstitute) {
-            temporarilyfriendVertretung.add(st["ver"]);
+            temporarilyfriendVertretung.add(st.title);
           }
 
-          if (temporarilyfriendVertretung.contains(substitute["ver"])) {
+          if (temporarilyfriendVertretung.contains(substitute.title)) {
             //add the name to the list who have this Substitute
             for (var oldVer in friendsSubstitute) {
-              if (oldVer["ver"] == substitute["ver"]) {
-                oldVer["name"] = oldVer["name"] + ", " + friend.name;
+              if (oldVer.title == substitute.title) {
+                oldVer.names = oldVer.names + ", " + friend.name;
               }
             }
           } else {
             //nobody else has this Substitute
-            friendsSubstitute.add({
-              "name": friend.name,
-              "ver": substitute["ver"],
-              "subjectPrefix": substitute["subjectPrefix"]
-            });
+            friendsSubstitute.add(SubstituteModel(
+                substitute.title, substitute.subjectPrefix, friend.name));
           }
         } else {
           //first Substitute in the List
-          friendsSubstitute.add({
-            "name": friend.name,
-            "ver": substitute["ver"],
-            "subjectPrefix": substitute["subjectPrefix"]
-          });
+          friendsSubstitute.add(SubstituteModel(
+              substitute.title, substitute.subjectPrefix, friend.name));
         }
       }
     }

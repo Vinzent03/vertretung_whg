@@ -1,8 +1,11 @@
+import 'dart:ui';
+
+import 'package:Vertretung/models/substituteModel.dart';
 import 'package:flutter/material.dart';
 import '../substitute/substituteTile.dart';
 
 class SubstituteList extends StatefulWidget {
-  final List<dynamic> list;
+  final List<SubstituteModel> list;
 
   SubstituteList({
     Key key,
@@ -42,9 +45,7 @@ class SubstituteListState extends State<SubstituteList>
           itemCount: widget.list.length,
           itemBuilder: (context, index) {
             return SubstituteListTile(
-              title: widget.list[index]["ver"],
-              subjectPrefix: widget.list[index]["subjectPrefix"],
-              names: widget.list[index]["name"],
+              widget.list[index],
             );
           },
         ),

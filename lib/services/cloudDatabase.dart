@@ -1,10 +1,11 @@
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/models/substituteModel.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:package_info/package_info.dart';
-import 'package:Vertretung/friends/friendModel.dart';
+import 'package:Vertretung/models/friendModel.dart';
 
 enum updateCodes { availableNormal, availableForce, notAvailable }
 
@@ -45,10 +46,10 @@ class CloudDatabase {
     );
   }
 
-  void updateLastNotification(List<dynamic> substitute) async {
+  void updateLastNotification(List<SubstituteModel> substitute) async {
     List<String> justSubstitute = [];
-    for (Map item in substitute) {
-      justSubstitute.add(item["ver"]);
+    for (SubstituteModel item in substitute) {
+      justSubstitute.add(item.title);
     }
     DocumentReference doc = ref.collection("userdata").doc(uid);
     doc.set({"lastNotification": justSubstitute}, SetOptions(merge: true));

@@ -1,4 +1,4 @@
-import 'package:Vertretung/friends/friendModel.dart';
+import 'package:Vertretung/models/friendModel.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
 
