@@ -91,7 +91,8 @@ class _IntroScreenState extends State<IntroScreen> {
                 ),
               ),
             ),
-            footer: Text("Dies ist für das Freunde Feature nötig \nund wird deinen Freunden angezeigt."),
+            footer: Text(
+                "Dies ist für das Freunde Feature nötig \nund wird deinen Freunden angezeigt."),
             decoration: PageDecoration(
               titlePadding: EdgeInsets.symmetric(vertical: 100),
               titleTextStyle: TextStyle(
@@ -145,7 +146,7 @@ class _IntroScreenState extends State<IntroScreen> {
                   style: TextStyle(fontSize: 19),
                 ),
                 Text(
-                  "Den Rest der Einstellungen, wie deine Fächer, sowie Hilfe, zu verschiedenen Themen findest du unter Vertretung oben rechts. \n\n",
+                  "Außerdem bist du damit einverstanden, dass deine Einstellungen in der Cloud gespeichert werden. Dies ist z.B für das Freundes-Feature nötig. Zusätzlich werden besondere Ereignisse wie Registrierungen und Fehlerberichte anonym gesendet.",
                   style: TextStyle(fontSize: 14),
                 ),
               ],

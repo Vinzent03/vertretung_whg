@@ -27,22 +27,22 @@ class _HelpPageState extends State<HelpPage> {
       HelpItem(
         header: "Was ist personalisierte Vertretung?",
         body:
-            "Wenn in den Einstellungen die personalisierte Vertretung eingestellt ist, kannst du in den Einstellungen Fächer die du hast bzw. nicht hast Blacklisten / Whitelisten. Anschließend ist eine personalisierte Seite sichtbar, wo für dich relevante Vertretungen zu sehen sind.",
+            "Wenn in den Einstellungen die personalisierte Vertretung eingeschaltet ist, kannst du in den Einstellungen Fächer die du hast (Whitelist) bzw. nicht hast (Blacklist) eintragen. Anschließend sind weitere Tabs mit nur für dich relevanter Vertretung zu sehen.",
       ),
       HelpItem(
         header: "Wie funktionieren die Benachrichtigungen?",
         body:
-            "Die Cloud schaut mehrmals stündlich bei jedem individuellem Nutzer, ob neue Vertretungen verfügbar sind. Dabei werden nur Vertretungen für den aktuellen Tag berücksichtigt. Wenn personalisierte Fächer eingeschaltet ist, wird man nur bei relevanten Äußerungen benachrichtigt. Da die Benachrichtigung nicht lokal erzeugt wird, erhält man auch Benachrichtigungen wenn die Anwendung geschlossen ist.",
+            "Die Cloud schaut mehrmals stündlich bei jedem individuellem Nutzer, ob neue Vertretungen verfügbar sind. Dabei werden nur Vertretungen für den aktuellen Tag berücksichtigt. Wenn personalisierte Vertretung eingeschaltet ist, wird man nur bei relevanten Änderungen benachrichtigt.",
       ),
       HelpItem(
         header: "Freunde",
         body:
-            "Du kannst Freunde über einen Token hinzufügen. Diesen bekommt man über das Share Symbol auf der Freundes Seite. Um ein Freund hinzuzufügen muss man die Freundesanfrage annehmen. Anschließend siehst du auf der Freundes Seite die Vertretung deiner Freunde.",
+            "Wenn du Freunde hinzufügst, siehst du wann deine Freunde Entfall haben. So weißt du immer wann du dich mit ihnen treffen kannst. Um Freunde hinzuzufügen, schickst du deinen Freundestoken/Link an einen Freund. Die Person muss den Token dann eingeben oder auf den Link klicken.",
       ),
       HelpItem(
         header: "Datenschutz",
         body:
-            "Den Rest der Einstellungen, wie deine Fächer, sowie Hilfe, zu verschiedenen Themen findest du unter Vertretung oben rechts. \n\n",
+            "Deine Einstellungen werden in der Cloud (Frankfurt) gespeichert. Dies ist z.B für das Freundes-Feature nötig. Zusätzlich werden besondere Ereignisse wie Registrierungen und Fehlerberichte anonym gesendet.",
       ),
     ];
     super.initState();
