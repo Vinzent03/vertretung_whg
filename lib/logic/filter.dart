@@ -35,8 +35,7 @@ class Filter {
     for (String st in listWithoutClasses) {
       if (st.contains("bei +")) {
         String beginn = st.substring(0, st.indexOf("bei +") - 1);
-        String end = st.substring(st.indexOf("bei +") + 6);
-        st = "$beginn Entfall $end";
+        st = "$beginn Entfall";
       }
       betterList.add(st);
     }
