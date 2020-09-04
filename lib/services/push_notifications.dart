@@ -28,6 +28,7 @@ class PushNotificationsManager {
             );
         },
       );
+      _firebaseMessaging.subscribeToTopic("all");
 
       // For testing purposes print the Firebase Messaging token
       String token = await _firebaseMessaging.getToken();
