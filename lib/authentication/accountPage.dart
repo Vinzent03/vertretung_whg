@@ -75,9 +75,9 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void reload() {
-    CloudDatabase().getName().then((value) => setState(() {
-          name = value;
-        }));
+    CloudDatabase().getName().then((value) {
+      if (mounted) setState(() => name = value);
+    });
     setState(() => uid = authService.getUserId().substring(0, 5));
     setState(() => isAnon = authService.isAnon());
     if (!isAnon) {
