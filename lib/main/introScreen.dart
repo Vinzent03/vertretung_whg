@@ -181,13 +181,14 @@ class _IntroScreenState extends State<IntroScreen> {
               subjectsNot: [],
               schoolClass: await SharedPref().getString(Names.schoolClass),
               personalSubstitute: false,
-              notification: true,
+              notificationOnChange: true,
+              notificationOnFirstChange: false,
             );
             db.updateCustomSubjects(Names.subjectsCustom, []);
             db.updateCustomSubjects(Names.subjectsNotCustom, []);
             SharedPref sharedPref = SharedPref();
             sharedPref.setBool(Names.personalSubstitute, false);
-            sharedPref.setBool(Names.friendsFeature, true);
+            sharedPref.setBool(Names.notificationOnFirstChange, false);
           }
         },
       ),

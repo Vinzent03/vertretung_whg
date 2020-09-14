@@ -4,6 +4,7 @@ import 'package:Vertretung/models/substituteModel.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:Vertretung/models/friendModel.dart';
 
@@ -17,19 +18,22 @@ class CloudDatabase {
     uid = AuthService().getUserId();
   }
 
-  void updateUserData(
-      {personalSubstitute,
-      schoolClass,
-      subjects,
-      subjectsNot,
-      notification}) async {
+  void updateUserData({
+    @required personalSubstitute,
+    @required schoolClass,
+    @required subjects,
+    @required subjectsNot,
+    @required notificationOnChange,
+    @required notificationOnFirstChange,
+  }) async {
     String token = await PushNotificationsManager().getToken();
     DocumentReference doc = ref.collection("userdata").doc(uid);
     doc.set({
       Names.subjects: subjects,
       Names.subjectsNot: subjectsNot,
       Names.personalSubstitute: personalSubstitute,
-      Names.notification: notification,
+      Names.notificationOnChange: notificationOnChange,
+      Names.notificationOnFirstChange: notificationOnFirstChange,
       Names.schoolClass: schoolClass,
       "token": token,
     }, SetOptions(merge: true));
@@ -90,8 +94,10 @@ class CloudDatabase {
         List<String>.from(userdataDoc.data()[Names.subjectsNotCustom]));
     sharedPref.setBool(
         Names.personalSubstitute, userdataDoc.data()[Names.personalSubstitute]);
-    await sharedPref.setBool(
-        Names.notification, userdataDoc.data()[Names.notification]);
+    sharedPref.setBool(Names.notificationOnChange,
+        userdataDoc.data()[Names.notificationOnChange]);
+    await sharedPref.setBool(Names.notificationOnFirstChange,
+        userdataDoc.data()[Names.notificationOnFirstChange]);
   }
 
   //Updates

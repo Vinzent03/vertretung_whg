@@ -91,6 +91,13 @@ class _SplashState extends State<Splash> {
     initNotification();
     initDynamicLink();
     checkForUpdate();
+    
+    //disable new notification option by default
+    SharedPref().checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
+      if (!value) SharedPref().setBool(Names.notificationOnFirstChange, false);
+    });
+
+
     Timer(Duration(milliseconds: 100), () {
       Navigator.of(context).pushReplacementNamed(Names.wrapper);
     });

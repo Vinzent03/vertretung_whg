@@ -38,7 +38,12 @@ class SharedPref {
 
   Future<void> setInt(String st, int newInt) async {
     final prefs = await SharedPreferences.getInstance();
-    return await prefs.setInt(st,newInt);
+    return await prefs.setInt(st, newInt);
+  }
+
+  Future<bool> checkIfKeyIsSet(String st) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey(st);
   }
 
   Future<void> clear() async {

@@ -38,8 +38,11 @@ class Names {
   ///selected subjects for the blackList
   static const String subjectsNot = "subjectsNot";
 
-  ///notification settings turned on
-  static const String notification = "notification";
+  ///send notifications when new substitute is added
+  static const String notificationOnChange = "notification";
+
+  //send notification when the data is new the first time
+  static const String notificationOnFirstChange = "notificationOnFirstChange";
 
   ///The last change of the substitute
   static const String lastChange = "lastChange";

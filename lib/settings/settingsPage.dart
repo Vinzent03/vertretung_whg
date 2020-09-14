@@ -26,7 +26,8 @@ class _SettingsPageState extends State<SettingsPage> {
   bool dark = false;
   bool personalSubstitute = false;
   bool refresh = false;
-  bool notification = false;
+  bool notificationOnChange = false;
+  bool notificationOnFirstChange = false;
   bool friendsFeature = false;
   String schoolClass = "Nicht Geladen";
   List<String> subjectsList = [];
@@ -61,13 +62,13 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void updateUserdata() {
-    print(subjectsList);
     manager.updateUserData(
       personalSubstitute: personalSubstitute,
       schoolClass: schoolClass,
       subjects: subjectsList,
       subjectsNot: subjectsNotList,
-      notification: notification,
+      notificationOnChange: notificationOnChange,
+      notificationOnFirstChange: notificationOnFirstChange,
     );
   }
 
@@ -75,15 +76,19 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     manager = CloudDatabase();
     bool pPersonalSubstitute;
-    bool pNotification;
+    bool pNotificationOnChange;
+    bool pNotificationOnFirstChange;
     bool pFriendsFeature;
     String pSchoolClass;
     List<String> pSubjectsList;
     sharedPref.getBool(Names.personalSubstitute).then((bool b) {
       pPersonalSubstitute = b;
     });
-    sharedPref.getBool(Names.notification).then((bool b) {
-      pNotification = b;
+    sharedPref.getBool(Names.notificationOnChange).then((bool b) {
+      pNotificationOnChange = b;
+    });
+    sharedPref.getBool(Names.notificationOnFirstChange).then((bool b) {
+      pNotificationOnFirstChange = b;
     });
     sharedPref.getBool(Names.friendsFeature).then((bool b) {
       pFriendsFeature = b;
@@ -98,7 +103,8 @@ class _SettingsPageState extends State<SettingsPage> {
       setState(() {
         subjectsNotList = st;
         personalSubstitute = pPersonalSubstitute;
-        notification = pNotification;
+        notificationOnChange = pNotificationOnChange;
+        notificationOnFirstChange = pNotificationOnFirstChange;
         friendsFeature = pFriendsFeature;
         schoolClass = pSchoolClass;
         subjectsList = pSubjectsList;
@@ -117,7 +123,8 @@ class _SettingsPageState extends State<SettingsPage> {
           IconButton(
             icon: Icon(Icons.share),
             onPressed: () async {
-              Map<String,String> links = await CloudDatabase().getUpdateLinks();
+              Map<String, String> links =
+                  await CloudDatabase().getUpdateLinks();
               Share.share(
                   "Hier ist der Download Link für die Vertretungsapp: ${links["download"]}");
             },
@@ -242,16 +249,31 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   SwitchListTile(
                     secondary: Icon(Icons.notifications_active),
-                    value: notification,
+                    value: notificationOnChange,
                     onChanged: (bool b) {
-                      sharedPref.setBool(Names.notification, b);
+                      sharedPref.setBool(Names.notificationOnChange, b);
                       setState(() {
-                        notification = b;
+                        notificationOnChange = b;
                       });
                       updateUserdata();
                     },
                     title: Text(
-                      "Benachrichtigungen",
+                      "Benachrichtigung bei neuer Vertretung",
+                      style: TextStyle(fontSize: 17),
+                    ),
+                  ),
+                  SwitchListTile(
+                    secondary: Icon(Icons.notifications_active),
+                    value: notificationOnFirstChange,
+                    onChanged: (bool b) {
+                      sharedPref.setBool(Names.notificationOnFirstChange, b);
+                      setState(() {
+                        notificationOnFirstChange = b;
+                      });
+                      updateUserdata();
+                    },
+                    title: Text(
+                      "Benachrichtigung wenn der Plan zum ersten mal aktualisiert",
                       style: TextStyle(fontSize: 17),
                     ),
                   ),
@@ -274,8 +296,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       Wiredash.of(context).setBuildProperties(
                           buildVersion:
                               (await PackageInfo.fromPlatform()).version);
-                      Wiredash.of(context).setUserProperties(
-                          userId: AuthService().getUserId());
+                      Wiredash.of(context)
+                          .setUserProperties(userId: AuthService().getUserId());
                       Wiredash.of(context).show();
                     },
                   )
