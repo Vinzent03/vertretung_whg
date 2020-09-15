@@ -57,28 +57,28 @@ class Filter {
     }
 
     if (listWithoutClasses.isNotEmpty) {
-      for (var st in listWithoutClasses) {
-        String stLower = st.title.toLowerCase();
+      for (SubstituteModel item in listWithoutClasses) {
+        String titleLower = item.title.toLowerCase();
 
-        for (String fach in subjectsList) {
-          fach = fach.toLowerCase();
+        for (String rawSubject in subjectsList) {
+          String subject = " " + rawSubject.toLowerCase() + " ";
           int i = 0;
-          for (String fachNot in subjectsNotList) {
-            fachNot = fachNot.toLowerCase();
-            if (stLower.contains("bei")) {
-              stLower = stLower.substring(0, stLower.indexOf("bei"));
+          for (String rawSubjectNot in subjectsNotList) {
+            String subjectNot = rawSubjectNot.toLowerCase();
+            if (titleLower.contains("bei")) {
+              titleLower = titleLower.substring(0, titleLower.indexOf("bei"));
             }
-            if (stLower.contains(fach)) {
+            if (titleLower.contains(subject)) {
               if (i != 2) {
                 i = 1;
               }
-              if (stLower.contains(fachNot)) {
+              if (titleLower.contains(subjectNot)) {
                 i = 2;
               }
             }
           }
           if (i == 1) {
-            listWithoutLessons.add(st.title);
+            listWithoutLessons.add(item.title);
           }
         }
       }
@@ -87,11 +87,10 @@ class Filter {
   }
 }
 
-List<SubstituteModel> mergeList(var list) {
+List<SubstituteModel> mergeList(List<String> list) {
   List<SubstituteModel> finalList = [];
   for (String item in list) {
     finalList.add(SubstituteModel(item, getSubjectPrefix(item)));
-    // finalList.add({"ver": item, "subjectPrefix": getSubjectPrefix(item)});
   }
   return finalList;
 }
