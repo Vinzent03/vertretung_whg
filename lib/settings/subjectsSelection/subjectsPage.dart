@@ -109,7 +109,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
               onPressed: () {
                 if (myController.text != "") {
                   CourseTileModel newItem = CourseTileModel(
-                      title: myController.text,
+                      title: myController.text.trim(),
                       isCustom: true,
                       isChecked: true);
                   setState(() {

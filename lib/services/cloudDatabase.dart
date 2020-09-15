@@ -62,7 +62,7 @@ class CloudDatabase {
   void updateName(String newName) async {
     DocumentReference doc = ref.collection("userdata").doc(uid);
     doc.set({
-      "name": newName,
+      "name": newName.trim(),
     }, SetOptions(merge: true));
   }
 
