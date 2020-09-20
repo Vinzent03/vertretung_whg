@@ -4,6 +4,7 @@ import 'package:Vertretung/otherWidgets/OpenContainerWrapper.dart';
 import 'package:Vertretung/otherWidgets/themeModeSelection.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
+import 'package:Vertretung/settings/freeLessonSelection/freeLessonSelection.dart';
 import 'package:share/share.dart';
 import 'package:Vertretung/otherWidgets/SchoolClassSelection.dart';
 import 'package:flutter/material.dart';
@@ -224,15 +225,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       setState(() => subjectsNotList = _newSubjects);
                       updateUserdata();
                     },
-                  )
+                  ),
                 ],
               ),
             ),
             Card(
               elevation: 3,
               child: Column(
-                children: <Widget>[
-                  ThemeModeSelection(_themeChanger.getThemeMode()),
+                children: <Widget> [
                   SwitchListTile(
                     title: Text(
                       "Freundes Funktion",
@@ -247,6 +247,28 @@ class _SettingsPageState extends State<SettingsPage> {
                       });
                     },
                   ),
+                  OpenContainerWrapper(
+                    tappable: friendsFeature,
+                    openBuilder: (BuildContext context, VoidCallback _) =>
+                        FreeLessonSelection(),
+                    closedBuilder: (context, action) => ListTile(
+                      title: Text(
+                        "Freistunden",
+                        style: TextStyle(fontSize: 17),
+                      ),
+                      leading: Icon(Icons.free_breakfast),
+                      enabled: friendsFeature,
+                    ),
+                    onClosed: (data) async {},
+                  ),
+                ],
+              ),
+            ),
+            Card(
+              elevation: 3,
+              child: Column(
+                children: <Widget>[
+                  ThemeModeSelection(_themeChanger.getThemeMode()),
                   SwitchListTile(
                     secondary: Icon(Icons.notifications_active),
                     value: notificationOnChange,

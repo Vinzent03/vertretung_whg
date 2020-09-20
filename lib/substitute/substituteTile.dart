@@ -26,17 +26,7 @@ class SubstituteListTile extends StatelessWidget {
             style: TextStyle(fontSize: 16),
           ),
           leading: CircleAvatar(
-            backgroundColor: Colors.white,
-            child: substitute.subjectPrefix.isEmpty
-                ? Text(
-                    "?",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  )
-                : Text(
-                    substitute.subjectPrefix,
-                    style: TextStyle(fontSize: 18),
-                  ),
-          ),
+              backgroundColor: Colors.white, child: buildCircleAvatar()),
           //dont show the share button on the friendsPage
           trailing: substitute.names != null
               ? null
@@ -73,5 +63,20 @@ class SubstituteListTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget buildCircleAvatar() {
+    if (substitute.subjectPrefix.isEmpty)
+      return Text(
+        "?",
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+      );
+    else if (substitute.title.contains("Freistunde"))
+      return Icon(Icons.free_breakfast);
+    else
+      return Text(
+        substitute.subjectPrefix,
+        style: TextStyle(fontSize: 18),
+      );
   }
 }

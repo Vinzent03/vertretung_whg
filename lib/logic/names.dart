@@ -38,6 +38,9 @@ class Names {
   ///selected subjects for the blackList
   static const String subjectsNot = "subjectsNot";
 
+  ///selected free lessons
+  static const String freeLessons = "freeLessons";
+
   ///send notifications when new substitute is added
   static const String notificationOnChange = "notification";
 

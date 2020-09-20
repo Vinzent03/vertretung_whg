@@ -12,11 +12,7 @@ enum updateCodes { availableNormal, availableForce, notAvailable }
 
 class CloudDatabase {
   final FirebaseFirestore ref = FirebaseFirestore.instance;
-  String uid;
-
-  CloudDatabase() {
-    uid = AuthService().getUserId();
-  }
+  String uid = AuthService().getUserId();
 
   void updateUserData({
     @required personalSubstitute,
@@ -42,10 +38,17 @@ class CloudDatabase {
   void updateCustomSubjects(
       String name, List<String> customSubjectsList) async {
     //name indicates whether to save as whitelist or blacklist
-    AuthService _auth = AuthService();
     ref.collection("userdata").doc(uid).update(
       {
         name: customSubjectsList,
+      },
+    );
+  }
+
+  void updateFreeLessons(List<String> newFreeLessons) async {
+    ref.collection("userdata").doc(uid).update(
+      {
+        "freeLessons": newFreeLessons,
       },
     );
   }
@@ -92,6 +95,8 @@ class CloudDatabase {
         List<String>.from(userdataDoc.data()[Names.subjectsCustom]));
     sharedPref.setStringList(Names.subjectsNotCustom,
         List<String>.from(userdataDoc.data()[Names.subjectsNotCustom]));
+    sharedPref.setStringList(Names.freeLessons,
+        List<String>.from(userdataDoc.data()[Names.freeLessons] ?? []));
     sharedPref.setBool(
         Names.personalSubstitute, userdataDoc.data()[Names.personalSubstitute]);
     sharedPref.setBool(Names.notificationOnChange,

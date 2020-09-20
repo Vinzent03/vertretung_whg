@@ -7,13 +7,9 @@ class FriendModel {
   bool personalSubstitute;
   List<dynamic> subjects;
   List<dynamic> subjectsNot;
+  List<dynamic> freeLessons;
   FriendModel({
     this.name,
     this.uid,
-    this.isChecked,
-    this.schoolClass,
-    this.personalSubstitute,
-    this.subjects,
-    this.subjectsNot,
   });
 }

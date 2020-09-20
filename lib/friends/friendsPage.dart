@@ -36,18 +36,18 @@ class FriendsPageState extends State<FriendsPage> {
 
   Future<void> reloadAll() async {
     try {
-      List<FriendModel> newFriendList = await CloudDatabase().getFriendsList();
-      if (newFriendList.length != friendList.length) {
-        selectedFriends = [];
-        friendList = newFriendList;
-        for (var friend in friendList) {
-          friend.isChecked = true;
-          selectedFriends.add(friend);
-        }
+    List<FriendModel> newFriendList = await CloudDatabase().getFriendsList();
+    if (newFriendList.length != friendList.length) {
+      selectedFriends = [];
+      friendList = newFriendList;
+      for (var friend in friendList) {
+        friend.isChecked = true;
+        selectedFriends.add(friend);
       }
-      await friendLogic.updateFriendsList(selectedFriends);
-      await reloadFriendsSubstitute();
-      _refreshController.refreshCompleted();
+    }
+    await friendLogic.updateFriendsList(selectedFriends);
+    await reloadFriendsSubstitute();
+    _refreshController.refreshCompleted();
     } catch (e) {
       Flushbar(
         message:
@@ -61,6 +61,7 @@ class FriendsPageState extends State<FriendsPage> {
   Future<void> reloadFriendsSubstitute() async {
     List<SubstituteModel> newFriendsSubstitute =
         await friendLogic.getFriendsSubstitute();
+    newFriendsSubstitute.sort((a, b) => a.title.compareTo(b.title));
     setState(() {
       friendsSubstitute = newFriendsSubstitute;
     });
