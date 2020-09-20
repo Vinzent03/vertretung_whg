@@ -142,7 +142,7 @@ class SubstitutePageState extends State<SubstitutePage>
       //key is needed because otherwise the tab length would not be updated
       child: Scaffold(
         appBar: AppBar(
-          title: Text("$lastChange  W: ${SubstituteLogic().getWeekNumber()}"),
+          title: Text("$lastChange  ${SubstituteLogic().getWeekNumber()}. KW"),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.help_outline),
