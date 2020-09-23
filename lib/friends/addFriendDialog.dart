@@ -1,6 +1,5 @@
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
@@ -104,15 +103,6 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
           onPressed: () async {
             error = false;
             if (_validateInputs()) {
-              var connectivityResult =
-                  await (Connectivity().checkConnectivity());
-              if (connectivityResult == ConnectivityResult.none) {
-                Navigator.pop(context);
-                return Flushbar(
-                  message: "Keine Verbindung.",
-                  duration: Duration(seconds: 2),
-                )..show(context);
-              }
               await pr.show();
               var result = await Functions()
                   .addFriend(controller.text, addFriendToYourself);

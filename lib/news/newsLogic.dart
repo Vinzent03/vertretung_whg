@@ -1,7 +1,6 @@
 import 'package:Vertretung/news/detailsPage.dart';
 import "newsTransmitter.dart";
 import 'package:Vertretung/services/cloudFunctions.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -9,20 +8,11 @@ import 'editNewsPage.dart';
 
 class NewsLogic {
   Future<bool> deleteNews(BuildContext context, index) async {
-    if ((await Connectivity().checkConnectivity()) == ConnectivityResult.none) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Keine Verbindung"),
-      ));
-      return false;
-    }
-
-    var result;
-
     ProgressDialog pr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
     await pr.show();
 
-    result = await Functions().deleteNews(index);
+    var result = await Functions().deleteNews(index);
     await pr.hide();
     Scaffold.of(context).hideCurrentSnackBar();
 

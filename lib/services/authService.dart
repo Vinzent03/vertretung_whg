@@ -60,6 +60,8 @@ class AuthService {
         case "invalid-email":
           return "Dies scheint keine richte E-Mail zu sein.";
           break;
+        case "network-request-failed":
+          return "Keine Verbindung";
         default:
           return "Ein unerwarteter Fehler ist aufgetreten.";
       }
@@ -89,6 +91,8 @@ class AuthService {
         case "user-disabled":
           return "Dieses Konto wurde deaktiviert";
           break;
+        case "network-request-failed":
+          return "Keine Verbindung";
         default:
           return "An undefined Error happened.";
       }
@@ -105,7 +109,8 @@ class AuthService {
       switch (e.code) {
         case "wrong-password":
           return "Falsches Passwort";
-          break;
+        case "network-request-failed":
+          return "Keine Verbindung";
         default:
           return "Ein unerwarteter Fehler ist aufgetreten.";
       }
@@ -120,7 +125,8 @@ class AuthService {
       switch (e.code) {
         case "weak-password":
           return "Das Passwort ist nicht stark genug";
-          break;
+        case "network-request-failed":
+          return "Keine Verbindung";
         default:
           return "Ein unerwarteter Fehler ist aufgetreten.";
       }

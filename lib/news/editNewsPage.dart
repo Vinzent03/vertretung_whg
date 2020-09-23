@@ -1,6 +1,5 @@
 import 'package:Vertretung/news/newsTransmitter.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -72,12 +71,6 @@ class EditNewsPageState extends State<EditNewsPage> {
                         content: Text("Bitte gib einen Titel an"),
                       ));
 
-                    if ((await Connectivity().checkConnectivity()) ==
-                        ConnectivityResult.none) {
-                      return Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("Keine Verbindung"),
-                      ));
-                    }
                     ProgressDialog pr = ProgressDialog(context,
                         type: ProgressDialogType.Normal,
                         isDismissible: false,

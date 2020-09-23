@@ -4,7 +4,6 @@ import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
-import 'package:connectivity/connectivity.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -62,17 +61,6 @@ class _AccountPageState extends State<AccountPage> {
         });
   }
 
-  Future<bool> checkConnectivity(context) async {
-    ConnectivityResult res = await Connectivity().checkConnectivity();
-    if (res == ConnectivityResult.none) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Keine Verbindung"),
-        behavior: SnackBarBehavior.floating,
-      ));
-      return false;
-    } else
-      return true;
-  }
 
   void reload() {
     CloudDatabase().getName().then((value) {
@@ -160,9 +148,8 @@ class _AccountPageState extends State<AccountPage> {
                           leading: Icon(Icons.security),
                           title: Text("Passwort ändern"),
                           onTap: () async {
-                            if (await checkConnectivity(context))
-                              Navigator.pushNamed(
-                                  context, Names.changePasswordPage);
+                            Navigator.pushNamed(
+                                context, Names.changePasswordPage);
                           },
                         )
                     ],
@@ -187,15 +174,14 @@ class _AccountPageState extends State<AccountPage> {
                               elevation: 0,
                               child: Text("Registrieren"),
                               onPressed: () async {
-                                if (await checkConnectivity(context))
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          LogInPage(
-                                              authType: AuthTypes.registration),
-                                    ),
-                                  );
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        LogInPage(
+                                            authType: AuthTypes.registration),
+                                  ),
+                                );
                                 reload();
                               }),
                         )
@@ -219,8 +205,7 @@ class _AccountPageState extends State<AccountPage> {
                       elevation: 0,
                       child: Text("Konto löschen"),
                       onPressed: () async {
-                        if (await checkConnectivity(context)) if (authService
-                            .isAnon())
+                        if (authService.isAnon())
                           deleteAccountAlert();
                         else
                           Navigator.push(
