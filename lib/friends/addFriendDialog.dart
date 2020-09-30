@@ -1,6 +1,7 @@
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flushbar/flushbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
@@ -30,17 +31,18 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
   @override
   void initState() {
     super.initState();
-    Clipboard.getData("text/plain").then((value) => {
-          if (value != null)
-            {
-              if (value.text.length ==
-                  25) //If the user has the complete share sentence
-                controller.text = value.text.substring(20)
-              else if (value.text.length == 5)
-                controller.text = value.text //if the user has just the code
-            }
-        });
-        uid = AuthService().getUserId().substring(0, 5);
+    if (!kIsWeb)
+      Clipboard.getData("text/plain").then((value) => {
+            if (value != null)
+              {
+                if (value.text.length ==
+                    25) //If the user has the complete share sentence
+                  controller.text = value.text.substring(20)
+                else if (value.text.length == 5)
+                  controller.text = value.text //if the user has just the code
+              }
+          });
+    uid = AuthService().getUserId().substring(0, 5);
   }
 
   String isValid(st) {

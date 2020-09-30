@@ -1,6 +1,8 @@
 import 'package:Vertretung/models/substituteModel.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/services.dart';
 import 'package:share/share.dart';
 
 class SubstituteListTile extends StatelessWidget {
@@ -32,34 +34,11 @@ class SubstituteListTile extends StatelessWidget {
               ? null
               : IconButton(
                   icon: Icon(Icons.share),
-                  onPressed: () {
-                    FirebaseAnalytics analytics = FirebaseAnalytics();
-                    analytics.logShare(
-                      contentType: substitute.names == null
-                          ? "SubstitutePage"
-                          : "FriendsPage",
-                      method: "hold",
-                      itemId: substitute.subjectPrefix,
-                    );
-                    Share.share(
-                        "Wir haben Vertretung und zwar: ${substitute.title}");
-                  },
+                  onPressed: () => share(context, true),
                 ),
           subtitle: substitute.names != null ? Text(substitute.names) : null,
-          onLongPress: substitute.names != null
-              ? null
-              : () {
-                  FirebaseAnalytics analytics = FirebaseAnalytics();
-                  analytics.logShare(
-                    contentType: substitute.names == null
-                        ? "SubstitutePage"
-                        : "FriendsPage",
-                    method: "button pressed",
-                    itemId: substitute.subjectPrefix,
-                  );
-                  Share.share(
-                      "Wir haben Vertretung und zwar: ${substitute.title}");
-                },
+          onLongPress:
+              substitute.names != null ? null : () => share(context, false),
         ),
       ),
     );
@@ -78,5 +57,25 @@ class SubstituteListTile extends StatelessWidget {
         substitute.subjectPrefix,
         style: TextStyle(fontSize: 18),
       );
+  }
+
+  share(BuildContext context, bool fromButton) {
+    FirebaseAnalytics analytics = FirebaseAnalytics();
+    analytics.logShare(
+      contentType: substitute.names == null ? "SubstitutePage" : "FriendsPage",
+      method: fromButton ? "button pressed" : "hold",
+      itemId: substitute.subjectPrefix,
+    );
+    if (kIsWeb) {
+      Clipboard.setData(ClipboardData(
+          text: "Wir haben Vertretung und zwar: ${substitute.title}"));
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Text zur Zwischenablage hinzugefügt.",
+        ),
+        behavior: SnackBarBehavior.floating,
+      ));
+    }
+    Share.share("Wir haben Vertretung und zwar: ${substitute.title}");
   }
 }

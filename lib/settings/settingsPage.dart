@@ -5,6 +5,7 @@ import 'package:Vertretung/otherWidgets/themeModeSelection.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/settings/freeLessonSelection/freeLessonSelection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:share/share.dart';
 import 'package:Vertretung/otherWidgets/SchoolClassSelection.dart';
 import 'package:flutter/material.dart';
@@ -120,17 +121,19 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Einstellungen"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () async {
-              Map<String, String> links =
-                  await CloudDatabase().getUpdateLinks();
-              Share.share(
-                  "Hier ist der Download Link für die Vertretungsapp: ${links["download"]}");
-            },
-          )
-        ],
+        actions: !kIsWeb
+            ? <Widget>[
+                IconButton(
+                  icon: Icon(Icons.share),
+                  onPressed: () async {
+                    Map<String, String> links =
+                        await CloudDatabase().getUpdateLinks();
+                    Share.share(
+                        "Hier ist der Download Link für die Vertretungsapp: ${links["download"]}");
+                  },
+                ),
+              ]
+            : [],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -232,7 +235,7 @@ class _SettingsPageState extends State<SettingsPage> {
             Card(
               elevation: 3,
               child: Column(
-                children: <Widget> [
+                children: <Widget>[
                   SwitchListTile(
                     title: Text(
                       "Freundes Funktion",
@@ -316,8 +319,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: Text("Feedback"),
                     onTap: () async {
                       Wiredash.of(context).setBuildProperties(
-                          buildVersion:
-                              (await PackageInfo.fromPlatform()).version);
+                          buildVersion: kIsWeb
+                              ? "web"
+                              : (await PackageInfo.fromPlatform()).version);
                       Wiredash.of(context)
                           .setUserProperties(userId: AuthService().getUserId());
                       Wiredash.of(context).show();

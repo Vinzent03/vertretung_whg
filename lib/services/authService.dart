@@ -1,3 +1,4 @@
+import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
@@ -8,14 +9,9 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future signInAnon() async {
-    try {
-      UserCredential result = await _auth.signInAnonymously();
-      User user = result.user;
-      return user;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
+    UserCredential result = await _auth.signInAnonymously();
+    User user = result.user;
+    return user;
   }
 
   String getUserId() {
@@ -42,7 +38,7 @@ class AuthService {
     return user.isAnonymous;
   }
 
-  Future<String> signUp({email, password}) async {
+  Future<String> linkAccountWithEmail(email, password) async {
     User user = _auth.currentUser;
     AuthCredential credential =
         EmailAuthProvider.credential(email: email, password: password);
@@ -66,6 +62,39 @@ class AuthService {
           return "Ein unerwarteter Fehler ist aufgetreten.";
       }
     }
+  }
+
+  Future<void> signUp(String email, String password) async {
+    await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+  }
+
+  Future<String> setupAccount(bool isAnonym, String name,
+      [String email, String password]) async {
+    try {
+      if (isAnonym)
+        await signInAnon();
+      else
+        await signUp(email, password);
+    } catch (e) {
+      return e.message;
+    }
+
+    CloudDatabase db = CloudDatabase();
+    db.updateName(name);
+    db.updateUserData(
+      subjects: [],
+      subjectsNot: [],
+      schoolClass: await SharedPref().getString(Names.schoolClass),
+      personalSubstitute: false,
+      notificationOnChange: true,
+      notificationOnFirstChange: false,
+    );
+    db.updateCustomSubjects(Names.subjectsCustom, []);
+    db.updateCustomSubjects(Names.subjectsNotCustom, []);
+    SharedPref sharedPref = SharedPref();
+    sharedPref.setBool(Names.personalSubstitute, false);
+    sharedPref.setBool(Names.notificationOnFirstChange, false);
   }
 
   String getEmail() {

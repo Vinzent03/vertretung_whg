@@ -9,6 +9,7 @@ import 'package:Vertretung/services/push_notifications.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Splash extends StatefulWidget {
   @override
@@ -88,15 +89,16 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     initTheme();
-    initNotification();
-    initDynamicLink();
-    checkForUpdate();
-    
+    if (!kIsWeb) {
+      checkForUpdate();
+      initDynamicLink();
+      initNotification();
+    }
+
     //disable new notification option by default
     SharedPref().checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
       if (!value) SharedPref().setBool(Names.notificationOnFirstChange, false);
     });
-
 
     Timer(Duration(milliseconds: 100), () {
       Navigator.of(context).pushReplacementNamed(Names.wrapper);

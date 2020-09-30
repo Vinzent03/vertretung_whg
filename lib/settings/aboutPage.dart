@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,12 +9,13 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  String version = "Laden";
+  String version = "web";
 
   @override
   void initState() {
-    PackageInfo.fromPlatform()
-        .then((onValue) => setState(() => version = onValue.version));
+    if (kIsWeb)
+      PackageInfo.fromPlatform()
+          .then((onValue) => setState(() => version = onValue.version));
     super.initState();
   }
 
@@ -81,8 +83,7 @@ class _AboutPageState extends State<AboutPage> {
                       icon: Image.asset(
                         "assets/images/Twitter-Icon.png",
                       ),
-                      onPressed: () =>
-                          launch("https://twitter.com/Vinadon_"),
+                      onPressed: () => launch("https://twitter.com/Vinadon_"),
                     ),
                   ),
                 ),

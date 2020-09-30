@@ -1,6 +1,7 @@
 import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
 class PushNotificationsManager {
   PushNotificationsManager._();
@@ -23,8 +24,8 @@ class PushNotificationsManager {
         onLaunch: (Map<String, dynamic> message) {
           if (message["data"]["reason"] == "friendRequest")
             Future.delayed(Duration(seconds: 1)).then(
-              (value) => MyKeys.navigatorKey.currentState
-                  .pushNamed(Names.friendsList),
+              (value) =>
+                  MyKeys.navigatorKey.currentState.pushNamed(Names.friendsList),
             );
         },
       );
@@ -47,11 +48,14 @@ class PushNotificationsManager {
   }
 
   Future<String> getToken() async {
-    return await _firebaseMessaging.getToken();
+    if (kIsWeb)
+      return null;
+    else
+      return await _firebaseMessaging.getToken();
   }
 
   Future<void> signOut() async {
-    await _firebaseMessaging.deleteInstanceID();
+    if (!kIsWeb) await _firebaseMessaging.deleteInstanceID();
     return _initialized = false;
   }
 }

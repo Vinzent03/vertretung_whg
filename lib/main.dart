@@ -23,12 +23,13 @@ import 'package:Vertretung/provider/themedata.dart';
 import 'package:Vertretung/settings/settingsPage.dart';
 import 'main/splash.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  runZoned(() {
+  if (!kIsWeb) FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  start() {
     Firebase.initializeApp().then(
       (value) => runApp(
         ChangeNotifierProvider<ProviderData>(
@@ -37,7 +38,14 @@ void main() {
         ),
       ),
     );
-  }, onError: Crashlytics.instance.recordError);
+  }
+
+  if (kIsWeb)
+    start();
+  else
+    runZoned(() {
+      start();
+    }, onError: Crashlytics.instance.recordError);
 }
 
 class MyAppSt extends StatelessWidget {

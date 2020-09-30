@@ -1,11 +1,9 @@
 import 'package:Vertretung/authentication/logInPage.dart';
-import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/otherWidgets/SchoolClassSelection.dart';
 import 'package:Vertretung/provider/themedata.dart';
 import 'package:Vertretung/services/authService.dart';
-import 'package:Vertretung/services/cloudDatabase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../logic/sharedPref.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
@@ -171,24 +169,12 @@ class _IntroScreenState extends State<IntroScreen> {
         onDone: () async {
           if (!alreadyPressed) {
             alreadyPressed = true;
-            await AuthService().signInAnon();
             String name = nameController.text;
             if (name == "") name = "Nicht festgelegt";
-            CloudDatabase db = CloudDatabase();
-            db.updateName(name);
-            db.updateUserData(
-              subjects: [],
-              subjectsNot: [],
-              schoolClass: await SharedPref().getString(Names.schoolClass),
-              personalSubstitute: false,
-              notificationOnChange: true,
-              notificationOnFirstChange: false,
-            );
-            db.updateCustomSubjects(Names.subjectsCustom, []);
-            db.updateCustomSubjects(Names.subjectsNotCustom, []);
-            SharedPref sharedPref = SharedPref();
-            sharedPref.setBool(Names.personalSubstitute, false);
-            sharedPref.setBool(Names.notificationOnFirstChange, false);
+            if (kIsWeb)
+              Navigator.pop(context,name);
+            else
+              AuthService().setupAccount(true, name);
           }
         },
       ),

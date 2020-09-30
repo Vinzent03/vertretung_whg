@@ -4,6 +4,7 @@ import 'package:Vertretung/models/substituteModel.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:Vertretung/models/friendModel.dart';
@@ -22,7 +23,7 @@ class CloudDatabase {
     @required notificationOnChange,
     @required notificationOnFirstChange,
   }) async {
-    String token = await PushNotificationsManager().getToken();
+    updateToken();
     DocumentReference doc = ref.collection("userdata").doc(uid);
     doc.set({
       Names.subjects: subjects,
@@ -31,8 +32,13 @@ class CloudDatabase {
       Names.notificationOnChange: notificationOnChange,
       Names.notificationOnFirstChange: notificationOnFirstChange,
       Names.schoolClass: schoolClass,
-      "token": token,
     }, SetOptions(merge: true));
+  }
+
+  void updateToken() async {
+    String token = await PushNotificationsManager().getToken();
+    DocumentReference doc = ref.collection("userdata").doc(uid);
+    if (!kIsWeb) doc.update({"token": token});
   }
 
   void updateCustomSubjects(
@@ -79,10 +85,7 @@ class CloudDatabase {
         await ref.collection("userdata").doc(uid).get();
 
     DocumentReference doc = ref.collection("userdata").doc(uid);
-    String token = await PushNotificationsManager().getToken();
-    doc.update({
-      "token": token,
-    });
+    updateToken();
 
     SharedPref sharedPref = SharedPref();
     sharedPref.setString(
@@ -177,5 +180,15 @@ class CloudDatabase {
     } catch (e) {
       return [];
     }
+  }
+
+  ///only used for web app
+  Future<List<dynamic>> getSubstitute() async {
+    DocumentSnapshot data = await ref.collection("details").doc("webapp").get();
+    return [
+      data.data()["lastChange"],
+      List<String>.from(data.data()["substituteToday"]),
+      List<String>.from(data.data()["substituteTomorrow"])
+    ];
   }
 }
