@@ -272,36 +272,38 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Column(
                 children: <Widget>[
                   ThemeModeSelection(_themeChanger.getThemeMode()),
-                  SwitchListTile(
-                    secondary: Icon(Icons.notifications_active),
-                    value: notificationOnChange,
-                    onChanged: (bool b) {
-                      sharedPref.setBool(Names.notificationOnChange, b);
-                      setState(() {
-                        notificationOnChange = b;
-                      });
-                      updateUserdata();
-                    },
-                    title: Text(
-                      "Benachrichtigung bei neuer Vertretung",
-                      style: TextStyle(fontSize: 17),
+                  if (!kIsWeb)
+                    SwitchListTile(
+                      secondary: Icon(Icons.notifications_active),
+                      value: notificationOnChange,
+                      onChanged: (bool b) {
+                        sharedPref.setBool(Names.notificationOnChange, b);
+                        setState(() {
+                          notificationOnChange = b;
+                        });
+                        updateUserdata();
+                      },
+                      title: Text(
+                        "Benachrichtigung bei neuer Vertretung",
+                        style: TextStyle(fontSize: 17),
+                      ),
                     ),
-                  ),
-                  SwitchListTile(
-                    secondary: Icon(Icons.notifications_active),
-                    value: notificationOnFirstChange,
-                    onChanged: (bool b) {
-                      sharedPref.setBool(Names.notificationOnFirstChange, b);
-                      setState(() {
-                        notificationOnFirstChange = b;
-                      });
-                      updateUserdata();
-                    },
-                    title: Text(
-                      "Benachrichtigung wenn der Plan zum ersten mal aktualisiert",
-                      style: TextStyle(fontSize: 17),
+                  if (!kIsWeb)
+                    SwitchListTile(
+                      secondary: Icon(Icons.notifications_active),
+                      value: notificationOnFirstChange,
+                      onChanged: (bool b) {
+                        sharedPref.setBool(Names.notificationOnFirstChange, b);
+                        setState(() {
+                          notificationOnFirstChange = b;
+                        });
+                        updateUserdata();
+                      },
+                      title: Text(
+                        "Benachrichtigung wenn der Plan zum ersten mal aktualisiert",
+                        style: TextStyle(fontSize: 17),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),

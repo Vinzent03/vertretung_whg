@@ -69,6 +69,7 @@ class AuthService {
         email: email, password: password);
   }
 
+  ///first mobile registration is anonym. First web registration is not anonym
   Future<String> setupAccount(bool isAnonym, String name,
       [String email, String password]) async {
     try {
@@ -87,13 +88,14 @@ class AuthService {
       subjectsNot: [],
       schoolClass: await SharedPref().getString(Names.schoolClass),
       personalSubstitute: false,
-      notificationOnChange: true,
+      notificationOnChange: isAnonym,
       notificationOnFirstChange: false,
     );
     db.updateCustomSubjects(Names.subjectsCustom, []);
     db.updateCustomSubjects(Names.subjectsNotCustom, []);
     SharedPref sharedPref = SharedPref();
     sharedPref.setBool(Names.personalSubstitute, false);
+    sharedPref.setBool(Names.notificationOnChange, isAnonym);
     sharedPref.setBool(Names.notificationOnFirstChange, false);
   }
 
