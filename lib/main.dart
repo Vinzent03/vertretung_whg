@@ -28,24 +28,16 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (!kIsWeb) FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  start() {
-    Firebase.initializeApp().then(
-      (value) => runApp(
-        ChangeNotifierProvider<ProviderData>(
-          create: (_) => ProviderData(themeData: darkTheme),
-          child: MyAppSt(),
-        ),
+  Firebase.initializeApp().then((value) {
+    if (!kIsWeb)
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+    runApp(
+      ChangeNotifierProvider<ProviderData>(
+        create: (_) => ProviderData(themeData: darkTheme),
+        child: MyAppSt(),
       ),
     );
-  }
-
-  if (kIsWeb)
-    start();
-  else
-    runZoned(() {
-      start();
-    }, onError: Crashlytics.instance.recordError);
+  });
 }
 
 class MyAppSt extends StatelessWidget {
