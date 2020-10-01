@@ -13,14 +13,18 @@ class FriendLogic {
   bool friendsLoaded = false;
 
   Future<void> setFriendsSettings() async {
-    for (var friend in friends) {
-      DocumentSnapshot snap =
-          await ref.collection("userdata").doc(friend.uid).get();
-      friend.subjects = snap.data()[Names.subjects];
-      friend.subjectsNot = snap.data()[Names.subjectsNot];
-      friend.personalSubstitute = snap.data()[Names.personalSubstitute];
-      friend.schoolClass = snap.data()[Names.schoolClass];
-      friend.freeLessons = snap.data()[Names.freeLessons] ?? [];
+    QuerySnapshot friendsData = await ref
+        .collection("userdata")
+        .where("__name__", whereIn: friends.map((e) => e.uid).toList())
+        .get();
+    for (QueryDocumentSnapshot friendDoc in friendsData.docs) {
+      FriendModel friend =
+          friends.firstWhere((element) => element.uid == friendDoc.id);
+      friend.subjects = friendDoc.data()[Names.subjects];
+      friend.subjectsNot = friendDoc.data()[Names.subjectsNot];
+      friend.personalSubstitute = friendDoc.data()[Names.personalSubstitute];
+      friend.schoolClass = friendDoc.data()[Names.schoolClass];
+      friend.freeLessons = friendDoc.data()[Names.freeLessons] ?? [];
     }
   }
 
