@@ -107,7 +107,7 @@ class AuthService {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseAnalytics().logLogin(loginMethod: "email");
-      await CloudDatabase().restoreAccount();
+      await CloudDatabase().syncSettings();
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "invalid-email":

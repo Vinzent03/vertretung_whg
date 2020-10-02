@@ -80,11 +80,10 @@ class CloudDatabase {
     return snap.data()["name"] ?? "No internet connection";
   }
 
-  Future<void> restoreAccount() async {
+  Future<void> syncSettings() async {
     DocumentSnapshot userdataDoc =
         await ref.collection("userdata").doc(uid).get();
 
-    DocumentReference doc = ref.collection("userdata").doc(uid);
     updateToken();
 
     SharedPref sharedPref = SharedPref();

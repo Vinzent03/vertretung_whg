@@ -3,6 +3,7 @@ import 'package:Vertretung/logic/myKeys.dart';
 import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/provider/providerData.dart';
+import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/dynamicLink.dart';
 import 'package:Vertretung/services/push_notifications.dart';
@@ -17,7 +18,7 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  void initTheme() async {
+  Future<void> initTheme() async {
     ThemeMode themeMode =
         ThemeMode.values[await SharedPref().getInt(Names.themeMode)];
     Provider.of<ProviderData>(context, listen: false).setThemeMode(themeMode);
@@ -88,7 +89,12 @@ class _SplashState extends State<Splash> {
 
   @override
   void initState() {
-    initTheme();
+    load();
+    super.initState();
+  }
+
+  load() async {
+    await initTheme();
     if (!kIsWeb) {
       checkForUpdate();
       initDynamicLink();
@@ -99,11 +105,10 @@ class _SplashState extends State<Splash> {
     SharedPref().checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
       if (!value) SharedPref().setBool(Names.notificationOnFirstChange, false);
     });
-
-    Timer(Duration(milliseconds: 100), () {
-      Navigator.of(context).pushReplacementNamed(Names.wrapper);
-    });
-    super.initState();
+    if (AuthService().getUserId() != null) await CloudDatabase().syncSettings();
+    // Timer(Duration(milliseconds: 100), () {
+    Navigator.of(context).pushReplacementNamed(Names.wrapper);
+    // });
   }
 
   @override
