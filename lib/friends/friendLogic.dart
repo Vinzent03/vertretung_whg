@@ -13,6 +13,7 @@ class FriendLogic {
   bool friendsLoaded = false;
 
   Future<void> setFriendsSettings() async {
+    if (friends.isEmpty) return;
     QuerySnapshot friendsData = await ref
         .collection("userdata")
         .where("__name__", whereIn: friends.map((e) => e.uid).toList())
