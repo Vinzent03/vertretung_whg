@@ -121,19 +121,22 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Einstellungen"),
-        actions: !kIsWeb
-            ? <Widget>[
-                IconButton(
-                  icon: Icon(Icons.share),
-                  onPressed: () async {
-                    Map<String, String> links =
-                        await CloudDatabase().getUpdateLinks();
-                    Share.share(
-                        "Hier ist der Download Link für die Vertretungsapp: ${links["download"]}");
-                  },
-                ),
-              ]
-            : [],
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.help_outline),
+            onPressed: () => Navigator.pushNamed(context, Names.helpPage),
+          ),
+          if (!kIsWeb)
+            IconButton(
+              icon: Icon(Icons.share),
+              onPressed: () async {
+                Map<String, String> links =
+                    await CloudDatabase().getUpdateLinks();
+                Share.share(
+                    "Hier ist der Download Link für die Vertretungsapp: ${links["download"]}");
+              },
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

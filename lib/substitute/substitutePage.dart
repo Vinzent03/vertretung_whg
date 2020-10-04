@@ -9,6 +9,7 @@ import 'package:Vertretung/otherWidgets/substituteList.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:Vertretung/otherWidgets/myTab.dart' as myTab;
+import 'package:url_launcher/url_launcher.dart';
 
 class SubstitutePage extends StatefulWidget {
   final Function reloadFriendsSubstitute;
@@ -122,9 +123,7 @@ class SubstitutePageState extends State<SubstitutePage>
     if (tempList.toString() !=
         (personalSubstitute ? myListToday : listToday)
             .toString()) //used to decrease Firestore writes.
-      cd.updateLastNotification(personalSubstitute
-          ? myListToday
-          : listToday);
+      cd.updateLastNotification(personalSubstitute ? myListToday : listToday);
   }
 
   @override
@@ -140,102 +139,118 @@ class SubstitutePageState extends State<SubstitutePage>
       length: personalSubstitute ? 4 : 2,
       key: Key(personalSubstitute ? "On" : "Off"),
       //key is needed because otherwise the tab length would not be updated
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("$lastChange  ${SubstituteLogic().getWeekNumber()}. KW"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.help_outline),
-              onPressed: () => Navigator.pushNamed(context, Names.helpPage),
-            ),
-            IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () async {
-                  await Navigator.pushNamed(context, Names.settingsPage);
-                  if (AuthService().getUserId() != null)
-                    reloadFilteredSubstitute();
-                  widget.updateFriendFeature();
-                })
-          ],
-          bottom: TabBar(
-            tabs: [
-              if (personalSubstitute)
+      child: Builder(builder: (context) {
+        return Scaffold(
+          appBar: AppBar(
+            title:
+                Text("$lastChange  ${SubstituteLogic().getWeekNumber()}. KW"),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.open_in_browser),
+                onPressed: () {
+                  int index = DefaultTabController.of(context).index;
+                  if (personalSubstitute) {
+                    if (index == 0)
+                      launch(Names.substituteLinkToday);
+                    else
+                      launch(Names.substituteLinkTomorrow);
+                  } else {
+                    if (index % 2 == 0)
+                      launch(Names.substituteLinkToday);
+                    else
+                      launch(Names.substituteLinkTomorrow);
+                  }
+                },
+              ),
+              IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, Names.settingsPage);
+                    if (AuthService().getUserId() != null)
+                      reloadFilteredSubstitute();
+                    widget.updateFriendFeature();
+                  })
+            ],
+            bottom: TabBar(
+              tabs: [
+                if (personalSubstitute)
+                  myTab.MyTab(
+                    // Extra tab class, because the default tab height is too high, so I cloned the class
+                    icon: Icon(
+                      Icons.person,
+                    ),
+                    iconMargin: EdgeInsets.all(0),
+                    text: "Heute",
+                  ),
+                if (personalSubstitute)
+                  myTab.MyTab(
+                    icon: Icon(
+                      Icons.person,
+                    ),
+                    iconMargin: EdgeInsets.all(0),
+                    text: "Morgen",
+                  ),
                 myTab.MyTab(
-                  // Extra tab class, because the default tab height is too high, so I cloned the class
                   icon: Icon(
-                    Icons.person,
+                    Icons.group,
                   ),
                   iconMargin: EdgeInsets.all(0),
                   text: "Heute",
                 ),
-              if (personalSubstitute)
                 myTab.MyTab(
                   icon: Icon(
-                    Icons.person,
+                    Icons.group,
                   ),
                   iconMargin: EdgeInsets.all(0),
                   text: "Morgen",
                 ),
-              myTab.MyTab(
-                icon: Icon(
-                  Icons.group,
-                ),
-                iconMargin: EdgeInsets.all(0),
-                text: "Heute",
-              ),
-              myTab.MyTab(
-                icon: Icon(
-                  Icons.group,
-                ),
-                iconMargin: EdgeInsets.all(0),
-                text: "Morgen",
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        body: finishedLoading
-            ? TabBarView(
-                children: [
-                  if (personalSubstitute)
+          body: finishedLoading
+              ? TabBarView(
+                  children: [
+                    if (personalSubstitute)
+                      SmartRefresher(
+                        controller: _refreshController,
+                        onRefresh: () => reloadAll(fromPullToRefresh: true),
+                        child: SubstituteList(
+                          key: MyKeys.firstTab,
+                          list: myListToday,
+                        ),
+                      ),
+                    if (personalSubstitute)
+                      SmartRefresher(
+                        controller: _refreshController,
+                        onRefresh: () => reloadAll(fromPullToRefresh: true),
+                        child: SubstituteList(
+                          key: MyKeys.secondTab,
+                          list: myListTomorrow,
+                        ),
+                      ),
                     SmartRefresher(
                       controller: _refreshController,
                       onRefresh: () => reloadAll(fromPullToRefresh: true),
                       child: SubstituteList(
-                        key: MyKeys.firstTab,
-                        list: myListToday,
+                        key: MyKeys.thirdTab,
+                        list: listToday,
                       ),
                     ),
-                  if (personalSubstitute)
                     SmartRefresher(
                       controller: _refreshController,
                       onRefresh: () => reloadAll(fromPullToRefresh: true),
                       child: SubstituteList(
-                        key: MyKeys.secondTab,
-                        list: myListTomorrow,
+                        key: MyKeys.fourthTab,
+                        list: listTomorrow,
                       ),
                     ),
-                  SmartRefresher(
-                    controller: _refreshController,
-                    onRefresh: () => reloadAll(fromPullToRefresh: true),
-                    child: SubstituteList(
-                      key: MyKeys.thirdTab,
-                      list: listToday,
-                    ),
-                  ),
-                  SmartRefresher(
-                    controller: _refreshController,
-                    onRefresh: () => reloadAll(fromPullToRefresh: true),
-                    child: SubstituteList(
-                      key: MyKeys.fourthTab,
-                      list: listTomorrow,
-                    ),
-                  ),
-                ],
-              )
-            : Center(
-                child: CircularProgressIndicator(),
-              ),
-      ),
+                  ],
+                )
+              : Center(
+                  child: CircularProgressIndicator(),
+                ),
+        );
+      }),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -16,10 +17,8 @@ class SubstituteLogic {
   Future<List<dynamic>> getData() async {
     try {
       if (kIsWeb) return await CloudDatabase().getSubstitute();
-      var todayResponse = await http.get(
-          "https://app.dsbcontrol.de/data/15fddc3b-5b2e-4339-847b-66d2e291b04a/ebfdb6c0-e2c4-4da1-ab90-ffc51b684903/ebfdb6c0-e2c4-4da1-ab90-ffc51b684903.html");
-      var tomorrowResponse = await http.get(
-          "https://app.dsbcontrol.de/data/15fddc3b-5b2e-4339-847b-66d2e291b04a/12dcaead-309b-4fc6-904e-5e0bfc1f20b3/12dcaead-309b-4fc6-904e-5e0bfc1f20b3.html");
+      var todayResponse = await http.get(Names.substituteLinkToday);
+      var tomorrowResponse = await http.get(Names.substituteLinkTomorrow);
       dom.Document todayDocument = parse(todayResponse.body);
       dom.Document tomorrowDocument = parse(tomorrowResponse.body);
       String lastChange = todayDocument.querySelectorAll('h2').first.text;
