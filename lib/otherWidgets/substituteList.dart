@@ -2,14 +2,18 @@ import 'dart:ui';
 
 import 'package:Vertretung/models/substituteModel.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../substitute/substituteTile.dart';
 
 class SubstituteList extends StatefulWidget {
   final List<SubstituteModel> list;
-
+  final RefreshController controller;
+  final VoidCallback reload;
   SubstituteList({
     Key key,
     this.list = const [],
+    this.controller,
+    this.reload,
   }) : super(key: key);
 
   @override
@@ -40,33 +44,41 @@ class SubstituteListState extends State<SubstituteList>
     if (widget.list.isNotEmpty)
       return ScaleTransition(
         scale: _animation,
-        child: ListView.builder(
-          physics: ScrollPhysics(),
-          itemCount: widget.list.length,
-          itemBuilder: (context, index) {
-            return SubstituteListTile(
-              widget.list[index],
-            );
-          },
+        child: SmartRefresher(
+          controller: widget.controller,
+          onRefresh: widget.reload,
+          child: ListView.builder(
+            physics: ScrollPhysics(),
+            itemCount: widget.list.length,
+            itemBuilder: (context, index) {
+              return SubstituteListTile(
+                widget.list[index],
+              );
+            },
+          ),
         ),
       );
     else
       return ScaleTransition(
         scale: _animation,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(
-                Icons.business_center,
-                color: Colors.blue,
-                size: 200,
-              ),
-              Text(
-                "Leider keine Vertretung",
-                style: TextStyle(fontSize: 19),
-              )
-            ],
+        child: SmartRefresher(
+          controller: widget.controller,
+          onRefresh: widget.reload,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.business_center,
+                  color: Colors.blue,
+                  size: 200,
+                ),
+                Text(
+                  "Leider keine Vertretung",
+                  style: TextStyle(fontSize: 19),
+                )
+              ],
+            ),
           ),
         ),
       );

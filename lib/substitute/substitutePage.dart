@@ -211,38 +211,30 @@ class SubstitutePageState extends State<SubstitutePage>
               ? TabBarView(
                   children: [
                     if (personalSubstitute)
-                      SmartRefresher(
+                      SubstituteList(
+                        key: MyKeys.firstTab,
+                        list: myListToday,
                         controller: _refreshController,
-                        onRefresh: () => reloadAll(fromPullToRefresh: true),
-                        child: SubstituteList(
-                          key: MyKeys.firstTab,
-                          list: myListToday,
-                        ),
+                        reload: () => reloadAll(fromPullToRefresh: true),
                       ),
                     if (personalSubstitute)
-                      SmartRefresher(
+                      SubstituteList(
+                        key: MyKeys.secondTab,
+                        list: myListTomorrow,
                         controller: _refreshController,
-                        onRefresh: () => reloadAll(fromPullToRefresh: true),
-                        child: SubstituteList(
-                          key: MyKeys.secondTab,
-                          list: myListTomorrow,
-                        ),
+                        reload: () => reloadAll(fromPullToRefresh: true),
                       ),
-                    SmartRefresher(
+                    SubstituteList(
+                      key: MyKeys.thirdTab,
+                      list: listToday,
                       controller: _refreshController,
-                      onRefresh: () => reloadAll(fromPullToRefresh: true),
-                      child: SubstituteList(
-                        key: MyKeys.thirdTab,
-                        list: listToday,
-                      ),
+                      reload: () => reloadAll(fromPullToRefresh: true),
                     ),
-                    SmartRefresher(
+                    SubstituteList(
+                      key: MyKeys.fourthTab,
+                      list: listTomorrow,
                       controller: _refreshController,
-                      onRefresh: () => reloadAll(fromPullToRefresh: true),
-                      child: SubstituteList(
-                        key: MyKeys.fourthTab,
-                        list: listTomorrow,
-                      ),
+                      reload: () => reloadAll(fromPullToRefresh: true),
                     ),
                   ],
                 )

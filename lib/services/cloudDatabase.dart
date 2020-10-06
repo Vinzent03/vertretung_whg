@@ -184,8 +184,9 @@ class CloudDatabase {
   ///only used for web app
   Future<List<dynamic>> getSubstitute() async {
     DocumentSnapshot data = await ref.collection("details").doc("webapp").get();
+    String lastChange = data.data()["lastChange"];
     return [
-      data.data()["lastChange"],
+      lastChange.substring(17, 23) + lastChange.substring(27),
       List<String>.from(data.data()["substituteToday"]),
       List<String>.from(data.data()["substituteTomorrow"])
     ];

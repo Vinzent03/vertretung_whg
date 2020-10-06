@@ -14,6 +14,9 @@ class ProviderData with ChangeNotifier {
   }
 
   Brightness getUsedTheme() {
+    WidgetsBinding.instance.window.onPlatformBrightnessChanged = () {
+      notifyListeners();
+    };
     addListener(getThemeMode);
     switch (usedThemeMode) {
       case ThemeMode.dark:
@@ -29,5 +32,4 @@ class ProviderData with ChangeNotifier {
         return Brightness.light;
     }
   }
-
 }

@@ -1,6 +1,7 @@
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/models/substituteModel.dart';
 import "dart:math";
+
 class Filter {
   SharedPref sharedPref = SharedPref();
 
@@ -64,10 +65,14 @@ class Filter {
         String titleLower = item.title.toLowerCase();
 
         for (String rawSubject in subjectsList) {
-          String subject = " " + rawSubject.toLowerCase() + " ";
+          String subject;
+          if (rawSubject.isNotEmpty)
+            subject = " " + rawSubject.toLowerCase() + " ";
+          else
+            subject = "";
           int i = 0;
           for (String rawSubjectNot in subjectsNotList) {
-            String subjectNot = rawSubjectNot.toLowerCase();
+            String subjectNot = " " + rawSubjectNot.toLowerCase() + " ";
             if (titleLower.contains("bei")) {
               titleLower = titleLower.substring(0, titleLower.indexOf("bei"));
             }
@@ -101,11 +106,10 @@ List<SubstituteModel> mergeList(List<String> list) {
 //get the name of the subject
 String getSubjectPrefix(String st) {
   //GE-GK1 would be the course
-  //GE would be subject 
+  //GE would be subject
 
   int beginIndex = st.indexOf("Std. ") + 5;
-  if (st.substring(beginIndex, beginIndex + 7).contains("Entfall"))
-    return "";
+  if (st.substring(beginIndex, beginIndex + 7).contains("Entfall")) return "";
   int endOfSubject = st.indexOf(" ", beginIndex) == -1
       ? st.length
       : st.indexOf(" ", beginIndex); //if the subject stands at the end
@@ -113,7 +117,7 @@ String getSubjectPrefix(String st) {
       ? 20
       : st.indexOf("-", beginIndex); // if no "-" is provided
   // int end = endOfSubject < endOfCourse ? endOfSubject : endOfCourse;
-  int end = min(endOfSubject,endOfCourse);
+  int end = min(endOfSubject, endOfCourse);
 
   return st.substring(beginIndex, end);
 }

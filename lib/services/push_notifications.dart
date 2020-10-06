@@ -40,11 +40,11 @@ class PushNotificationsManager {
   }
 
   void subTopic(String topic) {
-    _firebaseMessaging.subscribeToTopic(topic);
+    if (!kIsWeb) _firebaseMessaging.subscribeToTopic(topic);
   }
 
   void unsubTopic(String topic) {
-    _firebaseMessaging.unsubscribeFromTopic(topic);
+    if (!kIsWeb) _firebaseMessaging.unsubscribeFromTopic(topic);
   }
 
   Future<String> getToken() async {

@@ -144,16 +144,14 @@ class FriendsPageState extends State<FriendsPage> {
           }),
         ],
       ),
-      body: SmartRefresher(
-        controller: _refreshController,
-        onRefresh: reloadAll,
-        child: AnimatedSwitcher(
-          key: ValueKey(friendsSubstitute),
-          duration: Duration(seconds: 1),
-          child: SubstituteList(
-            key: MyKeys.friendsTab,
-            list: friendsSubstitute,
-          ),
+      body: AnimatedSwitcher(
+        key: ValueKey(friendsSubstitute),
+        duration: Duration(seconds: 1),
+        child: SubstituteList(
+          key: MyKeys.friendsTab,
+          list: friendsSubstitute,
+          controller: _refreshController,
+          reload: reloadAll,
         ),
       ),
       floatingActionButton: FloatingActionButton(
