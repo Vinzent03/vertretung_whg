@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart'; // Contains HTML parsers to generate a Document object
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
+import 'dart:convert';
 
 class SubstituteLogic {
   int getWeekNumber() {
@@ -19,8 +20,9 @@ class SubstituteLogic {
       if (kIsWeb) return await CloudDatabase().getSubstitute();
       var todayResponse = await http.get(Names.substituteLinkToday);
       var tomorrowResponse = await http.get(Names.substituteLinkTomorrow);
-      dom.Document todayDocument = parse(todayResponse.body);
-      dom.Document tomorrowDocument = parse(tomorrowResponse.body);
+      dom.Document todayDocument = parse(utf8.decode(todayResponse.bodyBytes));
+      dom.Document tomorrowDocument =
+          parse(utf8.decode(tomorrowResponse.bodyBytes));
       String lastChange = todayDocument.querySelectorAll('h2').first.text;
       var lastChangeShort = lastChange.substring(18);
       var lastChangeFinal =
@@ -32,14 +34,11 @@ class SubstituteLogic {
 
       List<String> vertretungTodayList = [];
       vertretungToday.forEach((element) {
-        vertretungTodayList.add(element.text.replaceAll("ã", "ü").replaceAll(
-            "Ã",
-            "Ü")); //needed to fix problem with encoding, not a good solution, but I don't get a better solution
+        vertretungTodayList.add(element.text);
       });
       List<String> vertretungTomorrowList = [];
       vertretungTomorrow.forEach((element) {
-        vertretungTomorrowList
-            .add(element.text.replaceAll("ã", "ü").replaceAll("Ã", "Ü"));
+        vertretungTomorrowList.add(element.text);
       });
       return [lastChangeFinal, vertretungTodayList, vertretungTomorrowList];
     } catch (e) {
