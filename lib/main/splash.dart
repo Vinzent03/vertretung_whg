@@ -120,7 +120,7 @@ class _SplashState extends State<Splash> {
           Center(
             child: Image.asset(
               "assets/icons/icon.png",
-              height: 100,
+              height: 150,
             ),
           ),
           Column(

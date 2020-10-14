@@ -30,15 +30,20 @@ class _WebPageLogInState extends State<WebPageLogIn> {
             SizedBox(
               height: 75,
             ),
-            CircleAvatar(
-              child: Image.asset("assets/icons/icon.png"),
-              radius: 100,
+            Card(
+              child: Image.asset(
+                "assets/icons/icon.png",
+                width: 250,
+              ),
+              elevation: 5,
+              shape: CircleBorder(),
             ),
             SizedBox(
               height: 75,
             ),
             Center(
               child: Card(
+                elevation: 3,
                 child: Padding(
                   padding: const EdgeInsets.all(30),
                   child: Column(
@@ -66,7 +71,6 @@ class _WebPageLogInState extends State<WebPageLogIn> {
                             setState(() {
                               name = newName;
                             });
-                            print(name);
                           }
                         },
                       ),

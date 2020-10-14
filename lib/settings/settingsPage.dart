@@ -16,6 +16,7 @@ import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
+import 'myLicensePage.dart';
 import 'subjectsSelection/subjectsPage.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -330,6 +331,18 @@ class _SettingsPageState extends State<SettingsPage> {
                       Wiredash.of(context)
                           .setUserProperties(userId: AuthService().getUserId());
                       Wiredash.of(context).show();
+                    },
+                  ),
+                  ListTile(
+                    title: Text("Lizenzen"),
+                    leading: Icon(Icons.library_books),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyLicensePage(),
+                        ),
+                      );
                     },
                   )
                 ],

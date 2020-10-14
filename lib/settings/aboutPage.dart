@@ -13,7 +13,7 @@ class _AboutPageState extends State<AboutPage> {
 
   @override
   void initState() {
-    if (kIsWeb)
+    if (!kIsWeb)
       PackageInfo.fromPlatform()
           .then((onValue) => setState(() => version = onValue.version));
     super.initState();
@@ -36,8 +36,13 @@ class _AboutPageState extends State<AboutPage> {
                     children: <Widget>[
                       ListTile(
                         title: Text("Vertretung"),
-                        leading:
-                            Image.asset("assets/icons/ic_launcher_round.png"),
+                        leading: Card(
+                          child: Image.asset(
+                            "assets/icons/icon.png",
+                          ),
+                          elevation: 5,
+                          shape: CircleBorder(),
+                        ),
                         subtitle: Text(
                           "Version: $version",
                           style: TextStyle(fontSize: 12),
@@ -61,13 +66,13 @@ class _AboutPageState extends State<AboutPage> {
                     ),
                     title: Text("Wir sind auf GitHub!"),
                     onTap: () => launch(
-                        "https://github.com/Vinzent03/Vertretung-fuer-das-Werner-Heisenberg-Gymnasium"),
+                        "https://github.com/Vinzent03/vertretung_whg"),
                     trailing: IconButton(
                       icon: Image.asset(
                         "assets/images/GitHub.png",
                       ),
                       onPressed: () => launch(
-                          "https://github.com/Vinzent03/Vertretung-fuer-das-Werner-Heisenberg-Gymnasium"),
+                          "https://github.com/Vinzent03/vertretung_whg"),
                     ),
                   ),
                 ),
@@ -87,17 +92,6 @@ class _AboutPageState extends State<AboutPage> {
                     ),
                   ),
                 ),
-                Card(
-                  elevation: 3,
-                  child: ListTile(
-                    title: Text("Lizenzen"),
-                    leading: Icon(Icons.library_books),
-                    onTap: () {
-                      showLicensePage(
-                          context: context, applicationName: "Vertretung");
-                    },
-                  ),
-                )
               ],
             ),
           );
