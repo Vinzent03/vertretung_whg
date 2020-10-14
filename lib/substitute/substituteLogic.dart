@@ -24,7 +24,7 @@ class SubstituteLogic {
       dom.Document tomorrowDocument =
           parse(utf8.decode(tomorrowResponse.bodyBytes));
       String lastChange = todayDocument.querySelectorAll('h2').first.text;
-      var lastChangeShort = lastChange.substring(18);
+      var lastChangeShort = lastChange.substring(17);
       var lastChangeFinal =
           lastChangeShort.replaceAll(lastChangeShort.substring(6, 10), "");
 
