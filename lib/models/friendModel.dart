@@ -1,7 +1,7 @@
 class FriendModel {
   ///Only used for the filter
   bool isChecked;
-  final name;
+  String name;
   final uid;
   String schoolClass;
   bool personalSubstitute;

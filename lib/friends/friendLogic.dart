@@ -26,6 +26,7 @@ class FriendLogic {
       friend.personalSubstitute = friendDoc.data()[Names.personalSubstitute];
       friend.schoolClass = friendDoc.data()[Names.schoolClass];
       friend.freeLessons = friendDoc.data()[Names.freeLessons] ?? [];
+      friend.name = friendDoc.data()["name"];
     }
   }
 
