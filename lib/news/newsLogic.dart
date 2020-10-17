@@ -1,3 +1,4 @@
+import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/news/detailsPage.dart';
 import "newsTransmitter.dart";
 import 'package:Vertretung/services/cloudFunctions.dart';
@@ -50,16 +51,15 @@ class NewsLogic {
   }
 
   Future<dynamic> openEditNewsPage(
-      BuildContext context, String text, String title, int index) async {
+      BuildContext context, NewsModel news, int index) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EditNewsPage(
           NewsTransmitter(
             true,
-            text: text,
-            title: title,
-            index: index,
+            news,
+            index,
           ),
         ),
       ),
@@ -67,13 +67,12 @@ class NewsLogic {
   }
 
   Future<dynamic> openDetailsPage(
-      BuildContext context, String text, String title, int index) async {
+      BuildContext context, NewsModel news, int index) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => DetailsPage(
-          text: text,
-          title: title,
+          news: news,
           index: index,
         ),
       ),

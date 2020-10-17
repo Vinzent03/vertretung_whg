@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/news/detailsPage.dart';
 import 'package:Vertretung/news/newsTransmitter.dart';
 import 'package:Vertretung/otherWidgets/OpenContainerWrapper.dart';
@@ -25,7 +26,7 @@ class NewsPage extends StatefulWidget {
 enum actions { delete, edit }
 
 class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
-  List<dynamic> newsList = [];
+  List<NewsModel> newsList = [];
   bool isAdmin = false;
   bool finishedLoading = false;
   RefreshController _refreshController =
@@ -94,8 +95,7 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                       child: OpenContainerWrapper(
                         openBuilder: (context, action) => DetailsPage(
                           index: index,
-                          text: newsList[index]["text"],
-                          title: newsList[index]["title"],
+                          news: newsList[index],
                         ),
                         closedBuilder: (context, action) =>
                             buildListItem(index, action),
@@ -128,18 +128,20 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
     );
   }
 
+  ///show only the first 100 chars as subtitle, to see more click on the ListTile
+  Widget buildSubtitle(int index) {
+    if (newsList[index].text.isEmpty) return null;
+    if (newsList[index].text.length > 100)
+      return Text(newsList[index].text.substring(0, 100) + "...");
+    else
+      return Text(newsList[index].text);
+  }
+
   Widget buildListItem(int index, Function action) {
     return ListTile(
-      title: Text(newsList[index]["title"]),
-      //show only the first 100 chars as subtitle, to see more click on the ListTile
-      subtitle: newsList[index]["text"] != ""
-          ? Text(newsList[index]["text"].toString().substring(
-              0, min(newsList[index]["text"].toString().length, 100)))
-          : null,
-      onTap: () async {
-        action();
-        //check if the page have to be reloaded(needed when deleted or edited)
-      },
+      title: Text(newsList[index].title),
+      subtitle: buildSubtitle(index),
+      onTap: action,
       trailing: isAdmin
           ? PopupMenuButton(
               icon: Icon(Icons.more_vert),
@@ -150,8 +152,7 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                 } else {
                   await NewsLogic().openEditNewsPage(
                     context,
-                    newsList[index]["text"],
-                    newsList[index]["title"],
+                    newsList[index],
                     index,
                   );
                   _refreshController.requestRefresh();

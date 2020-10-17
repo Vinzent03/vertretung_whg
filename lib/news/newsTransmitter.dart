@@ -1,8 +1,9 @@
+import 'package:Vertretung/models/newsModel.dart';
+
 ///Informations about the selected news from NewsPage.dart
 class NewsTransmitter {
-  final String text;
-  final String title;
+  final NewsModel news;
   final bool isEditAction;
   final int index;
-  NewsTransmitter(this.isEditAction, {this.text, this.title, this.index});
+  NewsTransmitter(this.isEditAction, [this.news, this.index]);
 }

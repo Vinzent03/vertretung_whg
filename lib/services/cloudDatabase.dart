@@ -1,5 +1,6 @@
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/models/substituteModel.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
@@ -147,9 +148,12 @@ class CloudDatabase {
   }
 
   //News
-  Future<List<dynamic>> getNews() async {
+  Future<List<NewsModel>> getNews() async {
     DocumentSnapshot snap = await ref.collection("news").doc("news").get();
-    return snap.data()["news"];
+    List<NewsModel> test = (snap.data()["news"] as List)
+        .map((e) => NewsModel(e["title"], e["text"], e["lastEdited"]))
+        .toList();
+    return test;
   }
 
   // friends

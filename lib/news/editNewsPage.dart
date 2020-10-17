@@ -14,17 +14,82 @@ class EditNewsPage extends StatefulWidget {
 class EditNewsPageState extends State<EditNewsPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController textController = TextEditingController();
-
   NewsTransmitter transmitter;
+
+  bool sendNotification = false;
+
+  confirm(BuildContext context) async {
+    if (titleController.text == "")
+      return Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Bitte gib einen Titel an"),
+      ));
+
+    ProgressDialog pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    await pr.show();
+
+    var result;
+    if (transmitter.isEditAction) {
+      result = await Functions().editNews(
+          transmitter.index,
+          {"title": titleController.text, "text": textController.text},
+          sendNotification);
+    } else {
+      result = await Functions().addNews(
+          {"title": titleController.text, "text": textController.text},
+          sendNotification);
+    }
+
+    await pr.hide();
+    Scaffold.of(context).hideCurrentSnackBar();
+
+    switch (result["code"]) {
+      case "SUCCESS":
+        Navigator.pop(context);
+        break;
+      case "ERROR_NOT_ADMIN":
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result["message"]),
+            duration: Duration(minutes: 1),
+          ),
+        );
+        break;
+      case "DEADLINE_EXCEEDED":
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text("Das hat zu lange gedauert. Versuche es später erneut."),
+            duration: Duration(seconds: 5),
+          ),
+        );
+        break;
+      default:
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Ein unerwarteter Fehler ist aufgetreten: \"" +
+                result["code"] +
+                "\""),
+            duration: Duration(minutes: 1),
+          ),
+        );
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
     transmitter = widget.transmitter;
 
     //decide between edit a news or add a new news
     if (transmitter.isEditAction) {
-      titleController.text = transmitter.title;
-      textController.text = transmitter.text;
+      titleController.text = transmitter.news.title;
+      textController.text = transmitter.news.text;
     }
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(transmitter.isEditAction
@@ -63,69 +128,14 @@ class EditNewsPageState extends State<EditNewsPage> {
                   ),
                 ),
               ),
+              CheckboxListTile(
+                title: Text("Benachrichtigung senden"),
+                onChanged: (bool b) => setState(() => sendNotification = b),
+                value: sendNotification,
+              ),
               Center(
                 child: RaisedButton(
-                  onPressed: () async {
-                    if (titleController.text == "")
-                      return Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("Bitte gib einen Titel an"),
-                      ));
-
-                    ProgressDialog pr = ProgressDialog(context,
-                        type: ProgressDialogType.Normal,
-                        isDismissible: false,
-                        showLogs: false);
-                    await pr.show();
-
-                    var result;
-                    if (transmitter.isEditAction) {
-                      result = await Functions().editNews(transmitter.index, {
-                        "title": titleController.text,
-                        "text": textController.text
-                      });
-                    } else {
-                      result = await Functions().addNews({
-                        "title": titleController.text,
-                        "text": textController.text
-                      });
-                    }
-
-                    await pr.hide();
-                    Scaffold.of(context).hideCurrentSnackBar();
-
-                    switch (result["code"]) {
-                      case "SUCCESS":
-                        Navigator.pop(context);
-                        break;
-                      case "ERROR_NOT_ADMIN":
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(result["message"]),
-                            duration: Duration(minutes: 1),
-                          ),
-                        );
-                        break;
-                      case "DEADLINE_EXCEEDED":
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                "Das hat zu lange gedauert. Versuche es später erneut."),
-                            duration: Duration(seconds: 5),
-                          ),
-                        );
-                        break;
-                      default:
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                "Ein unerwarteter Fehler ist aufgetreten: \"" +
-                                    result["code"] +
-                                    "\""),
-                            duration: Duration(minutes: 1),
-                          ),
-                        );
-                    }
-                  },
+                  onPressed: () => confirm(context),
                   child: Text("Bestätigen"),
                 ),
               ),

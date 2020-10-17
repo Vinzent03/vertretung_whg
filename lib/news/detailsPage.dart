@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/news/newsLogic.dart';
 import 'package:Vertretung/services/authService.dart';
 import "package:flutter/material.dart";
@@ -5,10 +8,9 @@ import "package:flutter_linkify/flutter_linkify.dart";
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsPage extends StatefulWidget {
-  final title;
-  final text;
-  final index;
-  DetailsPage({this.text, this.title, this.index});
+  final NewsModel news;
+  final int index;
+  DetailsPage({this.news, this.index});
   @override
   _DetailsPageState createState() => _DetailsPageState();
 }
@@ -33,8 +35,8 @@ class _DetailsPageState extends State<DetailsPage> {
             IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {
-                  await NewsLogic().openEditNewsPage(
-                      context, widget.text, widget.title, widget.index);
+                  await NewsLogic()
+                      .openEditNewsPage(context, widget.news, widget.index);
                   Navigator.pop(context, true);
                 }),
           if (isAdmin)
@@ -47,31 +49,33 @@ class _DetailsPageState extends State<DetailsPage> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Linkify(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Linkify(
                 onOpen: (link) => launch(link.url),
-                text: widget.title,
+                text: widget.news.title,
                 style: TextStyle(fontSize: 22),
               ),
-            ),
-            Divider(
-              thickness: 4,
-              indent: 8,
-              endIndent: 8,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Linkify(
-                onOpen: (link) => launch(link.url),
-                text: widget.text,
-                style: TextStyle(fontSize: 18),
+              SizedBox(height: 10),
+              Text(
+                "Zuletzt bearbeitet: " + widget.news.lastEdited,
+                style: TextStyle(fontSize: 16),
               ),
-            )
-          ],
+              SizedBox(height: 10),
+              Divider(
+                thickness: 4,
+              ),
+              SizedBox(height: 10),
+              Linkify(
+                onOpen: (link) => launch(link.url),
+                text: widget.news.text,
+                style: TextStyle(fontSize: 16),
+              )
+            ],
+          ),
         ),
       ),
     );

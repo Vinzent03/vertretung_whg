@@ -23,11 +23,12 @@ class Functions {
     }
   }
 
-  Future<dynamic> addNews(newNews) async {
+  Future<dynamic> addNews(Map newNews, bool sendNotification) async {
     try {
       HttpsCallable call = cf.getHttpsCallable(functionName: "addNews");
       HttpsCallableResult result = await call.call(<String, dynamic>{
         "newNews": newNews,
+        "sendNotification": sendNotification
       });
       return result.data;
     } catch (e) {
@@ -48,12 +49,16 @@ class Functions {
     }
   }
 
-  Future<dynamic> editNews(index, newNews) async {
+  Future<dynamic> editNews(
+      int index, Map newNews, bool sendNotification) async {
     try {
       HttpsCallable call = cf.getHttpsCallable(functionName: "editNews");
 
-      HttpsCallableResult result = await call
-          .call(<String, dynamic>{"index": index, "newNews": newNews});
+      HttpsCallableResult result = await call.call(<String, dynamic>{
+        "index": index,
+        "newNews": newNews,
+        "sendNotification": sendNotification
+      });
       return result.data;
     } catch (e) {
       return throwError(e);
