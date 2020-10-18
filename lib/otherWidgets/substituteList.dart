@@ -9,11 +9,14 @@ class SubstituteList extends StatefulWidget {
   final List<SubstituteModel> list;
   final RefreshController controller;
   final VoidCallback reload;
+  final bool isNotUpdated;
+
   SubstituteList({
     Key key,
     this.list = const [],
     this.controller,
     this.reload,
+    this.isNotUpdated,
   }) : super(key: key);
 
   @override
@@ -74,8 +77,11 @@ class SubstituteListState extends State<SubstituteList>
                   size: 200,
                 ),
                 Text(
-                  "Leider keine Vertretung",
+                  widget.isNotUpdated
+                      ? "Leider keine Vertretung, aber der Plan hat noch nicht aktualisiert."
+                      : "Leider keine Vertretung",
                   style: TextStyle(fontSize: 19),
+                  textAlign: TextAlign.center,
                 )
               ],
             ),

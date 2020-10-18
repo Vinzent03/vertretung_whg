@@ -152,6 +152,7 @@ class FriendsPageState extends State<FriendsPage> {
           list: friendsSubstitute,
           controller: _refreshController,
           reload: reloadAll,
+          isNotUpdated: false,
         ),
       ),
       floatingActionButton: FloatingActionButton(

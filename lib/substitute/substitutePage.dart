@@ -216,6 +216,8 @@ class SubstitutePageState extends State<SubstitutePage>
                         list: myListToday,
                         controller: _refreshController,
                         reload: () => reloadAll(fromPullToRefresh: true),
+                        isNotUpdated: myListToday.isEmpty &&
+                            lastChange.substring(7) == "00:09",
                       ),
                     if (personalSubstitute)
                       SubstituteList(
@@ -223,18 +225,24 @@ class SubstitutePageState extends State<SubstitutePage>
                         list: myListTomorrow,
                         controller: _refreshController,
                         reload: () => reloadAll(fromPullToRefresh: true),
+                        isNotUpdated: myListTomorrow.isEmpty &&
+                            lastChange.substring(7) == "00:09",
                       ),
                     SubstituteList(
                       key: MyKeys.thirdTab,
                       list: listToday,
                       controller: _refreshController,
                       reload: () => reloadAll(fromPullToRefresh: true),
+                      isNotUpdated: listToday.isEmpty &&
+                          lastChange.substring(7) == "00:09",
                     ),
                     SubstituteList(
                       key: MyKeys.fourthTab,
                       list: listTomorrow,
                       controller: _refreshController,
                       reload: () => reloadAll(fromPullToRefresh: true),
+                      isNotUpdated: listTomorrow.isEmpty &&
+                          lastChange.substring(7) == "00:09",
                     ),
                   ],
                 )
