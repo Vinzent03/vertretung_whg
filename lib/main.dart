@@ -42,7 +42,6 @@ class MyAppSt extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<ProviderData>(context);
     return Wiredash(
-      options: WiredashOptionsData(showDebugFloatingEntryPoint: false),
       theme: WiredashThemeData(brightness: provider.getUsedTheme()),
       navigatorKey: MyKeys.navigatorKey,
 

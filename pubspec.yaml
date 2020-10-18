@@ -42,7 +42,7 @@ dependencies:
   provider: ^4.0.5
   pull_to_refresh: ^1.5.7
   progress_dialog: ^1.2.4
-  wiredash: ^0.2.0
+  wiredash: ^0.3.0
   flutter_linkify: ^3.1.3
   dialog_context: ^0.1.1
   flushbar: ^1.10.4
