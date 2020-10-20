@@ -1,4 +1,4 @@
-![build status](https://img.shields.io/github/workflow/status/Vinzent03/vertretung_whg/Build_APK_based_on_Commit)
+![build status](https://img.shields.io/github/workflow/status/Vinzent03/vertretung_whg/Build%20APK%20based%20on%20commit)
 ![Platform](https://img.shields.io/badge/Plattform-Android-blue)
 ![Flutter](https://img.shields.io/badge/Flutter%20-based-blue)
 
