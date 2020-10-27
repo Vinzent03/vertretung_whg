@@ -78,7 +78,7 @@ class SubstituteListState extends State<SubstituteList>
                 ),
                 Text(
                   widget.isNotUpdated
-                      ? "Leider keine Vertretung, aber der Plan hat noch nicht aktualisiert."
+                      ? "Leider keine Vertretung, aber der Plan wurde noch nicht aktualisiert."
                       : "Leider keine Vertretung",
                   style: TextStyle(fontSize: 19),
                   textAlign: TextAlign.center,

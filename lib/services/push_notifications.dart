@@ -39,12 +39,12 @@ class PushNotificationsManager {
     }
   }
 
-  void subTopic(String topic) {
-    if (!kIsWeb) _firebaseMessaging.subscribeToTopic(topic);
+  Future<void> subTopic(String topic) async {
+    if (!kIsWeb) await _firebaseMessaging.subscribeToTopic(topic);
   }
 
-  void unsubTopic(String topic) {
-    if (!kIsWeb) _firebaseMessaging.unsubscribeFromTopic(topic);
+  Future<void> unsubTopic(String topic) async {
+    if (!kIsWeb) await _firebaseMessaging.unsubscribeFromTopic(topic);
   }
 
   Future<String> getToken() async {

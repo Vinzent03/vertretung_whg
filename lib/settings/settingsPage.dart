@@ -38,8 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   SharedPref sharedPref = SharedPref();
 
-  Future<String> createAlertDialog(
-      BuildContext context, String situation, String message) {
+  Future<String> createAlertDialog(BuildContext context) {
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -47,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15))),
-            title: Text(message),
+            title: Text("Bitte wähle deine Stufe/Klasse"),
             content: StufenList(),
             actions: <Widget>[
               FlatButton(
@@ -55,8 +54,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     borderRadius: BorderRadius.all(Radius.circular(7))),
                 child: Text("bestätigen"),
                 onPressed: () {
-                  updateUserdata();
                   Navigator.of(context).pop();
+                  sharedPref.getString(Names.schoolClass).then((onValue) {
+                    setState(() {
+                      schoolClass = onValue;
+                    });
+                    updateUserdata();
+                  });
                 },
               ),
             ],
@@ -161,26 +165,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     "Klasse/Stufe",
                     style: TextStyle(fontSize: 17),
                   ),
+                  onTap: () => createAlertDialog(context),
                   trailing: FlatButton(
                     child: Text(
                       schoolClass,
                       style: TextStyle(fontSize: 17),
                     ),
-                    onPressed: () async {
-                      PushNotificationsManager push =
-                          PushNotificationsManager();
-                      if (!schoolClass.contains(" "))
-                        push.unsubTopic(
-                            schoolClass); //Beim ersten starten ist die schoolClass "nicht festgelegt" und das geht nicht
-                      await createAlertDialog(context, "schoolClass",
-                          "Bitte wähle deine Stufe/Klasse");
-                      sharedPref.getString(Names.schoolClass).then((onValue) {
-                        setState(() {
-                          schoolClass = onValue;
-                        });
-                        updateUserdata();
-                      });
-                    },
+                    onPressed: () => createAlertDialog(context),
                   ),
                 )),
             Card(

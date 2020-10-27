@@ -34,11 +34,11 @@ class SubstituteLogic {
 
       List<String> vertretungTodayList = [];
       vertretungToday.forEach((element) {
-        vertretungTodayList.add(element.text);
+        vertretungTodayList.add(element.text.trim());
       });
       List<String> vertretungTomorrowList = [];
       vertretungTomorrow.forEach((element) {
-        vertretungTomorrowList.add(element.text);
+        vertretungTomorrowList.add(element.text.trim());
       });
       return [lastChangeFinal, vertretungTodayList, vertretungTomorrowList];
     } catch (e) {

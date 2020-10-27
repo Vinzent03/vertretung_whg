@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/news/detailsPage.dart';
 import 'package:Vertretung/news/newsTransmitter.dart';

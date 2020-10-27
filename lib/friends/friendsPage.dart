@@ -88,7 +88,7 @@ class FriendsPageState extends State<FriendsPage> {
     await pr.hide();
     Share.share("Hier ist der Freundestoken von $name: '" +
         uid.substring(0, 5) +
-        "' Dieser muss nun unter 'als Freund eintagen' eingegeben werden. Oder einfach auf diesen Link klicken: $link");
+        "' Dieser muss nun unter 'als Freund eintagen' eingegeben werden. Oder einfach auf diesen Link klicken(nur Android): $link");
   }
 
   showBottomSheet(context) => showModalBottomSheet(

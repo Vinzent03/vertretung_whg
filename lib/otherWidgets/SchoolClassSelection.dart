@@ -82,12 +82,17 @@ class _StufenListState extends State<StufenList> {
     });
   }
 
-  void finish(_value) {
+  void finish(_value) async {
+    PushNotificationsManager push = PushNotificationsManager();
     String finalClass = classes[int.parse(value)][_value];
     setState(() {
       classHint = finalClass;
     });
-    PushNotificationsManager().subTopic(finalClass);
+    String oldSchoolClass = await sharedPref.getString(Names.schoolClass);
+    if (!oldSchoolClass.contains(" "))
+      await push.unsubTopic(
+          oldSchoolClass); //If schoolClass is not manually set, it is set to "Nicht festgelegt", but that shouldn't be a topic
+    await push.subTopic(finalClass);
     FirebaseAnalytics().setUserProperty(name: "schoolClass", value: finalClass);
     sharedPref.setString(Names.schoolClass, finalClass);
   }

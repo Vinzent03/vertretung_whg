@@ -27,7 +27,7 @@ class _HelpPageState extends State<HelpPage> {
       HelpItem(
         header: "Was ist personalisierte Vertretung?",
         body:
-            "Wenn in den Einstellungen die personalisierte Vertretung eingeschaltet ist, kannst du in den Einstellungen Fächer die du hast (Whitelist) bzw. nicht hast (Blacklist) eintragen. Anschließend sind weitere Tabs mit nur für dich relevanter Vertretung zu sehen.",
+            "Wenn in den Einstellungen die personalisierte Vertretung eingeschaltet ist, kannst Du in den Einstellungen Fächer, die Du hast (Whitelist) bzw. nicht hast (Blacklist) eintragen. Anschließend sind weitere Tabs mit nur für dich relevanter Vertretung zu sehen.",
       ),
       HelpItem(
         header: "Wie funktionieren die Benachrichtigungen?",
@@ -37,7 +37,7 @@ class _HelpPageState extends State<HelpPage> {
       HelpItem(
         header: "Freunde",
         body:
-            "Wenn du Freunde hinzufügst, siehst du wann deine Freunde Entfall haben. So weißt du immer wann du dich mit ihnen treffen kannst. Um Freunde hinzuzufügen, schickst du deinen Freundestoken/Link an einen Freund. Die Person muss den Token dann eingeben oder auf den Link klicken.",
+            "Wenn Du Freunde hinzufügst, siehst Du, wann deine Freunde Entfall haben. So weißt Du immer, wann Du dich mit ihnen treffen kannst. Um Freunde hinzuzufügen, schickst Du deinen Freundestoken/Link an einen Freund. Die Person muss den Token dann eingeben oder auf den Link klicken.",
       ),
       HelpItem(
         header: "Datenschutz",

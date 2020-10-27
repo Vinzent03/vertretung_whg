@@ -30,7 +30,10 @@ class ThemeModeSelection extends StatelessWidget {
                       .setThemeMode(ThemeMode.values[index]);
                   Navigator.pop(context);
                 },
-                child: Text(modes[index],style: TextStyle(fontSize: 17),),
+                child: Text(
+                  modes[index],
+                  style: TextStyle(fontSize: 17),
+                ),
               );
             },
           ),
@@ -48,6 +51,7 @@ class ThemeModeSelection extends StatelessWidget {
         child: Text(modes[selectedThemeMode.index]),
         onPressed: () => showSelection(context),
       ),
+      onTap: () => showSelection(context),
     );
   }
 }
