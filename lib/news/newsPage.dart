@@ -4,10 +4,8 @@ import 'package:Vertretung/news/newsTransmitter.dart';
 import 'package:Vertretung/otherWidgets/OpenContainerWrapper.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'editNewsPage.dart';
 import 'newsLogic.dart';
 
@@ -25,11 +23,7 @@ class NewsPage extends StatefulWidget {
 enum actions { delete, edit }
 
 class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
-  List<NewsModel> newsList = [];
   bool isAdmin = false;
-  bool finishedLoading = false;
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
   AnimationController _controller;
 
   Animation<double> _animation;
@@ -42,28 +36,8 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
     _controller = AnimationController(
         duration: const Duration(milliseconds: 300), vsync: this, value: 0.1);
     _animation = CurvedAnimation(parent: _controller, curve: Curves.ease);
-    reload();
+    _controller.forward();
     super.initState();
-  }
-
-  void reload() async {
-    CloudDatabase cloudDatabase = CloudDatabase();
-    try {
-      List<dynamic> newNews = await cloudDatabase.getNews();
-      setState(() {
-        newsList = newNews;
-      });
-      finishedLoading = true;
-      _controller.forward();
-      _refreshController.refreshCompleted();
-    } catch (e) {
-      finishedLoading = true;
-      Flushbar(
-        message: "Es ist ein Fehler beim Laden der Nachrichten aufgetreten.",
-        duration: Duration(seconds: 3),
-      )..show(context);
-      _refreshController.refreshFailed();
-    }
   }
 
   void reAnimate() {
@@ -77,15 +51,21 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
       appBar: AppBar(
         title: Text("Nachrichten"),
       ),
-      body: finishedLoading
-          ? SmartRefresher(
-              controller: _refreshController,
-              onRefresh: reload,
-              child: ScaleTransition(
+      body: StreamBuilder<List<NewsModel>>(
+          stream: CloudDatabase().getNews(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return CircularProgressIndicator();
+            else if (snapshot.hasError)
+              return Center(
+                child: Text(
+                    "Ein Fehler ist aufgetreten:" + snapshot.error.toString()),
+              );
+              return ScaleTransition(
                 scale: _animation,
                 child: ListView.builder(
                   physics: ScrollPhysics(),
-                  itemCount: newsList.length,
+                  itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     return Card(
                       shape: RoundedRectangleBorder(
@@ -94,22 +74,16 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                       child: OpenContainerWrapper(
                         openBuilder: (context, action) => DetailsPage(
                           index: index,
-                          news: newsList[index],
+                          news: snapshot.data[index],
                         ),
                         closedBuilder: (context, action) =>
-                            buildListItem(index, action),
-                        onClosed: (data) => data != null
-                            ? _refreshController.requestRefresh()
-                            : null,
+                            buildListItem(snapshot.data[index], index, action),
                       ),
                     );
                   },
                 ),
-              ),
-            )
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
+              );
+          }),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
               heroTag: "filter",
@@ -120,7 +94,7 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                   MaterialPageRoute(
                     builder: (context) => EditNewsPage(NewsTransmitter(false)),
                   ),
-                ).then((value) => _refreshController.requestRefresh());
+                );
               },
             )
           : null,
@@ -128,13 +102,13 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   }
 
   ///show only the first 100 chars as subtitle, to see more click on the ListTile
-  Widget buildSubtitle(int index) {
-    final text = newsList[index].text;
+  Widget buildSubtitle(NewsModel item) {
+    final text = item.text;
     final toManyLines = '\n'.allMatches(text).length >= 4;
 
     int fourthLine;
     String displayedText = text;
-    
+
     if (toManyLines) {
       final firstNewLine = text.indexOf("\n") + 1;
       final secondNewLine = text.indexOf("\n", firstNewLine) + 1;
@@ -143,7 +117,8 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
     }
 
     if (text.isEmpty) return null;
-    if (toManyLines) displayedText = text.substring(0, fourthLine) + "...";
+    if (toManyLines)
+      displayedText = text.substring(0, fourthLine) + "...";
     else if (text.length > 100) displayedText = text.substring(0, 100) + "...";
 
     return Opacity(
@@ -156,28 +131,26 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget buildListItem(int index, Function action) {
+  Widget buildListItem(NewsModel item, int index, Function action) {
     return ListTile(
       title: Text(
         item.title,
         style: TextStyle(fontSize: 18),
       ),
-      subtitle: buildSubtitle(index),
+      subtitle: buildSubtitle(item),
       onTap: action,
       trailing: isAdmin
           ? PopupMenuButton(
               icon: Icon(Icons.more_vert),
-              onSelected: (selected) async {
+              onSelected: (selected) {
                 if (selected == actions.delete) {
-                  if (await NewsLogic().deleteNews(context, index))
-                    _refreshController.requestRefresh();
+                  NewsLogic().deleteNews(context, index);
                 } else {
-                  await NewsLogic().openEditNewsPage(
+                  NewsLogic().openEditNewsPage(
                     context,
-                    newsList[index],
+                    item,
                     index,
                   );
-                  _refreshController.requestRefresh();
                 }
               },
               itemBuilder: (BuildContext context) {

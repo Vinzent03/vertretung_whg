@@ -148,12 +148,12 @@ class CloudDatabase {
   }
 
   //News
-  Future<List<NewsModel>> getNews() async {
-    DocumentSnapshot snap = await ref.collection("news").doc("news").get();
-    List<NewsModel> test = (snap.data()["news"] as List)
+  Stream<List<NewsModel>> getNews() {
+    Stream<DocumentSnapshot> snap =
+        ref.collection("news").doc("news").snapshots();
+    return snap.map((event) => (event.data()["news"] as List)
         .map((e) => NewsModel(e["title"], e["text"], e["lastEdited"]))
-        .toList();
-    return test;
+        .toList());
   }
 
   // friends
