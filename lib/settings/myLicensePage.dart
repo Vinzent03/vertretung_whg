@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyLicensePage extends StatelessWidget {
@@ -29,10 +29,10 @@ class MyLicensePage extends StatelessWidget {
           Card(
             elevation: 3,
             child: ListTile(
-              title: Linkify(
-                text:
-                    "Icon made by https://www.freeicons.io/profile/3335 from https://www.freeicons.io",
-                onOpen: (link) => launch(link.url),
+              title: MarkdownBody(
+                data:
+                    "Icon made by [profile/3335](https://www.freeicons.io/profile/3335) from [freeicons](https://www.freeicons.io)",
+                onTapLink: (text, href, title) => launch(href),
               ),
               leading: Card(
                 child: Image.asset(

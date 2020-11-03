@@ -4,6 +4,7 @@ import "newsTransmitter.dart";
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:flushbar/flushbar.dart';
 
 import 'editNewsPage.dart';
 
@@ -15,37 +16,29 @@ class NewsLogic {
 
     var result = await Functions().deleteNews(index);
     await pr.hide();
-    Scaffold.of(context).hideCurrentSnackBar();
 
     switch (result["code"]) {
       case "SUCCESS":
         return true;
       case "ERROR_NOT_ADMIN":
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result["message"]),
-            duration: Duration(minutes: 1),
-          ),
-        );
+        Flushbar(
+          message: result["message"],
+          duration: Duration(seconds: 2),
+        )..show(context);
         return false;
       case "DEADLINE_EXCEEDED":
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content:
-                Text("Das hat zu lange gedauert. Versuche es später erneut."),
-            duration: Duration(seconds: 5),
-          ),
-        );
+        Flushbar(
+          message: "Das hat zu lange gedauert. Versuche es später erneut.",
+          duration: Duration(seconds: 5),
+        )..show(context);
         return false;
       default:
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Ein unerwarteter Fehler ist aufgetreten: \"" +
-                result["code"] +
-                "\""),
-            duration: Duration(minutes: 1),
-          ),
-        );
+        Flushbar(
+          message: "Ein unerwarteter Fehler ist aufgetreten: \"" +
+              result["code"] +
+              "\"",
+          duration: Duration(seconds: 30),
+        )..show(context);
         return false;
     }
   }

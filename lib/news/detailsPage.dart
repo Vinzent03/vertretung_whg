@@ -1,10 +1,8 @@
-import 'dart:ui';
-
 import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/news/newsLogic.dart';
 import 'package:Vertretung/services/authService.dart';
 import "package:flutter/material.dart";
-import "package:flutter_linkify/flutter_linkify.dart";
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -50,13 +48,12 @@ class _DetailsPageState extends State<DetailsPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Linkify(
-                onOpen: (link) => launch(link.url),
-                text: widget.news.title,
+              Text(
+                widget.news.title,
                 style: TextStyle(fontSize: 22),
               ),
               SizedBox(height: 10),
@@ -69,10 +66,11 @@ class _DetailsPageState extends State<DetailsPage> {
                 thickness: 4,
               ),
               SizedBox(height: 10),
-              Linkify(
-                onOpen: (link) => launch(link.url),
-                text: widget.news.text,
-                style: TextStyle(fontSize: 16),
+              MarkdownBody(
+                data: widget.news.text,
+                onTapLink: (text, href, title) => launch(href),
+                shrinkWrap: true,
+                selectable: true,
               )
             ],
           ),

@@ -42,10 +42,11 @@ dependencies:
   pull_to_refresh: ^1.5.7
   progress_dialog: ^1.2.4
   wiredash: ^0.3.0
-  flutter_linkify: ^3.1.3
   dialog_context: ^0.1.1
   flushbar: ^1.10.4
   animations: ^1.1.2
+  flutter_markdown: ^0.5.0
+  
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style assets.icons.
   cupertino_icons: ^0.1.2

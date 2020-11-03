@@ -20,14 +20,16 @@ import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/provider/themedata.dart';
 import 'package:Vertretung/settings/settingsPage.dart';
 import 'main/splash.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  Firebase.initializeApp().then((value) {
-    if (!kIsWeb)
+  Firebase.initializeApp().then((value) async {
+    if (!kIsWeb) {
+      await FirebaseCrashlytics.instance
+          .setCrashlyticsCollectionEnabled(!kDebugMode);
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+    }
     runApp(
       ChangeNotifierProvider<ProviderData>(
         create: (_) => ProviderData(themeData: darkTheme),

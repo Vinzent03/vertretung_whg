@@ -18,6 +18,86 @@ class EditNewsPageState extends State<EditNewsPage> {
 
   bool sendNotification = false;
 
+  @override
+  void didChangeDependencies() {
+    transmitter = widget.transmitter;
+
+    //decide between edit a news or add a new news
+    if (transmitter.isEditAction) {
+      titleController.text = transmitter.news.title;
+      textController.text = transmitter.news.text;
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(transmitter.isEditAction
+            ? "Bearbeite die Nachricht"
+            : "Füge eine Nachricht hinzu"),
+      ),
+      body: Builder(builder: (context) {
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                child: Text("Titel"),
+                padding: EdgeInsets.all(10),
+              ),
+              Card(
+                margin: EdgeInsets.all(10),
+                elevation: 3,
+                child: TextField(
+                  controller: titleController,
+                ),
+              ),
+              Padding(
+                child: Text("Text"),
+                padding: EdgeInsets.all(10),
+              ),
+              Card(
+                margin: EdgeInsets.all(10),
+                elevation: 3,
+                child: Container(
+                  height: 300,
+                  child: TextField(
+                    controller: textController,
+                    expands: true,
+                    maxLines: null,
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+                child: Text("Markdown wird unterstützt"),
+              ),
+              CheckboxListTile(
+                title: Text("Benachrichtigung senden"),
+                onChanged: (bool b) {
+                  if (sendNotification)
+                    setState(() => sendNotification = b);
+                  else
+                    confirmNotification();
+                },
+                value: sendNotification,
+              ),
+              Center(
+                child: RaisedButton(
+                  onPressed: () => confirm(context),
+                  child: Text("Bestätigen"),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
   confirm(BuildContext context) async {
     if (titleController.text == "")
       return Scaffold.of(context).showSnackBar(SnackBar(
@@ -76,73 +156,25 @@ class EditNewsPageState extends State<EditNewsPage> {
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    transmitter = widget.transmitter;
-
-    //decide between edit a news or add a new news
-    if (transmitter.isEditAction) {
-      titleController.text = transmitter.news.title;
-      textController.text = transmitter.news.text;
-    }
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(transmitter.isEditAction
-            ? "Bearbeite die Nachricht"
-            : "Füge eine Nachricht hinzu"),
-      ),
-      body: Builder(builder: (context) {
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                child: Text("Titel"),
-                padding: EdgeInsets.all(10),
-              ),
-              Card(
-                margin: EdgeInsets.all(10),
-                elevation: 3,
-                child: TextField(
-                  controller: titleController,
-                ),
-              ),
-              Padding(
-                child: Text("Text"),
-                padding: EdgeInsets.all(10),
-              ),
-              Card(
-                margin: EdgeInsets.all(10),
-                elevation: 3,
-                child: Container(
-                  height: 300,
-                  child: TextField(
-                    controller: textController,
-                    expands: true,
-                    maxLines: null,
-                  ),
-                ),
-              ),
-              CheckboxListTile(
-                title: Text("Benachrichtigung senden"),
-                onChanged: (bool b) => setState(() => sendNotification = b),
-                value: sendNotification,
-              ),
-              Center(
-                child: RaisedButton(
-                  onPressed: () => confirm(context),
-                  child: Text("Bestätigen"),
-                ),
-              ),
-            ],
+  confirmNotification() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Möchtest du wirklich eine Benachrichtigung senden?"),
+        actions: [
+          FlatButton(
+            child: Text("Abbrechen"),
+            onPressed: () => Navigator.pop(context),
           ),
-        );
-      }),
+          RaisedButton(
+            child: Text("Bestätigen"),
+            onPressed: () {
+              setState(() => sendNotification = true);
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
     );
   }
 }
