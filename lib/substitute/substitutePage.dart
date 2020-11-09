@@ -150,12 +150,12 @@ class SubstitutePageState extends State<SubstitutePage>
                 onPressed: () {
                   int index = DefaultTabController.of(context).index;
                   if (personalSubstitute) {
-                    if (index == 0)
+                    if (index % 2 == 0)
                       launch(Names.substituteLinkToday);
                     else
                       launch(Names.substituteLinkTomorrow);
                   } else {
-                    if (index % 2 == 0)
+                    if (index == 0)
                       launch(Names.substituteLinkToday);
                     else
                       launch(Names.substituteLinkTomorrow);
