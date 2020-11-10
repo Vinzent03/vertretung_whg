@@ -9,6 +9,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
@@ -210,12 +211,19 @@ class _IntroScreenState extends State<IntroScreen> {
         onDone: () async {
           if (!alreadyPressed) {
             alreadyPressed = true;
+            ProgressDialog pr =
+                ProgressDialog(context, isDismissible: false, showLogs: false);
+
             String name = nameController.text;
             if (name == "") name = "Nicht festgelegt";
-            if (kIsWeb)
+            if (kIsWeb) {
               Navigator.pop(context, name);
-            else {
-              AuthService().setupAccount(true, name).catchError((e) {
+            } else {
+              await pr.show();
+              await AuthService()
+                  .setupAccount(true, name)
+                  .catchError((e) async {
+                await pr.hide();
                 alreadyPressed = false;
                 Flushbar(
                   message: "Ein Fehler ist aufgetreten: $e",
@@ -223,6 +231,7 @@ class _IntroScreenState extends State<IntroScreen> {
                   duration: Duration(seconds: 5),
                 ).show(context);
               });
+              pr.hide();
             }
           }
         },

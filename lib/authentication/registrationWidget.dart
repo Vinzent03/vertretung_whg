@@ -2,6 +2,7 @@ import 'package:Vertretung/logic/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class RegistrationWidget extends StatelessWidget {
   final String name;
@@ -54,6 +55,8 @@ class RegistrationWidget extends StatelessWidget {
         RaisedButton(
           child: Text(kIsWeb ? "Registrieren" : "Account mit Email verbinden"),
           onPressed: () async {
+            ProgressDialog pr =
+                ProgressDialog(context, isDismissible: false, showLogs: false);
             String err;
             if (passwordController.text != passwordConfirmController.text)
               return Scaffold.of(context).showSnackBar(SnackBar(
@@ -61,12 +64,25 @@ class RegistrationWidget extends StatelessWidget {
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: Colors.red,
               ));
-            if (kIsWeb)
-              err = await AuthService().setupAccount(
-                  false, name, emailController.text, passwordController.text);
-            else
+            await pr.show();
+            if (kIsWeb) {
+              await AuthService()
+                  .setupAccount(false, name, emailController.text,
+                      passwordController.text)
+                  .catchError((e) async {
+                await pr.hide();
+                final SnackBar snack = SnackBar(
+                  content: Text(e),
+                  backgroundColor: Colors.red,
+                );
+                Scaffold.of(context).showSnackBar(snack);
+              });
+              await pr.hide();
+            } else {
               err = await AuthService().linkAccountWithEmail(
                   emailController.text, passwordController.text);
+              await pr.hide();
+            }
             if (err != null) {
               final SnackBar snack = SnackBar(
                 content: Text(err),
