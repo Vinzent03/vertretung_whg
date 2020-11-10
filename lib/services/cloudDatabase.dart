@@ -19,16 +19,12 @@ class CloudDatabase {
   void updateUserData({
     @required personalSubstitute,
     @required schoolClass,
-    @required subjects,
-    @required subjectsNot,
     @required notificationOnChange,
     @required notificationOnFirstChange,
   }) async {
     updateToken();
     DocumentReference doc = ref.collection("userdata").doc(uid);
     doc.set({
-      Names.subjects: subjects,
-      Names.subjectsNot: subjectsNot,
       Names.personalSubstitute: personalSubstitute,
       Names.notificationOnChange: notificationOnChange,
       Names.notificationOnFirstChange: notificationOnFirstChange,
@@ -42,12 +38,31 @@ class CloudDatabase {
     if (!kIsWeb) doc.update({"token": token});
   }
 
-  void updateCustomSubjects(
-      String name, List<String> customSubjectsList) async {
-    //name indicates whether to save as whitelist or blacklist
+  void updateSubjects() async {
+    SharedPref sharedPref = SharedPref();
+    List<String> subjects = await sharedPref.getStringList(Names.subjects);
+    List<String> subjectsNot =
+        await sharedPref.getStringList(Names.subjectsNot);
+
     ref.collection("userdata").doc(uid).update(
       {
-        name: customSubjectsList,
+        Names.subjects: subjects,
+        Names.subjectsNot: subjectsNot,
+      },
+    );
+  }
+
+  void updateCustomSubjects() async {
+    SharedPref sharedPref = SharedPref();
+    List<String> subjectsCustom =
+        await sharedPref.getStringList(Names.subjectsCustom);
+    List<String> subjectsNotCustom =
+        await sharedPref.getStringList(Names.subjectsNotCustom);
+
+    ref.collection("userdata").doc(uid).update(
+      {
+        Names.subjectsCustom: subjectsCustom,
+        Names.subjectsNotCustom: subjectsNotCustom,
       },
     );
   }

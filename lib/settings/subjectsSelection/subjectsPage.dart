@@ -8,8 +8,11 @@ import 'subjectsTemplate.dart';
 
 class SubjectsPage extends StatefulWidget {
   ///whether to use data of whitelist or blacklist
-  final List<String> names;
-  SubjectsPage(this.names);
+  final bool isWhitelist;
+
+  //if settings will be stored to Firestore too
+  final bool inIntroScreen;
+  SubjectsPage({@required this.isWhitelist, this.inIntroScreen = false});
   @override
   _SubjectsPageState createState() => _SubjectsPageState();
 }
@@ -19,14 +22,47 @@ class _SubjectsPageState extends State<SubjectsPage> {
   List<String> selectedSubjects = [];
   TextEditingController myController;
   SharedPref sharedPref = SharedPref();
-  String title;
   SubjectsTemplate template = SubjectsTemplate();
 
-  loadData() async {
-    if (widget.names[0] == Names.subjects)
-      title = "Whitelist";
+  Future<void> showInfoDialog() async {
+    String text;
+    if (widget.isWhitelist)
+      text =
+          "Trage Deine eigenen Fächer ein und Dir wird nur Vertretung von Fächern angezeigt, die Du dort eingetragen hast. Dies ist hauptsächlich für die Oberstufe gedacht.";
     else
-      title = "Blacklist";
+      text =
+          "Trage die Fächer Deiner Freunde ein und Dir wird nur Vertretung von anderen Fächern angezeigt. Dies ist hauptsächlich für die Unterstufe gedacht.";
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(text),
+        actions: [
+          RaisedButton(
+            child: Text("OK"),
+            onPressed: () => Navigator.pop(context),
+          )
+        ],
+      ),
+    );
+  }
+
+  showFormatingDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+            "Fächer müssen exakt wie auf dem normalen Vertretungsplan geschrieben werden. (z.B. M-LK1)"),
+        actions: [
+          RaisedButton(
+            child: Text("OK"),
+            onPressed: () => Navigator.pop(context),
+          )
+        ],
+      ),
+    );
+  }
+
+  loadData() async {
     myController = TextEditingController(text: "Gib ein Fach ein");
 
     subjectsListCustom = [
@@ -34,8 +70,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
     ];
     //recover custom subjects
     template.subjectsTemplate.sort((a, b) => a.title.compareTo(b.title));
-    List<String> savedSubjectsCustom =
-        await sharedPref.getStringList(widget.names[1]);
+    List<String> savedSubjectsCustom = await sharedPref.getStringList(
+        widget.isWhitelist ? Names.subjectsCustom : Names.subjectsNotCustom);
     for (String fach in savedSubjectsCustom) {
       subjectsListCustom.insert(
           subjectsListCustom.length - 1,
@@ -45,30 +81,34 @@ class _SubjectsPageState extends State<SubjectsPage> {
           ));
     }
     // recover already selected subjects
-    sharedPref.getStringList(widget.names[0]).then((newSelectedSubjects) {
-      setState(() {
-        selectedSubjects = newSelectedSubjects;
-        for (String selectedSubject in selectedSubjects) {
-          //in the moment only "EF", easier to add more lists in the future
-          for (CourseTileModel section in template.subjectsTemplate) {
-            for (CourseTileModel subject in section.children) {
-              for (CourseTileModel course in subject.children) {
-                if (course.title == selectedSubject) {
-                  course.isChecked = true;
-                }
-              }
-            }
-          }
-          for (CourseTileModel customSubject in subjectsListCustom) {
-            //used to ignore the ListTile at the bottom (used to add  subjects)
-            if (customSubject.title != null) {
-              if (customSubject.title == selectedSubject) {
-                customSubject.isChecked = true;
+    List<String> newSubjects = await sharedPref
+        .getStringList(widget.isWhitelist ? Names.subjects : Names.subjectsNot);
+    if (newSubjects.isEmpty) await showInfoDialog();
+
+    showFormatingDialog();
+
+    setState(() {
+      selectedSubjects = newSubjects;
+      for (String selectedSubject in selectedSubjects) {
+        //in the moment only "EF", easier to add more lists in the future
+        for (CourseTileModel section in template.subjectsTemplate) {
+          for (CourseTileModel subject in section.children) {
+            for (CourseTileModel course in subject.children) {
+              if (course.title == selectedSubject) {
+                course.isChecked = true;
               }
             }
           }
         }
-      });
+        for (CourseTileModel customSubject in subjectsListCustom) {
+          //used to ignore the ListTile at the bottom (used to add  subjects)
+          if (customSubject.title != null) {
+            if (customSubject.title == selectedSubject) {
+              customSubject.isChecked = true;
+            }
+          }
+        }
+      }
     });
   }
 
@@ -84,7 +124,9 @@ class _SubjectsPageState extends State<SubjectsPage> {
     } else {
       selectedSubjects.add(root.title);
     }
-    sharedPref.setStringList(widget.names[0], selectedSubjects);
+    sharedPref.setStringList(
+        widget.isWhitelist ? Names.subjects : Names.subjectsNot,
+        selectedSubjects);
     selectedSubjects.sort();
     if (mounted)
       setState(() {
@@ -160,7 +202,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Fächer Wahl $title"),
+        title: Text(
+            "Fächer Wahl ${widget.isWhitelist ? 'Whitelist' : 'Blacklist'}"),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -188,7 +231,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                   padding: EdgeInsets.all(20),
                   alignment: Alignment.topLeft,
                   child: Text(
-                      " ${selectedSubjects.length} ausgewählte Fächer: ${selectedSubjects.toString()}"),
+                      " ${selectedSubjects.length} ausgewählte Fächer: ${selectedSubjects.toString().substring(1, selectedSubjects.toString().length - 1)}"),
                 ),
               ),
               ListView.builder(
@@ -217,13 +260,20 @@ class _SubjectsPageState extends State<SubjectsPage> {
 
   @override
   void dispose() {
+    CloudDatabase db = CloudDatabase();
     List<String> _customSubjectsForSaving = [];
     for (CourseTileModel subject in subjectsListCustom) {
       if (subject.title != null) _customSubjectsForSaving.add(subject.title);
     }
-    sharedPref.setStringList(widget.names[1], _customSubjectsForSaving);
-    CloudDatabase()
-        .updateCustomSubjects(widget.names[1], _customSubjectsForSaving);
+    sharedPref.setStringList(
+        widget.isWhitelist ? Names.subjectsCustom : Names.subjectsNotCustom,
+        _customSubjectsForSaving);
+
+    if (!widget.inIntroScreen) {
+      db.updateSubjects();
+      db.updateCustomSubjects();
+    }
+
     myController.dispose();
     super.dispose();
   }

@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import "package:wiredash/wiredash.dart";
 import 'package:Vertretung/services/authService.dart';
-import 'package:Vertretung/services/push_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
@@ -28,17 +27,39 @@ class _SettingsPageState extends State<SettingsPage> {
   CloudDatabase manager;
   bool dark = false;
   bool personalSubstitute = false;
-  bool refresh = false;
   bool notificationOnChange = false;
   bool notificationOnFirstChange = false;
   bool friendsFeature = false;
   String schoolClass = "Nicht Geladen";
-  List<String> subjectsList = [];
-  List<String> subjectsNotList = [];
+  bool isAdvancedLevel = false;
 
   SharedPref sharedPref = SharedPref();
 
-  Future<String> createAlertDialog(BuildContext context) {
+  deleteSubjectsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Möchtest Du deine bisher eingegeben Fächer löschen?"),
+        actions: [
+          RaisedButton(
+            child: Text("Bestätigen"),
+            onPressed: () async {
+              await sharedPref.setStringList(Names.subjects, []);
+              await sharedPref.setStringList(Names.subjectsNot, []);
+              CloudDatabase().updateSubjects();
+              Navigator.pop(context);
+            },
+          ),
+          FlatButton(
+            child: Text("Abbrechen"),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String> selectSchoolClassDialog(BuildContext context) {
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -46,18 +67,25 @@ class _SettingsPageState extends State<SettingsPage> {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15))),
-            title: Text("Bitte wähle deine Stufe/Klasse"),
+            title: Text("Bitte wähle Deine Stufe/Klasse"),
             content: StufenList(),
             actions: <Widget>[
               FlatButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(7))),
-                child: Text("bestätigen"),
-                onPressed: () {
+                child: Text("Bestätigen"),
+                onPressed: () async {
                   Navigator.of(context).pop();
+                  if ((await sharedPref.getStringList(Names.subjects))
+                          .isNotEmpty ||
+                      (await sharedPref.getStringList(Names.subjectsNot))
+                          .isNotEmpty) {
+                    await deleteSubjectsDialog();
+                  }
                   sharedPref.getString(Names.schoolClass).then((onValue) {
                     setState(() {
                       schoolClass = onValue;
+                      isAdvancedLevel = ["EF", "Q1", "Q2"].contains(onValue);
                     });
                     updateUserdata();
                   });
@@ -72,8 +100,6 @@ class _SettingsPageState extends State<SettingsPage> {
     manager.updateUserData(
       personalSubstitute: personalSubstitute,
       schoolClass: schoolClass,
-      subjects: subjectsList,
-      subjectsNot: subjectsNotList,
       notificationOnChange: notificationOnChange,
       notificationOnFirstChange: notificationOnFirstChange,
     );
@@ -87,7 +113,6 @@ class _SettingsPageState extends State<SettingsPage> {
     bool pNotificationOnFirstChange;
     bool pFriendsFeature;
     String pSchoolClass;
-    List<String> pSubjectsList;
     sharedPref.getBool(Names.personalSubstitute).then((bool b) {
       pPersonalSubstitute = b;
     });
@@ -103,18 +128,14 @@ class _SettingsPageState extends State<SettingsPage> {
     sharedPref.getString(Names.schoolClass).then((String st) {
       pSchoolClass = st;
     });
-    sharedPref.getStringList(Names.subjects).then((List<String> st) {
-      pSubjectsList = st;
-    });
     sharedPref.getStringList(Names.subjectsNot).then((List<String> st) {
       setState(() {
-        subjectsNotList = st;
         personalSubstitute = pPersonalSubstitute;
         notificationOnChange = pNotificationOnChange;
         notificationOnFirstChange = pNotificationOnFirstChange;
         friendsFeature = pFriendsFeature;
         schoolClass = pSchoolClass;
-        subjectsList = pSubjectsList;
+        isAdvancedLevel = ["EF", "Q1", "Q2"].contains(pSchoolClass);
       });
     });
     super.initState();
@@ -165,13 +186,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     "Klasse/Stufe",
                     style: TextStyle(fontSize: 17),
                   ),
-                  onTap: () => createAlertDialog(context),
+                  onTap: () => selectSchoolClassDialog(context),
                   trailing: FlatButton(
                     child: Text(
                       schoolClass,
                       style: TextStyle(fontSize: 17),
                     ),
-                    onPressed: () => createAlertDialog(context),
+                    onPressed: () => selectSchoolClassDialog(context),
                   ),
                 )),
             Card(
@@ -194,35 +215,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   OpenContainerWrapper(
                     tappable: personalSubstitute,
                     openBuilder: (BuildContext context, VoidCallback _) =>
-                        SubjectsPage([Names.subjects, Names.subjectsCustom]),
-                    closedBuilder: (context, action) => ListTile(
-                      title: Text("Deine Fächer (Whitelist)"),
-                      enabled: personalSubstitute,
-                      leading: Icon(Icons.edit),
-                    ),
-                    onClosed: (data) async {
-                      List<String> _newSubjects =
-                          await sharedPref.getStringList(Names.subjects);
-                      setState(() => subjectsList = _newSubjects);
-                      updateUserdata();
-                    },
-                  ),
-                  OpenContainerWrapper(
-                    tappable: personalSubstitute,
-                    openBuilder: (BuildContext context, VoidCallback _) =>
                         SubjectsPage(
-                            [Names.subjectsNot, Names.subjectsNotCustom]),
+                      isWhitelist: isAdvancedLevel,
+                    ),
                     closedBuilder: (context, action) => ListTile(
-                      title: Text("Fächer anderer (Blacklist)"),
+                      title: Text(isAdvancedLevel?"Deine Fächer eingeben":"Fächer Deiner Mitschüler eingeben"),
                       enabled: personalSubstitute,
                       leading: Icon(Icons.edit),
                     ),
-                    onClosed: (data) async {
-                      List<String> _newSubjects =
-                          await sharedPref.getStringList(Names.subjectsNot);
-                      setState(() => subjectsNotList = _newSubjects);
-                      updateUserdata();
-                    },
                   ),
                 ],
               ),
@@ -295,7 +295,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         updateUserdata();
                       },
                       title: Text(
-                        "Benachrichtigung wenn der Plan zum ersten mal aktualisiert",
+                        "Benachrichtigung wenn der Plan zum ersten mal aktualisiert wird",
                         style: TextStyle(fontSize: 17),
                       ),
                     ),

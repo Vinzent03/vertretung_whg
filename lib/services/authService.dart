@@ -69,32 +69,24 @@ class AuthService {
         email: email, password: password);
   }
 
-  ///first mobile registration is anonym. First web registration is not anonym
+  ///First mobile registration is anonym. First web registration is not anonym
   Future<String> setupAccount(bool isAnonym, String name,
       [String email, String password]) async {
-    try {
-      if (isAnonym)
-        await signInAnon();
-      else
-        await signUp(email, password);
-    } catch (e) {
-      return e.message;
-    }
-
+    if (isAnonym)
+      await signInAnon();
+    else
+      await signUp(email, password);
     CloudDatabase db = CloudDatabase();
+    SharedPref sharedPref = SharedPref();
     db.updateName(name);
     db.updateUserData(
-      subjects: [],
-      subjectsNot: [],
-      schoolClass: await SharedPref().getString(Names.schoolClass),
-      personalSubstitute: false,
+      schoolClass: await sharedPref.getString(Names.schoolClass),
+      personalSubstitute: await sharedPref.getBool(Names.personalSubstitute),
       notificationOnChange: isAnonym,
       notificationOnFirstChange: false,
     );
-    db.updateCustomSubjects(Names.subjectsCustom, []);
-    db.updateCustomSubjects(Names.subjectsNotCustom, []);
-    SharedPref sharedPref = SharedPref();
-    sharedPref.setBool(Names.personalSubstitute, false);
+    db.updateSubjects();
+    db.updateCustomSubjects();
     sharedPref.setBool(Names.notificationOnChange, isAnonym);
     sharedPref.setBool(Names.notificationOnFirstChange, false);
   }

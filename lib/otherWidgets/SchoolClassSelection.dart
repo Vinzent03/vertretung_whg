@@ -1,5 +1,6 @@
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -12,8 +13,8 @@ class StufenList extends StatefulWidget {
 class _StufenListState extends State<StufenList> {
   SharedPref sharedPref = SharedPref();
   String value = "";
-  String levelHint = "Wähle eine Stufe";
-  String classHint = "Wähle eine Klasse";
+  String levelHint = "1. Wähle eine Stufe";
+  String classHint = "2. Wähle eine Klasse";
   bool disabledDropdown = true;
   List level = [
     {"value": 0, "title": "5"},
@@ -89,12 +90,12 @@ class _StufenListState extends State<StufenList> {
       classHint = finalClass;
     });
     String oldSchoolClass = await sharedPref.getString(Names.schoolClass);
+    sharedPref.setString(Names.schoolClass, finalClass);
     if (!oldSchoolClass.contains(" "))
       await push.unsubTopic(
           oldSchoolClass); //If schoolClass is not manually set, it is set to "Nicht festgelegt", but that shouldn't be a topic
-    await push.subTopic(finalClass);
+    push.subTopic(finalClass);
     FirebaseAnalytics().setUserProperty(name: "schoolClass", value: finalClass);
-    sharedPref.setString(Names.schoolClass, finalClass);
   }
 
   @override
@@ -126,7 +127,7 @@ class _StufenListState extends State<StufenList> {
             style: TextStyle(fontSize: 18),
           ),
           disabledHint: Text(
-            "Wähle zuerst eine Stufe",
+            classHint,
             style: TextStyle(
               fontSize: 18,
             ),

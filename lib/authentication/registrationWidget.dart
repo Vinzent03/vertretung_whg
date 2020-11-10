@@ -52,7 +52,7 @@ class RegistrationWidget extends StatelessWidget {
           height: 20,
         ),
         RaisedButton(
-          child: Text("Registrieren"),
+          child: Text(kIsWeb ? "Registrieren" : "Account mit Email verbinden"),
           onPressed: () async {
             String err;
             if (passwordController.text != passwordConfirmController.text)

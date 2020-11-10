@@ -172,7 +172,7 @@ class _AccountPageState extends State<AccountPage> {
                           title: RaisedButton(
                               color: Colors.blue,
                               elevation: 0,
-                              child: Text("Registrieren"),
+                              child: Text("Account mit Email verbinden"),
                               onPressed: () async {
                                 await Navigator.push(
                                   context,
