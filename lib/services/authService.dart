@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';

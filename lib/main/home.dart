@@ -1,7 +1,7 @@
 import 'package:Vertretung/friends/friendsPage.dart';
-import 'package:Vertretung/logic/myKeys.dart';
+import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/otherWidgets/substituteList.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';

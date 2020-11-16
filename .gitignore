@@ -40,6 +40,6 @@ lib/generated_plugin_registrant.dart
 
 android/key.properties
 android/Vertretung.jks
-lib/logic/wiredashKeys.dart
+lib/data/wiredashKeys.dart
 android/app/google-services.json
 web/firebaseConfig.js

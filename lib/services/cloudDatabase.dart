@@ -1,5 +1,5 @@
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/models/substituteModel.dart';
 import 'package:Vertretung/services/authService.dart';

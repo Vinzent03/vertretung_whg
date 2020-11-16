@@ -75,6 +75,7 @@ class EditNewsPageState extends State<EditNewsPage> {
                     const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
                 child: Text("Markdown wird unterstützt"),
               ),
+              
               CheckboxListTile(
                 title: Text("Benachrichtigung senden"),
                 onChanged: (bool b) {

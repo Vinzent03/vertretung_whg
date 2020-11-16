@@ -1,5 +1,5 @@
 import 'package:Vertretung/friends/addFriendPerDynamicLink.dart';
-import 'package:Vertretung/logic/myKeys.dart';
+import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';

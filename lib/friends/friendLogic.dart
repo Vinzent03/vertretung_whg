@@ -1,6 +1,6 @@
 import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/models/substituteModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Vertretung/models/friendModel.dart';

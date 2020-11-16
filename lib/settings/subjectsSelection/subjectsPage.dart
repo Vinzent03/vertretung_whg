@@ -2,7 +2,7 @@ import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/settings/subjectsSelection/searchPage.dart';
 import 'package:flutter/material.dart';
-import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/data/names.dart';
 import '../../models/courseTileModel.dart';
 import 'subjectsTemplate.dart';
 

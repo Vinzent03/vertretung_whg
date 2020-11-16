@@ -1,5 +1,5 @@
 import 'package:Vertretung/authentication/logInPage.dart';
-import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/otherWidgets/SchoolClassSelection.dart';
 import 'package:Vertretung/provider/themedata.dart';

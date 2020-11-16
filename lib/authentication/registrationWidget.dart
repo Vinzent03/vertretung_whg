@@ -1,4 +1,4 @@
-import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

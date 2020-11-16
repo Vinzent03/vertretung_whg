@@ -1,6 +1,6 @@
 import 'package:Vertretung/authentication/deleteAccountPage.dart';
 import 'package:Vertretung/authentication/logInPage.dart';
-import 'package:Vertretung/logic/names.dart';
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
