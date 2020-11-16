@@ -4,6 +4,5 @@ import 'package:Vertretung/models/newsModel.dart';
 class NewsTransmitter {
   final NewsModel news;
   final bool isEditAction;
-  final int index;
-  NewsTransmitter(this.isEditAction, [this.news, this.index]);
+  NewsTransmitter(this.isEditAction, [this.news]);
 }

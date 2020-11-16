@@ -1,4 +1,7 @@
+import 'package:Vertretung/data/schoolClasses.dart';
+import 'package:Vertretung/models/schoolClassModel.dart';
 import 'package:Vertretung/news/newsTransmitter.dart';
+import 'package:Vertretung/news/newsSchoolClassesSelection.dart';
 import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +18,7 @@ class EditNewsPageState extends State<EditNewsPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController textController = TextEditingController();
   NewsTransmitter transmitter;
-
+  List<SchoolClassModel> schoolClasses = SchoolClasses().schoolClasses;
   bool sendNotification = false;
 
   @override
@@ -28,6 +31,16 @@ class EditNewsPageState extends State<EditNewsPage> {
       textController.text = transmitter.news.text;
     }
     super.didChangeDependencies();
+  }
+
+  List<String> getSelectedSchoolClasses() {
+    List<String> selectedSchoolClasses = [];
+    schoolClasses.forEach((element) {
+      selectedSchoolClasses.addAll(element.children
+          .where((element) => element.isChecked)
+          .map((e) => e.title));
+    });
+    return selectedSchoolClasses;
   }
 
   @override
@@ -75,7 +88,6 @@ class EditNewsPageState extends State<EditNewsPage> {
                     const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
                 child: Text("Markdown wird unterstützt"),
               ),
-              
               CheckboxListTile(
                 title: Text("Benachrichtigung senden"),
                 onChanged: (bool b) {
@@ -86,9 +98,27 @@ class EditNewsPageState extends State<EditNewsPage> {
                 },
                 value: sendNotification,
               ),
+              if (!widget.transmitter.isEditAction)
+                ListTile(
+                  title: Text("Klassen/Stufen auswählen"),
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            NewsSchoolClassesSelection(schoolClasses),
+                      ),
+                    );
+                    setState(() {});
+                    // setState(() => schoolClasses = newSchoolClasses);
+                  },
+                ),
               Center(
                 child: RaisedButton(
-                  onPressed: () => confirm(context),
+                  onPressed: getSelectedSchoolClasses().isNotEmpty ||
+                          widget.transmitter.isEditAction
+                      ? () => confirm(context)
+                      : null,
                   child: Text("Bestätigen"),
                 ),
               ),
@@ -112,13 +142,18 @@ class EditNewsPageState extends State<EditNewsPage> {
     var result;
     if (transmitter.isEditAction) {
       result = await Functions().editNews(
-          transmitter.index,
-          {"title": titleController.text, "text": textController.text},
-          sendNotification);
+        titleController.text,
+        textController.text,
+        transmitter.news.id,
+        sendNotification,
+      );
     } else {
       result = await Functions().addNews(
-          {"title": titleController.text, "text": textController.text},
-          sendNotification);
+        titleController.text,
+        textController.text,
+        getSelectedSchoolClasses(),
+        sendNotification,
+      );
     }
 
     await pr.hide();

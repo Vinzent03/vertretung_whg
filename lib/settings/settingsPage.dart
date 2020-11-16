@@ -1,13 +1,13 @@
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/otherWidgets/OpenContainerWrapper.dart';
+import 'package:Vertretung/otherWidgets/openContainerWrapper.dart';
 import 'package:Vertretung/otherWidgets/themeModeSelection.dart';
 import 'package:Vertretung/provider/providerData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/settings/freeLessonSelection/freeLessonSelection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:share/share.dart';
-import 'package:Vertretung/otherWidgets/SchoolClassSelection.dart';
+import 'package:Vertretung/otherWidgets/schoolClassSelection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import "package:wiredash/wiredash.dart";

@@ -33,15 +33,14 @@ class _DetailsPageState extends State<DetailsPage> {
             IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {
-                  await NewsLogic()
-                      .openEditNewsPage(context, widget.news, widget.index);
+                  await NewsLogic().openEditNewsPage(context, widget.news);
                   Navigator.pop(context);
                 }),
           if (isAdmin)
             IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () async {
-                  if (await NewsLogic().deleteNews(context, widget.index))
+                  if (await NewsLogic().deleteNews(context, widget.news.id))
                     Navigator.pop(context);
                 }),
         ],

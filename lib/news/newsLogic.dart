@@ -9,12 +9,12 @@ import 'package:flushbar/flushbar.dart';
 import 'editNewsPage.dart';
 
 class NewsLogic {
-  Future<bool> deleteNews(BuildContext context, index) async {
+  Future<bool> deleteNews(BuildContext context, String id) async {
     ProgressDialog pr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
     await pr.show();
 
-    var result = await Functions().deleteNews(index);
+    var result = await Functions().deleteNews(id);
     await pr.hide();
 
     switch (result["code"]) {
@@ -43,8 +43,7 @@ class NewsLogic {
     }
   }
 
-  Future<dynamic> openEditNewsPage(
-      BuildContext context, NewsModel news, int index) async {
+  Future<dynamic> openEditNewsPage(BuildContext context, NewsModel news) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(
@@ -52,7 +51,6 @@ class NewsLogic {
           NewsTransmitter(
             true,
             news,
-            index,
           ),
         ),
       ),

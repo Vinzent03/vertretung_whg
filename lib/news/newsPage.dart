@@ -1,7 +1,9 @@
+import 'package:Vertretung/data/names.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/news/detailsPage.dart';
 import 'package:Vertretung/news/newsTransmitter.dart';
-import 'package:Vertretung/otherWidgets/OpenContainerWrapper.dart';
+import 'package:Vertretung/otherWidgets/openContainerWrapper.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +27,7 @@ enum actions { delete, edit }
 class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   bool isAdmin = false;
   AnimationController _controller;
-
+  String schoolClass = "Loading";
   Animation<double> _animation;
 
   @override
@@ -37,12 +39,18 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 300), vsync: this, value: 0.1);
     _animation = CurvedAnimation(parent: _controller, curve: Curves.ease);
     _controller.forward();
+    SharedPref().getString(Names.schoolClass).then((value) {
+      setState(() => schoolClass = value);
+    });
     super.initState();
   }
 
   void reAnimate() {
     _controller.reset();
     _controller.forward();
+    SharedPref().getString(Names.schoolClass).then((value) {
+      if (value != schoolClass) setState(() => schoolClass = value);
+    });
   }
 
   @override
@@ -52,37 +60,37 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
         title: Text("Nachrichten"),
       ),
       body: StreamBuilder<List<NewsModel>>(
-          stream: CloudDatabase().getNews(),
+          stream: CloudDatabase().getNews(schoolClass),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             else if (snapshot.hasError)
               return Center(
                 child: Text(
                     "Ein Fehler ist aufgetreten:" + snapshot.error.toString()),
               );
-              return ScaleTransition(
-                scale: _animation,
-                child: ListView.builder(
-                  physics: ScrollPhysics(),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15))),
-                      elevation: 3,
-                      child: OpenContainerWrapper(
-                        openBuilder: (context, action) => DetailsPage(
-                          index: index,
-                          news: snapshot.data[index],
-                        ),
-                        closedBuilder: (context, action) =>
-                            buildListItem(snapshot.data[index], index, action),
+            return ScaleTransition(
+              scale: _animation,
+              child: ListView.builder(
+                physics: ScrollPhysics(),
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15))),
+                    elevation: 3,
+                    child: OpenContainerWrapper(
+                      openBuilder: (context, action) => DetailsPage(
+                        index: index,
+                        news: snapshot.data[index],
                       ),
-                    );
-                  },
-                ),
-              );
+                      closedBuilder: (context, action) =>
+                          buildListItem(snapshot.data[index], index, action),
+                    ),
+                  );
+                },
+              ),
+            );
           }),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
@@ -144,12 +152,11 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
               icon: Icon(Icons.more_vert),
               onSelected: (selected) {
                 if (selected == actions.delete) {
-                  NewsLogic().deleteNews(context, index);
+                  NewsLogic().deleteNews(context, item.id);
                 } else {
                   NewsLogic().openEditNewsPage(
                     context,
                     item,
-                    index,
                   );
                 }
               },

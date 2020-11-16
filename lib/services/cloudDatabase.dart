@@ -163,11 +163,20 @@ class CloudDatabase {
   }
 
   //News
-  Stream<List<NewsModel>> getNews() {
-    Stream<DocumentSnapshot> snap =
-        ref.collection("news").doc("news").snapshots();
-    return snap.map((event) => (event.data()["news"] as List)
-        .map((e) => NewsModel(e["title"], e["text"], e["lastEdited"]))
+  Stream<List<NewsModel>> getNews(String schoolClass) {
+    List<QueryDocumentSnapshot> sort(QuerySnapshot event) {
+      List<QueryDocumentSnapshot> list = event.docs;
+      list.sort((a, b) => (a.data()["created"] as Timestamp)
+          .compareTo((b.data()["created"] as Timestamp)));
+      return list.reversed.toList();
+    }
+
+    Stream<QuerySnapshot> snap = ref
+        .collection("news")
+        .where("schoolClasses", arrayContains: schoolClass)
+        .snapshots();
+    return snap.map((event) => (sort(event))
+        .map((e) => NewsModel(e.id, e["title"], e["text"], e["lastEdited"]))
         .toList());
   }
 

@@ -1,5 +1,5 @@
+import 'package:Vertretung/models/courseTileModel.dart';
 import 'package:flutter/material.dart';
-import '../../models/courseTileModel.dart';
 
 class SearchPage extends StatefulWidget {
   final Function checkItem;
