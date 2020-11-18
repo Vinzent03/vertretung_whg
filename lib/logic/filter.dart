@@ -35,7 +35,12 @@ class Filter {
     List<String> betterList = [];
     for (String st in listWithoutClasses) {
       if (st.contains("bei +")) {
-        if (!st.substring(st.indexOf("bei +")).contains(",")) {
+        bool textContainsSubject = false;
+        for(String subjectSuffix in ["-GK","-LK","-PK","-ZK"]){
+          if(st.contains(subjectSuffix))textContainsSubject = true;
+        }
+
+        if (textContainsSubject) {
           String beginn = st.substring(0, st.indexOf("bei +") - 1);
           st = "$beginn Entfall";
         } else
