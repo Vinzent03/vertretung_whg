@@ -60,7 +60,7 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
         title: Text("Nachrichten"),
       ),
       body: StreamBuilder<List<NewsModel>>(
-          stream: CloudDatabase().getNews(schoolClass),
+          stream: CloudDatabase().getNews(schoolClass, isAdmin),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
               return Center(child: CircularProgressIndicator());
