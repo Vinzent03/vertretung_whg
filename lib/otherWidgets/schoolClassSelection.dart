@@ -6,12 +6,12 @@ import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
-class StufenList extends StatefulWidget {
+class SchoolClassSelection extends StatefulWidget {
   @override
-  _StufenListState createState() => _StufenListState();
+  _SchoolClassSelectionState createState() => _SchoolClassSelectionState();
 }
 
-class _StufenListState extends State<StufenList> {
+class _SchoolClassSelectionState extends State<SchoolClassSelection> {
   SharedPref sharedPref = SharedPref();
   String levelHint = "1. Wähle eine Stufe";
   String classHint = "2. Wähle eine Klasse";

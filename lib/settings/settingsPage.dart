@@ -68,7 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15))),
             title: Text("Bitte wähle Deine Stufe/Klasse"),
-            content: StufenList(),
+            content: SchoolClassSelection(),
             actions: <Widget>[
               FlatButton(
                 shape: RoundedRectangleBorder(

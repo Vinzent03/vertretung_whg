@@ -81,7 +81,7 @@ class _IntroScreenState extends State<IntroScreen> {
           ),
           PageViewModel(
             title: "In welcher Stufe/Klasse bist Du?",
-            bodyWidget: StufenList(),
+            bodyWidget: SchoolClassSelection(),
             decoration: PageDecoration(
                 titlePadding: titlePadding, titleTextStyle: titleStyle),
           ),
