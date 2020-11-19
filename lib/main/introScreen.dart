@@ -30,12 +30,6 @@ class _IntroScreenState extends State<IntroScreen> {
       color: Colors.blue[800], fontSize: 35, fontWeight: FontWeight.w600);
   EdgeInsets titlePadding = EdgeInsets.symmetric(vertical: 100);
 
-  @override
-  void initState() {
-    //Default value for personal substitute is false, prevent if the user doesn't change the switch
-    SharedPref().setBool(Names.personalSubstitute, false);
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +124,6 @@ class _IntroScreenState extends State<IntroScreen> {
                   title: Text("Personalisierte Vertretung"),
                   onChanged: (bool value) {
                     setState(() => personalSubstitute = value);
-                    SharedPref().setBool(Names.personalSubstitute, value);
                   },
                   value: personalSubstitute,
                 ),
@@ -213,7 +206,8 @@ class _IntroScreenState extends State<IntroScreen> {
             alreadyPressed = true;
             ProgressDialog pr =
                 ProgressDialog(context, isDismissible: false, showLogs: false);
-
+            await SharedPref()
+                .setBool(Names.personalSubstitute, personalSubstitute);
             String name = nameController.text;
             if (name == "") name = "Nicht festgelegt";
             if (kIsWeb) {
