@@ -1,7 +1,9 @@
 import 'package:Vertretung/data/names.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:provider/provider.dart';
 
 class DeleteAccountPage extends StatefulWidget {
   @override
@@ -63,7 +65,10 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                                 backgroundColor: Colors.red,
                               ));
                             }
-                            await auth.signOut(deleteAccount: true);
+                            await auth.signOut(
+                              Provider.of<UserData>(context, listen: false),
+                              deleteAccount: true,
+                            );
                             await pr.hide();
                             Navigator.popUntil(
                                 context, ModalRoute.withName(Names.wrapper));

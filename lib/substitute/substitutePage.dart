@@ -1,22 +1,19 @@
-import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/data/myKeys.dart';
-import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/data/names.dart';
-import 'package:Vertretung/services/authService.dart';
+import 'package:Vertretung/logic/filter.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/models/substituteModel.dart';
+import 'package:Vertretung/otherWidgets/myTab.dart' as myTab;
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/substitute/substituteLogic.dart';
-import 'package:Vertretung/otherWidgets/substituteList.dart';
+import 'package:Vertretung/substitute/substitutePullToRefresh.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:Vertretung/otherWidgets/myTab.dart' as myTab;
 import 'package:url_launcher/url_launcher.dart';
 
 class SubstitutePage extends StatefulWidget {
-  final Function reloadFriendsSubstitute;
-  final Function updateFriendFeature;
-  SubstitutePage(
-      {Key key, this.reloadFriendsSubstitute, this.updateFriendFeature})
-      : super(key: key);
   @override
   String toStringShort() {
     return "SubstitutePage";
@@ -42,13 +39,11 @@ class SubstitutePageState extends State<SubstitutePage>
       RefreshController(initialRefresh: false);
 
   //initialize these list, because to load subjects from localDatabase takes time, and the UI have to be build
-  List<dynamic> myListToday = [];
-  List<dynamic> listToday = [];
-  List<dynamic> myListTomorrow = [];
-  List<dynamic> listTomorrow = [];
+  List<SubstituteModel> myListToday = [];
+  List<SubstituteModel> listToday = [];
+  List<SubstituteModel> myListTomorrow = [];
+  List<SubstituteModel> listTomorrow = [];
 
-  List<String> rawListToday = [];
-  List<String> rawListTomorrow = [];
   Future<void> reloadAll({bool fromPullToRefresh = false}) async {
     SnackBar snack = SnackBar(
       content: Text("Es werden alte Daten verwendet."),
@@ -68,57 +63,48 @@ class SubstitutePageState extends State<SubstitutePage>
     if (dataResult.isEmpty) {
       if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
       loadingSuccess = false;
+      String newLastChange = await sharedPref.getString(Names.lastChange);
+      List<String> oldRawSubstituteToday =
+          await sharedPref.getStringList(Names.substituteToday);
+      List<String> oldRawSubstituteTomorrow =
+          await sharedPref.getStringList(Names.substituteTomorrow);
+      setState(() {
+        lastChange = newLastChange;
+      });
+      context.read<UserData>().rawSubstituteToday = oldRawSubstituteToday;
+      context.read<UserData>().rawSubstituteTomorrow = oldRawSubstituteTomorrow;
     } else {
       loadingSuccess = true;
       Scaffold.of(context).hideCurrentSnackBar();
       setState(() {
         lastChange = dataResult[0];
-        rawListToday = dataResult[1];
-        rawListTomorrow = dataResult[2];
       });
+      context.read<UserData>().rawSubstituteToday = dataResult[1];
+      context.read<UserData>().rawSubstituteTomorrow = dataResult[2];
       await sharedPref.setString(Names.lastChange, lastChange);
-      await sharedPref.setStringList(Names.substituteToday, rawListToday);
-      await sharedPref.setStringList(Names.substituteTomorrow, rawListTomorrow);
+      await sharedPref.setStringList(Names.substituteToday, dataResult[1]);
+      await sharedPref.setStringList(Names.substituteTomorrow, dataResult[2]);
     }
-    await reloadFilteredSubstitute();
-    finishedLoading = true;
-    if (fromPullToRefresh) _refreshController.refreshCompleted();
-    widget.reloadFriendsSubstitute();
-  }
-
-  void reloadSettings() {
-    sharedPref.getBool(Names.personalSubstitute).then((onValue) {
-      setState(() {
-        personalSubstitute = onValue;
-      });
+    setState(() {
+      finishedLoading = true;
     });
+    if (fromPullToRefresh) _refreshController.refreshCompleted();
   }
 
-  Future<void> reloadFilteredSubstitute() async {
-    reloadSettings();
-    String schoolClass = await sharedPref.getString(Names.schoolClass);
-    List<String> subjectsList = await sharedPref.getStringList(Names.subjects);
-    List<String> subjectsNotList =
-        await sharedPref.getStringList(Names.subjectsNot);
-    List<String> rawSubstituteToday =
-        await sharedPref.getStringList(Names.substituteToday);
-    List<String> rawSubstituteListTomorrow =
-        await sharedPref.getStringList(Names.substituteTomorrow);
-    String newLastChange = await sharedPref.getString(Names.lastChange);
-
+  void reloadFilteredSubstitute(
+      String schoolClass,
+      List<String> subjects,
+      List<String> subjectsNot,
+      List<String> rawSubstituteToday,
+      List<String> rawSubstituteTomorrow) {
     Filter filterToday = Filter(schoolClass, rawSubstituteToday);
-    Filter filterTomorrow = Filter(schoolClass, rawSubstituteListTomorrow);
+    Filter filterTomorrow = Filter(schoolClass, rawSubstituteTomorrow);
     List<dynamic> tempList = (personalSubstitute ? myListToday : listToday);
     setState(() {
-      if (mounted) {
-        myListToday =
-            filterToday.checkForSubjects(subjectsList, subjectsNotList);
-        listToday = filterToday.checkForSchoolClass();
-        myListTomorrow =
-            filterTomorrow.checkForSubjects(subjectsList, subjectsNotList);
-        listTomorrow = filterTomorrow.checkForSchoolClass();
-        lastChange = newLastChange;
-      }
+      myListToday = filterToday.checkForSubjects(subjects, subjectsNot);
+      listToday = filterToday.checkForSchoolClass();
+      myListTomorrow = filterTomorrow.checkForSubjects(subjects, subjectsNot);
+      listTomorrow = filterTomorrow.checkForSchoolClass();
     });
     if (tempList.toString() !=
         (personalSubstitute ? myListToday : listToday)
@@ -128,9 +114,25 @@ class SubstitutePageState extends State<SubstitutePage>
 
   @override
   void initState() {
-    reloadSettings();
-    reloadAll();
+    reloadAll(fromPullToRefresh: false);
+    context.read<UserData>().addListener(() {
+      if (!mounted) return;
+      UserData provider = context.read<UserData>();
+      reloadFilteredSubstitute(
+          provider.schoolClass,
+          provider.subjects,
+          provider.subjectsNot,
+          provider.rawSubstituteToday,
+          provider.rawSubstituteTomorrow);
+    });
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    UserData provider = Provider.of<UserData>(context);
+    personalSubstitute = provider.personalSubstitute;
   }
 
   @override
@@ -166,9 +168,6 @@ class SubstitutePageState extends State<SubstitutePage>
                   icon: Icon(Icons.settings),
                   onPressed: () async {
                     await Navigator.pushNamed(context, Names.settingsPage);
-                    if (AuthService().getUserId() != null)
-                      reloadFilteredSubstitute();
-                    widget.updateFriendFeature();
                   })
             ],
             bottom: TabBar(
@@ -211,7 +210,7 @@ class SubstitutePageState extends State<SubstitutePage>
               ? TabBarView(
                   children: [
                     if (personalSubstitute)
-                      SubstituteList(
+                      SubstitutePullToRefresh(
                         key: MyKeys.firstTab,
                         list: myListToday,
                         controller: _refreshController,
@@ -220,7 +219,7 @@ class SubstitutePageState extends State<SubstitutePage>
                             lastChange.substring(7) == "00:09",
                       ),
                     if (personalSubstitute)
-                      SubstituteList(
+                      SubstitutePullToRefresh(
                         key: MyKeys.secondTab,
                         list: myListTomorrow,
                         controller: _refreshController,
@@ -228,7 +227,7 @@ class SubstitutePageState extends State<SubstitutePage>
                         isNotUpdated: myListTomorrow.isEmpty &&
                             lastChange.substring(7) == "00:09",
                       ),
-                    SubstituteList(
+                    SubstitutePullToRefresh(
                       key: MyKeys.thirdTab,
                       list: listToday,
                       controller: _refreshController,
@@ -236,7 +235,7 @@ class SubstitutePageState extends State<SubstitutePage>
                       isNotUpdated: listToday.isEmpty &&
                           lastChange.substring(7) == "00:09",
                     ),
-                    SubstituteList(
+                    SubstitutePullToRefresh(
                       key: MyKeys.fourthTab,
                       list: listTomorrow,
                       controller: _refreshController,

@@ -1,15 +1,18 @@
 class FriendModel {
-  ///Only used for the filter
-  bool isChecked;
-  String name;
   final uid;
-  String schoolClass;
-  bool personalSubstitute;
-  List<dynamic> subjects;
-  List<dynamic> subjectsNot;
-  List<dynamic> freeLessons;
-  FriendModel({
-    this.name,
+  final String name;
+  final String schoolClass;
+  final bool personalSubstitute;
+  final List<dynamic> subjects;
+  final List<dynamic> subjectsNot;
+  final List<dynamic> freeLessons;
+  const FriendModel(
     this.uid,
-  });
+    this.name, [
+    this.schoolClass,
+    this.personalSubstitute,
+    this.subjects,
+    this.subjectsNot,
+    this.freeLessons,
+  ]);
 }

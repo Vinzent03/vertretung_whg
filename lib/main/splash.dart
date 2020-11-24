@@ -1,16 +1,16 @@
-import 'dart:async';
 import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/provider/providerData.dart';
+import 'package:Vertretung/provider/themeSettings.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/dynamicLink.dart';
 import 'package:Vertretung/services/push_notifications.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Splash extends StatefulWidget {
   @override
@@ -21,7 +21,28 @@ class _SplashState extends State<Splash> {
   Future<void> initTheme() async {
     ThemeMode themeMode =
         ThemeMode.values[await SharedPref().getInt(Names.themeMode)];
-    Provider.of<ProviderData>(context, listen: false).setThemeMode(themeMode);
+    context.read<ThemeSettings>().setThemeMode(themeMode);
+  }
+
+  Future<void> initUserSettings() async {
+    SharedPref sharedPref = SharedPref();
+
+    context.read<UserData>().schoolClass =
+        await sharedPref.getString(Names.schoolClass);
+    context.read<UserData>().personalSubstitute =
+        await sharedPref.getBool(Names.personalSubstitute);
+    context.read<UserData>().friendsFeature =
+        await sharedPref.getBool(Names.friendsFeature);
+
+    context.read<UserData>().rawSubstituteToday =
+        await sharedPref.getStringList(Names.substituteToday);
+    context.read<UserData>().rawSubstituteTomorrow =
+        await sharedPref.getStringList(Names.substituteTomorrow);
+
+    context.read<UserData>().subjects =
+        await sharedPref.getStringList(Names.subjects);
+    context.read<UserData>().subjectsNot =
+        await sharedPref.getStringList(Names.subjectsNot);
   }
 
   void initNotification() => PushNotificationsManager().init();
@@ -95,6 +116,7 @@ class _SplashState extends State<Splash> {
 
   load() async {
     await initTheme();
+    await initUserSettings();
     if (!kIsWeb) {
       checkForUpdate();
       initDynamicLink();
@@ -105,7 +127,9 @@ class _SplashState extends State<Splash> {
     SharedPref().checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
       if (!value) SharedPref().setBool(Names.notificationOnFirstChange, false);
     });
-    if (AuthService().getUserId() != null) await CloudDatabase().syncSettings();
+    if (AuthService().getUserId() != null)
+      await CloudDatabase()
+          .syncSettings(Provider.of<UserData>(context, listen: false));
     // Timer(Duration(milliseconds: 100), () {
     Navigator.of(context).pushReplacementNamed(Names.wrapper);
     // });

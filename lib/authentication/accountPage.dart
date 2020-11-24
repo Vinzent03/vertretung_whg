@@ -1,9 +1,11 @@
 import 'package:Vertretung/authentication/deleteAccountPage.dart';
 import 'package:Vertretung/authentication/logInPage.dart';
 import 'package:Vertretung/data/names.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -61,7 +63,6 @@ class _AccountPageState extends State<AccountPage> {
         });
   }
 
-
   void reload() {
     CloudDatabase().getName().then((value) {
       if (mounted) setState(() => name = value);
@@ -87,7 +88,8 @@ class _AccountPageState extends State<AccountPage> {
             child: Text("Bestätigen"),
             color: Colors.red,
             onPressed: () async {
-              await authService.signOut();
+              await authService
+                  .signOut(Provider.of<UserData>(context, listen: false));
               Navigator.popUntil(context, ModalRoute.withName(Names.wrapper));
             },
           )
@@ -191,7 +193,9 @@ class _AccountPageState extends State<AccountPage> {
                               elevation: 0,
                               child: Text("Abmelden"),
                               onPressed: () async {
-                                await AuthService().signOut();
+                                await authService.signOut(Provider.of<UserData>(
+                                    context,
+                                    listen: false));
                                 Navigator.popUntil(context,
                                     ModalRoute.withName(Names.wrapper));
                               }),

@@ -1,36 +1,15 @@
 import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/data/names.dart';
+import 'package:Vertretung/models/friendModel.dart';
 import 'package:Vertretung/models/substituteModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:Vertretung/models/friendModel.dart';
 
 class FriendLogic {
   final FirebaseFirestore ref = FirebaseFirestore.instance;
   SharedPref sharedPref = SharedPref();
-  List<String> rawSubstituteList;
-  List<FriendModel> friends = [];
-  bool friendsLoaded = false;
 
-  Future<void> setFriendsSettings() async {
-    if (friends.isEmpty) return;
-    QuerySnapshot friendsData = await ref
-        .collection("userdata")
-        .where("__name__", whereIn: friends.map((e) => e.uid).toList())
-        .get();
-    for (QueryDocumentSnapshot friendDoc in friendsData.docs) {
-      FriendModel friend =
-          friends.firstWhere((element) => element.uid == friendDoc.id);
-      friend.subjects = friendDoc.data()[Names.subjects];
-      friend.subjectsNot = friendDoc.data()[Names.subjectsNot];
-      friend.personalSubstitute = friendDoc.data()[Names.personalSubstitute];
-      friend.schoolClass = friendDoc.data()[Names.schoolClass];
-      friend.freeLessons = friendDoc.data()[Names.freeLessons] ?? [];
-      friend.name = friendDoc.data()["name"];
-    }
-  }
-
-  List<SubstituteModel> _getSubstituteOfFriend(FriendModel friend) {
+  List<SubstituteModel> _getSubstituteOfFriend(
+      FriendModel friend, List<String> rawSubstituteList) {
     Filter filter = Filter(friend.schoolClass, rawSubstituteList);
     List<SubstituteModel> substitute;
     List<SubstituteModel> justCancelledLessons = [];
@@ -123,14 +102,14 @@ class FriendLogic {
   }
 
   /// includes substitute and free lessons
-  Future<List<SubstituteModel>> getFriendsSubstitute() async {
-    if (!friendsLoaded) return [];
+  List<SubstituteModel> getFriendsSubstitute(
+      List<FriendModel> friends, List<String> rawSubstituteToday) {
     List<SubstituteModel> friendsSubstitute = [];
-    rawSubstituteList = await sharedPref.getStringList(Names.substituteToday);
 
     for (FriendModel friend in friends) {
       List<SubstituteModel> substituteAndFreeLessons =
-          _getSubstituteOfFriend(friend) + _getFreeLessonsOfFriend(friend);
+          _getSubstituteOfFriend(friend, rawSubstituteToday) +
+              _getFreeLessonsOfFriend(friend);
       for (SubstituteModel substitute in substituteAndFreeLessons) {
         if (friendsSubstitute.map((e) => e.title).contains(substitute.title)) {
           //instead of showing a substitute doubled add the name to the existing one
@@ -144,23 +123,7 @@ class FriendLogic {
         }
       }
     }
+    friendsSubstitute.sort((a, b) => a.title.compareTo(b.title));
     return friendsSubstitute;
-  }
-
-  Future<List<SubstituteModel>> getFriendsFreeLessons() async {
-    if (!friendsLoaded) return [];
-    List<SubstituteModel> friendsFreeLessons = [];
-    for (FriendModel friend in friends) {
-      _getFreeLessonsOfFriend(friend).forEach((element) {
-        friendsFreeLessons.add(element);
-      });
-    }
-    return friendsFreeLessons;
-  }
-
-  Future<void> updateFriendsList(List<FriendModel> newFriends) async {
-    friends = newFriends;
-    await setFriendsSettings();
-    friendsLoaded = true;
   }
 }

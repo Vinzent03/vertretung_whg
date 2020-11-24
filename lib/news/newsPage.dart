@@ -1,13 +1,14 @@
-import 'package:Vertretung/data/names.dart';
-import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/news/detailsPage.dart';
 import 'package:Vertretung/news/newsTransmitter.dart';
 import 'package:Vertretung/otherWidgets/openContainerWrapper.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:provider/provider.dart';
+
 import 'editNewsPage.dart';
 import 'newsLogic.dart';
 
@@ -27,7 +28,6 @@ enum actions { delete, edit }
 class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   bool isAdmin = false;
   AnimationController _controller;
-  String schoolClass = "Loading";
   Animation<double> _animation;
 
   @override
@@ -39,18 +39,12 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 300), vsync: this, value: 0.1);
     _animation = CurvedAnimation(parent: _controller, curve: Curves.ease);
     _controller.forward();
-    SharedPref().getString(Names.schoolClass).then((value) {
-      setState(() => schoolClass = value);
-    });
     super.initState();
   }
 
   void reAnimate() {
     _controller.reset();
     _controller.forward();
-    SharedPref().getString(Names.schoolClass).then((value) {
-      if (value != schoolClass) setState(() => schoolClass = value);
-    });
   }
 
   @override
@@ -60,7 +54,8 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
         title: Text("Nachrichten"),
       ),
       body: StreamBuilder<List<NewsModel>>(
-          stream: CloudDatabase().getNews(schoolClass, isAdmin),
+          stream: CloudDatabase().getNews(
+              context.select((UserData user) => user.schoolClass), isAdmin),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
               return Center(child: CircularProgressIndicator());

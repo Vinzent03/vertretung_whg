@@ -1,22 +1,20 @@
-import 'package:Vertretung/friends/addFriendDialog.dart';
-import 'package:Vertretung/friends/friendLogic.dart';
 import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/data/names.dart';
-import 'package:Vertretung/models/substituteModel.dart';
+import 'package:Vertretung/friends/addFriendDialog.dart';
+import 'package:Vertretung/friends/friendLogic.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/models/friendModel.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/dynamicLink.dart';
-import 'package:Vertretung/otherWidgets/substituteList.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:Vertretung/substitute/substituteFromStream.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
-import 'package:Vertretung/models/friendModel.dart';
 
 class FriendsPage extends StatefulWidget {
-  const FriendsPage({Key key}) : super(key: key);
-
   @override
   String toStringShort() {
     return "FriendsPage";
@@ -27,56 +25,7 @@ class FriendsPage extends StatefulWidget {
 }
 
 class FriendsPageState extends State<FriendsPage> {
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: true);
-  List<SubstituteModel> friendsSubstitute = [];
-  List<FriendModel> selectedFriends = [];
-  List<FriendModel> friendList = [];
   FriendLogic friendLogic = FriendLogic();
-
-  Future<void> reloadAll() async {
-    try {
-      List<FriendModel> newFriendList = await CloudDatabase().getFriendsList();
-      if (newFriendList.length != friendList.length) {
-        selectedFriends = [];
-        friendList = newFriendList;
-        for (var friend in friendList) {
-          friend.isChecked = true;
-          selectedFriends.add(friend);
-        }
-      }
-      await friendLogic.updateFriendsList(selectedFriends);
-      await reloadFriendsSubstitute();
-      _refreshController.refreshCompleted();
-    } catch (e) {
-      Flushbar(
-        message:
-            "Es ist ein Fehler beim Laden der Vertretung von Freunden aufgetreten.",
-        duration: Duration(seconds: 3),
-      )..show(context);
-      _refreshController.refreshFailed();
-      throw e;
-    }
-  }
-
-  Future<void> reloadFriendsSubstitute() async {
-    List<SubstituteModel> newFriendsSubstitute =
-        await friendLogic.getFriendsSubstitute();
-    newFriendsSubstitute.sort((a, b) => a.title.compareTo(b.title));
-    setState(() {
-      friendsSubstitute = newFriendsSubstitute;
-    });
-  }
-
-  void onCheckboxClicked(bool isChecked, index, Function setState) {
-    setState(() {
-      friendList[index].isChecked = isChecked;
-    });
-    if (isChecked)
-      selectedFriends.add(friendList[index]);
-    else
-      selectedFriends.remove(friendList[index]);
-  }
 
   void shareFriendsToken() async {
     ProgressDialog pr = ProgressDialog(context,
@@ -119,7 +68,6 @@ class FriendsPageState extends State<FriendsPage> {
                 onTap: () async {
                   await Navigator.pushNamed(context, Names.friendsList);
                   Navigator.pop(context);
-                  _refreshController.requestRefresh();
                 },
               ),
             ],
@@ -144,83 +92,63 @@ class FriendsPageState extends State<FriendsPage> {
           }),
         ],
       ),
-      body: AnimatedSwitcher(
-        key: ValueKey(friendsSubstitute),
-        duration: Duration(seconds: 1),
-        child: SubstituteList(
-          key: MyKeys.friendsTab,
-          list: friendsSubstitute,
-          controller: _refreshController,
-          reload: reloadAll,
-          isNotUpdated: false,
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "add",
-        onPressed: () async {
-          List<dynamic> beforeChangesSelectedFriends =
-              List.from(selectedFriends);
-          await showDialog(
-            context: context,
-            builder: (context) {
-              //to change the state
-              return StatefulBuilder(
-                builder: (context, setState) => AlertDialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15))),
-                  title: Text("Wähle deine Freunde"),
-                  content: Container(
-                    width: 10,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return CheckboxListTile(
-                          title: Text(friendList[index].name),
-                          value: friendList[index].isChecked,
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (isChecked) =>
-                              onCheckboxClicked(isChecked, index, setState),
-                        );
-                      },
-                      itemCount: friendList.length,
+      body: StreamBuilder<List<FriendModel>>(
+          stream: CloudDatabase().getFriendsSettings(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError)
+              return Center(
+                child: Text(
+                    "Ein Fehler aufgetreten: " + snapshot.error.toString()),
+              );
+            if (snapshot.hasData) {
+              if (snapshot.data.isEmpty)
+                return Center(
+                    child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Schade, Du hast wohl keine Freunde",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text("Alle auswählen"),
+                    RaisedButton(
+                      child: Text("Füge Freunde hinzu!"),
                       onPressed: () {
-                        selectedFriends = [];
-                        for (var friend in friendList) {
-                          setState(() {
-                            friend.isChecked = true;
-                          });
-                          selectedFriends.add(friend);
-                        }
+                        showDialog(
+                            context: context,
+                            builder: (context) => AddFriendDialog());
                       },
                     ),
-                    FlatButton(
-                      child: Text("Alle abwählen"),
+                    RaisedButton(
+                      child: Text("Freundes Funktion deaktivieren"),
                       onPressed: () {
-                        selectedFriends = [];
-                        for (var friend in friendList) {
-                          setState(() {
-                            friend.isChecked = false;
-                          });
-                        }
+                        context.read<UserData>().friendsFeature = false;
+                        SharedPref().setBool(Names.friendsFeature, false);
                       },
                     ),
                   ],
-                ),
+                ));
+              else
+                return AnimatedSwitcher(
+                  key: ValueKey(friendLogic.getFriendsSubstitute(
+                      snapshot.data,
+                      context.select(
+                          (UserData value) => value.rawSubstituteToday))),
+                  duration: Duration(seconds: 1),
+                  child: SubstituteFromStream(
+                    key: MyKeys.friendsTab,
+                    list: friendLogic.getFriendsSubstitute(
+                        snapshot.data,
+                        context.select(
+                            (UserData value) => value.rawSubstituteToday)),
+                    isNotUpdated: false,
+                  ),
+                );
+            } else
+              return Center(
+                child: CircularProgressIndicator(),
               );
-            },
-          );
-          if (beforeChangesSelectedFriends.length != selectedFriends.length)
-            _refreshController.requestRefresh();
-        },
-        child: Icon(Icons.filter_list),
-        backgroundColor:
-            selectedFriends.length != friendList.length ? Colors.red : null,
-      ),
+          }),
     );
   }
 }

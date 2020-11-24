@@ -1,19 +1,20 @@
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/otherWidgets/openContainerWrapper.dart';
+import 'package:Vertretung/otherWidgets/schoolClassSelection.dart';
 import 'package:Vertretung/otherWidgets/themeModeSelection.dart';
-import 'package:Vertretung/provider/providerData.dart';
+import 'package:Vertretung/provider/themeSettings.dart';
+import 'package:Vertretung/provider/userData.dart';
+import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/settings/freeLessonSelection/freeLessonSelection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:share/share.dart';
-import 'package:Vertretung/otherWidgets/schoolClassSelection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import "package:wiredash/wiredash.dart";
-import 'package:Vertretung/services/authService.dart';
-import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
+import 'package:provider/provider.dart';
+import 'package:share/share.dart';
+import "package:wiredash/wiredash.dart";
 
 import 'myLicensePage.dart';
 import 'subjectsSelection/subjectsPage.dart';
@@ -24,14 +25,11 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  CloudDatabase manager;
-  bool dark = false;
-  bool personalSubstitute = false;
+  CloudDatabase manager = CloudDatabase();
   bool notificationOnChange = false;
   bool notificationOnFirstChange = false;
-  bool friendsFeature = false;
-  String schoolClass = "Nicht Geladen";
-  bool isAdvancedLevel = false;
+  bool personalSubstitute;
+  bool friendsFeature;
 
   SharedPref sharedPref = SharedPref();
 
@@ -46,6 +44,9 @@ class _SettingsPageState extends State<SettingsPage> {
             onPressed: () async {
               await sharedPref.setStringList(Names.subjects, []);
               await sharedPref.setStringList(Names.subjectsNot, []);
+              context.read<UserData>().subjects = [];
+              context.read<UserData>().subjectsNot = [];
+
               CloudDatabase().updateSubjects();
               Navigator.pop(context);
             },
@@ -82,13 +83,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           .isNotEmpty) {
                     await deleteSubjectsDialog();
                   }
-                  sharedPref.getString(Names.schoolClass).then((onValue) {
-                    setState(() {
-                      schoolClass = onValue;
-                      isAdvancedLevel = ["EF", "Q1", "Q2"].contains(onValue);
-                    });
-                    updateUserdata();
-                  });
+                  updateUserdata();
                 },
               ),
             ],
@@ -98,52 +93,39 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void updateUserdata() {
     manager.updateUserData(
-      personalSubstitute: personalSubstitute,
-      schoolClass: schoolClass,
+      personalSubstitute: context.read<UserData>().personalSubstitute,
+      schoolClass: context.read<UserData>().schoolClass,
       notificationOnChange: notificationOnChange,
       notificationOnFirstChange: notificationOnFirstChange,
     );
   }
 
+  void loadSettings() async {
+    bool pNotificationOnChange =
+        await sharedPref.getBool(Names.notificationOnChange);
+    bool pNotificationOnFirstChange =
+        await sharedPref.getBool(Names.notificationOnFirstChange);
+    setState(() {
+      notificationOnChange = pNotificationOnChange;
+      notificationOnFirstChange = pNotificationOnFirstChange;
+    });
+  }
+
   @override
   void initState() {
-    manager = CloudDatabase();
-    bool pPersonalSubstitute;
-    bool pNotificationOnChange;
-    bool pNotificationOnFirstChange;
-    bool pFriendsFeature;
-    String pSchoolClass;
-    sharedPref.getBool(Names.personalSubstitute).then((bool b) {
-      pPersonalSubstitute = b;
-    });
-    sharedPref.getBool(Names.notificationOnChange).then((bool b) {
-      pNotificationOnChange = b;
-    });
-    sharedPref.getBool(Names.notificationOnFirstChange).then((bool b) {
-      pNotificationOnFirstChange = b;
-    });
-    sharedPref.getBool(Names.friendsFeature).then((bool b) {
-      pFriendsFeature = b;
-    });
-    sharedPref.getString(Names.schoolClass).then((String st) {
-      pSchoolClass = st;
-    });
-    sharedPref.getStringList(Names.subjectsNot).then((List<String> st) {
-      setState(() {
-        personalSubstitute = pPersonalSubstitute;
-        notificationOnChange = pNotificationOnChange;
-        notificationOnFirstChange = pNotificationOnFirstChange;
-        friendsFeature = pFriendsFeature;
-        schoolClass = pSchoolClass;
-        isAdvancedLevel = ["EF", "Q1", "Q2"].contains(pSchoolClass);
-      });
-    });
+    loadSettings();
     super.initState();
   }
 
   @override
+  void didChangeDependencies() {
+    friendsFeature = Provider.of<UserData>(context).friendsFeature;
+    personalSubstitute = Provider.of<UserData>(context).personalSubstitute;
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    ProviderData _themeChanger = Provider.of<ProviderData>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Einstellungen"),
@@ -189,7 +171,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   onTap: () => selectSchoolClassDialog(context),
                   trailing: FlatButton(
                     child: Text(
-                      schoolClass,
+                      context.watch<UserData>().schoolClass,
                       style: TextStyle(fontSize: 17),
                     ),
                     onPressed: () => selectSchoolClassDialog(context),
@@ -205,10 +187,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     secondary: Icon(Icons.group),
                     onChanged: (bool b) {
                       sharedPref.setBool(Names.personalSubstitute, b);
-                      if (mounted)
-                        setState(() {
-                          personalSubstitute = b;
-                        });
+                      context.read<UserData>().personalSubstitute = b;
                       updateUserdata();
                     },
                   ),
@@ -216,10 +195,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     tappable: personalSubstitute,
                     openBuilder: (BuildContext context, VoidCallback _) =>
                         SubjectsPage(
-                      isWhitelist: isAdvancedLevel,
+                      isWhitelist: ["EF", "Q1", "Q2"]
+                          .contains(context.watch<UserData>().schoolClass),
                     ),
                     closedBuilder: (context, action) => ListTile(
-                      title: Text(isAdvancedLevel?"Deine Fächer eingeben":"Fächer Deiner Mitschüler eingeben"),
+                      title: Text(["EF", "Q1", "Q2"]
+                              .contains(context.watch<UserData>().schoolClass)
+                          ? "Deine Fächer eingeben"
+                          : "Fächer Deiner Mitschüler eingeben"),
                       enabled: personalSubstitute,
                       leading: Icon(Icons.edit),
                     ),
@@ -240,9 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     value: friendsFeature,
                     onChanged: (bool b) {
                       sharedPref.setBool(Names.friendsFeature, b);
-                      setState(() {
-                        friendsFeature = b;
-                      });
+                      context.read<UserData>().friendsFeature = b;
                     },
                   ),
                   OpenContainerWrapper(
@@ -257,7 +238,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       leading: Icon(Icons.free_breakfast),
                       enabled: friendsFeature,
                     ),
-                    onClosed: (data) async {},
                   ),
                 ],
               ),
@@ -266,7 +246,8 @@ class _SettingsPageState extends State<SettingsPage> {
               elevation: 3,
               child: Column(
                 children: <Widget>[
-                  ThemeModeSelection(_themeChanger.getThemeMode()),
+                  ThemeModeSelection(
+                      context.watch<ThemeSettings>().getThemeMode()),
                   if (!kIsWeb)
                     SwitchListTile(
                       secondary: Icon(Icons.notifications_active),

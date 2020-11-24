@@ -1,5 +1,5 @@
 import 'package:Vertretung/models/schoolClassModel.dart';
-import 'package:Vertretung/provider/providerData.dart';
+import 'package:Vertretung/provider/themeSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -47,8 +47,7 @@ class _NewsSchoolClassesSelectionState
         ],
       ),
       bottomSheet: Container(
-        color: Provider.of<ProviderData>(context).getUsedTheme() ==
-                Brightness.dark
+        color: context.watch<ThemeSettings>().brightness == Brightness.dark
             ? Colors.black
             : Colors.white,
         child: ButtonBar(

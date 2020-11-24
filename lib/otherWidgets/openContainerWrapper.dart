@@ -1,4 +1,4 @@
-import 'package:Vertretung/provider/providerData.dart';
+import 'package:Vertretung/provider/themeSettings.dart';
 import 'package:animations/animations.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
@@ -21,7 +21,7 @@ class OpenContainerWrapper extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    usedBrightness = Provider.of<ProviderData>(context).getUsedTheme();
+    usedBrightness = context.watch<ThemeSettings>().brightness;
     return OpenContainer(
         tappable: tappable,
         closedColor:

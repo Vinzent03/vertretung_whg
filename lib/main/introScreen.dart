@@ -3,15 +3,17 @@ import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/otherWidgets/schoolClassSelection.dart';
 import 'package:Vertretung/provider/themedata.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/settings/subjectsSelection/subjectsPage.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:progress_dialog/progress_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class IntroScreen extends StatefulWidget {
   @override
@@ -29,7 +31,6 @@ class _IntroScreenState extends State<IntroScreen> {
   TextStyle titleStyle = TextStyle(
       color: Colors.blue[800], fontSize: 35, fontWeight: FontWeight.w600);
   EdgeInsets titlePadding = EdgeInsets.symmetric(vertical: 100);
-
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +187,7 @@ class _IntroScreenState extends State<IntroScreen> {
         done: Text("Fertig"),
         onChange: (int i) async {
           //get schoolClass to show different personalSubstitute content
-          String schoolClass = await SharedPref().getString(Names.schoolClass);
+          String schoolClass = context.read<UserData>().schoolClass;
           if (i > 2 &&
               !alreadyShowedSchoolClassFlushBar &&
               schoolClass == "Nicht festgelegt") {
@@ -208,6 +209,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 ProgressDialog(context, isDismissible: false, showLogs: false);
             await SharedPref()
                 .setBool(Names.personalSubstitute, personalSubstitute);
+            context.read<UserData>().personalSubstitute = personalSubstitute;
             String name = nameController.text;
             if (name == "") name = "Nicht festgelegt";
             if (kIsWeb) {

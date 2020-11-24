@@ -1,14 +1,15 @@
-import 'package:Vertretung/friends/friendsPage.dart';
 import 'package:Vertretung/data/myKeys.dart';
-import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/data/names.dart';
-import 'package:Vertretung/otherWidgets/substituteList.dart';
-import 'package:Vertretung/provider/providerData.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:provider/provider.dart';
+import 'package:Vertretung/friends/friendsPage.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/news/newsPage.dart';
+import 'package:Vertretung/provider/themeSettings.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/substitute//substitutePage.dart';
+import 'package:Vertretung/substitute/substitutePullToRefresh.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,13 +18,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentIndex = 0;
-  GlobalKey<FriendsPageState> friendKey = GlobalKey();
   GlobalKey<NewsPageState> newsKey = GlobalKey();
-  bool friendsFeature = false;
-  ThemeMode selectedThemeMode;
+  bool friendsFeature;
   List<Widget> pagesWithFriendsPage;
   List<Widget> pagesWithoutFriendsPage;
-  List<GlobalKey<SubstituteListState>> keyList = [
+  List<GlobalKey<SubstitutePullToRefreshState>> keyList = [
     MyKeys.firstTab,
     MyKeys.secondTab,
     MyKeys.thirdTab,
@@ -32,22 +31,14 @@ class _HomeState extends State<Home> {
 
   _HomeState() {
     pagesWithFriendsPage = [
-      SubstitutePage(
-        reloadFriendsSubstitute: reloadFriendsSubstitute,
-        updateFriendFeature: updateFriendFeature,
-      ),
-      FriendsPage(
-        key: friendKey,
-      ),
+      SubstitutePage(),
+      FriendsPage(),
       NewsPage(
         key: newsKey,
       ),
     ];
     pagesWithoutFriendsPage = [
-      SubstitutePage(
-        reloadFriendsSubstitute: reloadFriendsSubstitute,
-        updateFriendFeature: updateFriendFeature,
-      ),
+      SubstitutePage(),
       NewsPage(
         key: newsKey,
       ),
@@ -63,25 +54,17 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
-  void reloadFriendsSubstitute() {
-    if (friendsFeature && friendKey.currentState != null)
-      friendKey.currentState.reloadFriendsSubstitute();
-  }
-
-  void updateFriendFeature() {
-    SharedPref().getBool(Names.friendsFeature).then((value) {
-      if (value != friendsFeature)
-        setState(() {
-          friendsFeature = value;
-        });
-    });
+  @override
+  void didChangeDependencies() {
+    friendsFeature = Provider.of<UserData>(context).friendsFeature;
+    super.didChangeDependencies();
   }
 
   void animatePages(index) {
     if (friendsFeature)
       switch (index) {
         case 0:
-          for (GlobalKey<SubstituteListState> key in keyList) {
+          for (GlobalKey<SubstitutePullToRefreshState> key in keyList) {
             if (key.currentState != null) key.currentState.reAnimate();
           }
           break;
@@ -97,7 +80,7 @@ class _HomeState extends State<Home> {
     else
       switch (index) {
         case 0:
-          for (GlobalKey<SubstituteListState> key in keyList) {
+          for (GlobalKey<SubstitutePullToRefreshState> key in keyList) {
             if (key.currentState != null) key.currentState.reAnimate();
           }
           break;
@@ -121,7 +104,7 @@ class _HomeState extends State<Home> {
         elevation: 10,
         currentIndex: currentIndex,
         backgroundColor:
-            Provider.of<ProviderData>(context).getUsedTheme() == Brightness.dark
+            context.watch<ThemeSettings>().brightness == Brightness.dark
                 ? Colors.black
                 : Colors.white,
         items: [

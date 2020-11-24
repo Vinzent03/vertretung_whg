@@ -1,6 +1,6 @@
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/provider/providerData.dart';
+import 'package:Vertretung/provider/themeSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +26,8 @@ class ThemeModeSelection extends StatelessWidget {
               return FlatButton(
                 onPressed: () {
                   SharedPref().setInt(Names.themeMode, index);
-                  Provider.of<ProviderData>(context, listen: false)
+                  context
+                      .read<ThemeSettings>()
                       .setThemeMode(ThemeMode.values[index]);
                   Navigator.pop(context);
                 },

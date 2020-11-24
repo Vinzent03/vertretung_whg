@@ -1,14 +1,16 @@
-import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/data/names.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/models/friendModel.dart';
 import 'package:Vertretung/models/newsModel.dart';
 import 'package:Vertretung/models/substituteModel.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-import 'package:Vertretung/models/friendModel.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 enum updateCodes { availableNormal, availableForce, notAvailable }
 
@@ -96,31 +98,43 @@ class CloudDatabase {
     return snap.data()["name"] ?? "No internet connection";
   }
 
-  Future<void> syncSettings() async {
+  Future<void> syncSettings(UserData provider) async {
     DocumentSnapshot userdataDoc =
         await ref.collection("userdata").doc(uid).get();
 
     updateToken();
+    String schoolClass = userdataDoc.data()[Names.schoolClass];
+    List<String> subjects =
+        List<String>.from(userdataDoc.data()[Names.subjects]);
+    List<String> subjectsNot =
+        List<String>.from(userdataDoc.data()[Names.subjectsNot]);
+    List<String> subjectsCustom =
+        List<String>.from(userdataDoc.data()[Names.subjectsCustom]);
+    List<String> subjectsNotCustom =
+        List<String>.from(userdataDoc.data()[Names.subjectsNotCustom]);
+    List<String> freeLessons =
+        List<String>.from(userdataDoc.data()[Names.freeLessons] ?? []);
+    bool personalSubstitute = userdataDoc.data()[Names.personalSubstitute];
+    bool notificationOnChange = userdataDoc.data()[Names.notificationOnChange];
+    bool notificationOnFirstChange =
+        userdataDoc.data()[Names.notificationOnFirstChange];
 
     SharedPref sharedPref = SharedPref();
-    sharedPref.setString(
-        Names.schoolClass, userdataDoc.data()[Names.schoolClass]);
-    sharedPref.setStringList(
-        Names.subjects, List<String>.from(userdataDoc.data()[Names.subjects]));
-    sharedPref.setStringList(Names.subjectsNot,
-        List<String>.from(userdataDoc.data()[Names.subjectsNot]));
-    sharedPref.setStringList(Names.subjectsCustom,
-        List<String>.from(userdataDoc.data()[Names.subjectsCustom]));
-    sharedPref.setStringList(Names.subjectsNotCustom,
-        List<String>.from(userdataDoc.data()[Names.subjectsNotCustom]));
-    sharedPref.setStringList(Names.freeLessons,
-        List<String>.from(userdataDoc.data()[Names.freeLessons] ?? []));
+    sharedPref.setString(Names.schoolClass, schoolClass);
+    sharedPref.setStringList(Names.subjects, subjects);
+    sharedPref.setStringList(Names.subjectsNot, subjectsNot);
+    sharedPref.setStringList(Names.subjectsCustom, subjectsCustom);
+    sharedPref.setStringList(Names.subjectsNotCustom, subjectsNotCustom);
+    sharedPref.setStringList(Names.freeLessons, freeLessons);
+    sharedPref.setBool(Names.personalSubstitute, personalSubstitute);
+    sharedPref.setBool(Names.notificationOnChange, notificationOnChange);
     sharedPref.setBool(
-        Names.personalSubstitute, userdataDoc.data()[Names.personalSubstitute]);
-    sharedPref.setBool(Names.notificationOnChange,
-        userdataDoc.data()[Names.notificationOnChange]);
-    await sharedPref.setBool(Names.notificationOnFirstChange,
-        userdataDoc.data()[Names.notificationOnFirstChange]);
+        Names.notificationOnFirstChange, notificationOnFirstChange);
+
+    provider.schoolClass = schoolClass;
+    provider.subjects = subjects;
+    provider.subjectsNot = subjectsNot;
+    provider.personalSubstitute = personalSubstitute;
   }
 
   //Updates
@@ -193,24 +207,37 @@ class CloudDatabase {
     return await doc.update({"friends": friends});
   }
 
-  Future<List<FriendModel>> getFriendsList() async {
-    List<FriendModel> friendList = [];
-    DocumentSnapshot myFriendsDoc =
-        await ref.collection("userdata").doc(uid).get();
-    try {
-      for (String friendUid in myFriendsDoc.data()["friends"]) {
-        DocumentSnapshot friendsDoc =
-            await ref.collection("userdata").doc(friendUid).get();
-        String friendName = friendsDoc.data()["name"];
-        friendList.add(FriendModel(name: friendName, uid: friendUid));
-      }
-      friendList.sort((friendA, friendB) {
-        return friendA.name.toLowerCase().compareTo(friendB.name.toLowerCase());
-      });
-      return friendList;
-    } catch (e) {
-      return [];
-    }
+  Stream<List<FriendModel>> getFriendsSettings() {
+    return ref.collection("userdata").doc(uid).snapshots().map((event) {
+      return List<String>.from(event.data()["friends"] ?? []);
+    }).concurrentAsyncExpand(
+        (List<String> friends) => _getFriendsSettings(friends));
+  }
+
+  Stream<List<FriendModel>> _getFriendsSettings(List<String> friends) {
+    if (friends.isEmpty) return Stream.value([]);
+    var newStream = ref
+        .collection("userdata")
+        .where(FieldPath.documentId, whereIn: friends)
+        .snapshots();
+    return newStream.map((event) {
+      var sortedList = event.docs
+          .map(
+            (e) => FriendModel(
+              e.id,
+              e.data()["name"],
+              e.data()[Names.schoolClass],
+              e.data()[Names.personalSubstitute],
+              e.data()[Names.subjects],
+              e.data()[Names.subjectsNot],
+              e.data()[Names.freeLessons] ?? [],
+            ),
+          )
+          .toList();
+      sortedList.sort((friendA, friendB) =>
+          friendA.name.toLowerCase().compareTo(friendB.name.toLowerCase()));
+      return sortedList;
+    });
   }
 
   ///only used for web app

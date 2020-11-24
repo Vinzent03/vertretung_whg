@@ -1,7 +1,9 @@
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:provider/provider.dart';
 
 class LogInWidget extends StatelessWidget {
   LogInWidget({Key key}) : super(key: key);
@@ -15,7 +17,7 @@ class LogInWidget extends StatelessWidget {
     String err = await AuthService().signInEmail(
         email: emailController.text,
         password: passwordController.text,
-        context: context);
+        provider: Provider.of<UserData>(context, listen: false));
     if (err != null) {
       await pr.hide();
       final SnackBar snack = SnackBar(

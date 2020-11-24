@@ -2,9 +2,11 @@ import 'package:Vertretung/data/schoolClasses.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/models/schoolClassModel.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:provider/provider.dart';
 
 class SchoolClassSelection extends StatefulWidget {
   @override
@@ -27,7 +29,8 @@ class _SchoolClassSelectionState extends State<SchoolClassSelection> {
     });
   }
 
-  void finish(_value) async {
+  void finish(String _value, BuildContext context) async {
+    context.read<UserData>().schoolClass = _value;
     PushNotificationsManager push = PushNotificationsManager();
     setState(() {
       classHint = _value;
@@ -87,7 +90,8 @@ class _SchoolClassSelectionState extends State<SchoolClassSelection> {
                 ),
               )
               .toList(),
-          onChanged: disabledDropdown ? null : (_value) => finish(_value),
+          onChanged:
+              disabledDropdown ? null : (_value) => finish(_value, context),
         ),
       ],
     );

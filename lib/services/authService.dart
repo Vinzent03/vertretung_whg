@@ -1,5 +1,6 @@
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -23,7 +24,7 @@ class AuthService {
     return _auth.authStateChanges();
   }
 
-  Future<void> signOut({bool deleteAccount = false}) async {
+  Future<void> signOut(UserData provider, {bool deleteAccount = false}) async {
     var user = _auth.currentUser;
     await PushNotificationsManager().signOut();
     if (user.isAnonymous || deleteAccount)
@@ -31,6 +32,7 @@ class AuthService {
     else
       _auth.signOut();
     await SharedPref().clear();
+    provider.reset();
   }
 
   bool isAnon() {
@@ -95,11 +97,12 @@ class AuthService {
     return _auth.currentUser.email;
   }
 
-  Future<String> signInEmail({email, password, context}) async {
+  Future<String> signInEmail(
+      {String email, String password, UserData provider}) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseAnalytics().logLogin(loginMethod: "email");
-      await CloudDatabase().syncSettings();
+      await CloudDatabase().syncSettings(provider);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "invalid-email":
