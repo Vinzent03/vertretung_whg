@@ -3,7 +3,6 @@ import 'package:Vertretung/services/cloudFunctions.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -20,7 +19,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
   String message;
   String uid;
   bool error = false;
-  bool addFriendToYourself = false;
+  bool addFriendToYourself = true;
   ProgressDialog pr;
   @override
   void didChangeDependencies() {

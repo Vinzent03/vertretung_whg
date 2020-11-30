@@ -227,7 +227,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                   ),
                   OpenContainerWrapper(
-                    tappable: friendsFeature,
                     openBuilder: (BuildContext context, VoidCallback _) =>
                         FreeLessonSelection(),
                     closedBuilder: (context, action) => ListTile(
@@ -236,7 +235,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: TextStyle(fontSize: 17),
                       ),
                       leading: Icon(Icons.free_breakfast),
-                      enabled: friendsFeature,
                     ),
                   ),
                 ],

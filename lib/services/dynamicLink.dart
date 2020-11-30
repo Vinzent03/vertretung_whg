@@ -1,5 +1,5 @@
-import 'package:Vertretung/friends/addFriendPerDynamicLink.dart';
 import 'package:Vertretung/data/myKeys.dart';
+import 'package:Vertretung/friends/addFriendPerDynamicLink.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -48,8 +48,7 @@ class DynamicLink {
           "https://vertretung.page.link/friendAdd?uid=$shortUid&name=$name"),
       androidParameters: AndroidParameters(
         packageName: "com.vinzent.vertretung",
-        fallbackUrl: Uri.parse(
-            "https://github.com/Vinzent03/vertretung_whg/releases/latest"),
+        fallbackUrl: Uri.parse("https://info-vertretung-whg.web.app"),
       ),
     );
     final ShortDynamicLink shortDynamicUrl = await parameters.buildShortLink();
