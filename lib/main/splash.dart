@@ -1,6 +1,9 @@
+import 'package:Vertretung/authentication/webPageLogIn.dart';
 import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/main/home.dart';
+import 'package:Vertretung/main/introScreen.dart';
 import 'package:Vertretung/provider/themeSettings.dart';
 import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
@@ -18,6 +21,8 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  AuthService auth = AuthService();
+  bool finishedLoading = false;
   Future<void> initTheme() async {
     ThemeMode themeMode =
         ThemeMode.values[await SharedPref().getInt(Names.themeMode)];
@@ -26,27 +31,24 @@ class _SplashState extends State<Splash> {
 
   Future<void> initUserSettings() async {
     SharedPref sharedPref = SharedPref();
-
-    context.read<UserData>().schoolClass =
-        await sharedPref.getString(Names.schoolClass);
-    context.read<UserData>().personalSubstitute =
+    UserData provider = Provider.of<UserData>(context, listen: false);
+    provider.schoolClass = await sharedPref.getString(Names.schoolClass);
+    provider.personalSubstitute =
         await sharedPref.getBool(Names.personalSubstitute);
-    context.read<UserData>().friendsFeature =
-        await sharedPref.getBool(Names.friendsFeature);
+    provider.friendsFeature = await sharedPref.getBool(Names.friendsFeature);
 
-    context.read<UserData>().rawSubstituteToday =
+    provider.rawSubstituteToday =
         await sharedPref.getStringList(Names.substituteToday);
-    context.read<UserData>().rawSubstituteTomorrow =
+    provider.rawSubstituteTomorrow =
         await sharedPref.getStringList(Names.substituteTomorrow);
 
-    context.read<UserData>().subjects =
-        await sharedPref.getStringList(Names.subjects);
-    context.read<UserData>().subjectsNot =
-        await sharedPref.getStringList(Names.subjectsNot);
+    provider.subjects = await sharedPref.getStringList(Names.subjects);
+    provider.subjectsNot = await sharedPref.getStringList(Names.subjectsNot);
   }
 
   void initNotification() => PushNotificationsManager().init();
   void initDynamicLink() => DynamicLink().handleDynamicLink();
+
   Future<void> checkForUpdate() async {
     CloudDatabase cd = CloudDatabase();
     updateCodes updateSituation = await cd.getUpdate();
@@ -108,67 +110,84 @@ class _SplashState extends State<Splash> {
     }
   }
 
+  Future<void> load() async {
+    if (!kIsWeb) {
+      initDynamicLink();
+      initNotification();
+    }
+    //disable new notification option by default
+    SharedPref().checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
+      if (!value) SharedPref().setBool(Names.notificationOnFirstChange, false);
+    });
+    await Future.wait(
+      [
+        initTheme(),
+        initUserSettings(),
+        if (!kIsWeb) checkForUpdate(),
+        if (auth.getUserId() != null)
+          CloudDatabase()
+              .syncSettings(Provider.of<UserData>(context, listen: false))
+      ],
+    );
+    setState(() {
+      finishedLoading = true;
+    });
+  }
+
   @override
   void initState() {
     load();
     super.initState();
   }
 
-  load() async {
-    await initTheme();
-    await initUserSettings();
-    if (!kIsWeb) {
-      checkForUpdate();
-      initDynamicLink();
-      initNotification();
-    }
-
-    //disable new notification option by default
-    SharedPref().checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
-      if (!value) SharedPref().setBool(Names.notificationOnFirstChange, false);
-    });
-    if (AuthService().getUserId() != null)
-      await CloudDatabase()
-          .syncSettings(Provider.of<UserData>(context, listen: false));
-    // Timer(Duration(milliseconds: 100), () {
-    Navigator.of(context).pushReplacementNamed(Names.wrapper);
-    // });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[800],
-      body: Stack(
-        children: <Widget>[
-          Center(
-            child: Image.asset(
-              "assets/icons/icon.png",
-              height: 150,
+      body: finishedLoading
+          ? StreamBuilder(
+              stream: auth.user,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return buildLoadScreen();
+                if (snapshot.hasData)
+                  return Home();
+                else if (kIsWeb)
+                  return WebPageLogIn(isLogIn: true);
+                else
+                  return IntroScreen();
+              },
+            )
+          : buildLoadScreen(),
+    );
+  }
+
+  Widget buildLoadScreen() {
+    return Stack(
+      children: <Widget>[
+        Center(
+          child: Image.asset(
+            "assets/icons/icon.png",
+            height: 150,
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 500,
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                height: 500,
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                "Vertretung",
+                style: TextStyle(fontSize: 30, color: Colors.white),
+                textAlign: TextAlign.center,
               ),
-              Align(
-                alignment: Alignment.center,
-                child: AnimatedOpacity(
-                  opacity: 1,
-                  duration: Duration(milliseconds: 100),
-                  child: Text(
-                    "Vertretung",
-                    style: TextStyle(fontSize: 30, color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
+            )
+          ],
+        ),
+      ],
     );
   }
 }

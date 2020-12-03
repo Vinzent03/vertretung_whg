@@ -3,7 +3,6 @@ import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/data/wiredashKeys.dart';
 import 'package:Vertretung/friends/friendsList.dart';
 import 'package:Vertretung/main/introScreen.dart';
-import 'package:Vertretung/main/wrapper.dart';
 import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/pages/helpPage.dart';
 import 'package:Vertretung/provider/themeSettings.dart';
@@ -68,10 +67,8 @@ class MyAppSt extends StatelessWidget {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: context.watch<ThemeSettings>().getThemeMode(),
-        initialRoute: Names.splashScreen,
+        home: Splash(),
         routes: {
-          Names.splashScreen: (context) => Splash(),
-          Names.wrapper: (context) => Wrapper(),
           Names.settingsPage: (context) => SettingsPage(),
           Names.helpPage: (context) => HelpPage(),
           Names.introScreen: (context) => IntroScreen(),

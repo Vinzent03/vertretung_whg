@@ -1,4 +1,3 @@
-import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +89,8 @@ class RegistrationWidget extends StatelessWidget {
               );
               Scaffold.of(context).showSnackBar(snack);
             } else {
-              Navigator.popUntil(context, ModalRoute.withName(Names.wrapper));
+              Navigator.popUntil(
+                  context, ModalRoute.withName(Navigator.defaultRouteName));
             }
           },
         ),

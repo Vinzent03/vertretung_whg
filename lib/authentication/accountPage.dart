@@ -90,7 +90,8 @@ class _AccountPageState extends State<AccountPage> {
             onPressed: () async {
               await authService
                   .signOut(Provider.of<UserData>(context, listen: false));
-              Navigator.popUntil(context, ModalRoute.withName(Names.wrapper));
+              Navigator.popUntil(
+                  context, ModalRoute.withName(Navigator.defaultRouteName));
             },
           )
         ],
@@ -196,8 +197,10 @@ class _AccountPageState extends State<AccountPage> {
                                 await authService.signOut(Provider.of<UserData>(
                                     context,
                                     listen: false));
-                                Navigator.popUntil(context,
-                                    ModalRoute.withName(Names.wrapper));
+                                Navigator.popUntil(
+                                    context,
+                                    ModalRoute.withName(
+                                        Navigator.defaultRouteName));
                               }),
                         ),
                 ),

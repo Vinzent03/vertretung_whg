@@ -1,4 +1,3 @@
-import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +70,9 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                             );
                             await pr.hide();
                             Navigator.popUntil(
-                                context, ModalRoute.withName(Names.wrapper));
+                                context,
+                                ModalRoute.withName(
+                                    Navigator.defaultRouteName));
                           },
                         ),
                       ),
