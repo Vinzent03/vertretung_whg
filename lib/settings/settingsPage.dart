@@ -290,20 +290,19 @@ class _SettingsPageState extends State<SettingsPage> {
                     leading: Icon(Icons.info),
                     onTap: () => Navigator.pushNamed(context, Names.aboutPage),
                   ),
-                  if (!kIsWeb)
-                    ListTile(
-                      leading: Icon(Icons.feedback),
-                      title: Text("Feedback"),
-                      onTap: () async {
-                        Wiredash.of(context).setBuildProperties(
-                            buildVersion: kIsWeb
-                                ? "web"
-                                : (await PackageInfo.fromPlatform()).version);
-                        Wiredash.of(context).setUserProperties(
-                            userId: AuthService().getUserId());
-                        Wiredash.of(context).show();
-                      },
-                    ),
+                  ListTile(
+                    leading: Icon(Icons.feedback),
+                    title: Text("Feedback"),
+                    onTap: () async {
+                      Wiredash.of(context).setBuildProperties(
+                          buildVersion: kIsWeb
+                              ? "web"
+                              : (await PackageInfo.fromPlatform()).version);
+                      Wiredash.of(context)
+                          .setUserProperties(userId: AuthService().getUserId());
+                      Wiredash.of(context).show();
+                    },
+                  ),
                   ListTile(
                     title: Text("Lizenzen"),
                     leading: Icon(Icons.library_books),
