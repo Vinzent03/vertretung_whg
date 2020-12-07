@@ -103,6 +103,8 @@ class CloudDatabase {
         await ref.collection("userdata").doc(uid).get();
 
     updateToken();
+
+    if (!userdataDoc.exists) return;
     String schoolClass = userdataDoc.data()[Names.schoolClass];
     List<String> subjects =
         List<String>.from(userdataDoc.data()[Names.subjects]);

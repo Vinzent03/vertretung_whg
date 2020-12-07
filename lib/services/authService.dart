@@ -20,6 +20,14 @@ class AuthService {
     return user?.uid;
   }
 
+  void syncSettingsOnSignIn(UserData provider) {
+    _auth.authStateChanges().listen((event) {
+      if (event != null) {
+        CloudDatabase().syncSettings(provider);
+      }
+    });
+  }
+
   Stream<User> get user {
     return _auth.authStateChanges();
   }
@@ -47,7 +55,7 @@ class AuthService {
     try {
       await user.linkWithCredential(credential);
       FirebaseAnalytics().logSignUp(signUpMethod: "email");
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "weak-password":
           return "Das Passwort ist zu schwach.";
@@ -97,12 +105,10 @@ class AuthService {
     return _auth.currentUser.email;
   }
 
-  Future<String> signInEmail(
-      {String email, String password, UserData provider}) async {
+  Future<String> signInEmail({String email, String password}) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseAnalytics().logLogin(loginMethod: "email");
-      await CloudDatabase().syncSettings(provider);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "invalid-email":
@@ -131,7 +137,7 @@ class AuthService {
         EmailAuthProvider.credential(email: user.email, password: password);
     try {
       await user.reauthenticateWithCredential(credential);
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "wrong-password":
           return "Falsches Passwort";
@@ -147,7 +153,7 @@ class AuthService {
     User user = _auth.currentUser;
     try {
       await user.updatePassword(newPassword);
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "weak-password":
           return "Das Passwort ist nicht stark genug";

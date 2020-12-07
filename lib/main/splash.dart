@@ -111,9 +111,11 @@ class _SplashState extends State<Splash> {
   }
 
   Future<void> load() async {
+    auth.syncSettingsOnSignIn(Provider.of<UserData>(context, listen: false));
     if (!kIsWeb) {
       initDynamicLink();
       initNotification();
+      checkForUpdate();
     }
     //disable new notification option by default
     SharedPref().checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
@@ -123,10 +125,6 @@ class _SplashState extends State<Splash> {
       [
         initTheme(),
         initUserSettings(),
-        if (!kIsWeb) checkForUpdate(),
-        if (auth.getUserId() != null)
-          CloudDatabase()
-              .syncSettings(Provider.of<UserData>(context, listen: false))
       ],
     );
     setState(() {
