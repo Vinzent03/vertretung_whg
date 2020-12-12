@@ -6,6 +6,7 @@ class UserData extends ChangeNotifier {
   bool _friendsFeature;
   List<String> _rawSubstituteToday;
   List<String> _rawSubstituteTomorrow;
+  String _lastChange;
   List<String> _subjects;
   List<String> _subjectsNot;
 
@@ -41,6 +42,13 @@ class UserData extends ChangeNotifier {
 
   set rawSubstituteTomorrow(List<String> list) {
     _rawSubstituteTomorrow = list;
+    notifyListeners();
+  }
+
+  String get lastChange => _lastChange;
+
+  set lastChange(String st) {
+    _lastChange = st;
     notifyListeners();
   }
 

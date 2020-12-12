@@ -2,6 +2,7 @@ import 'package:Vertretung/authentication/accountPage.dart';
 import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/data/wiredashKeys.dart';
 import 'package:Vertretung/friends/friendsList.dart';
+import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/main/introScreen.dart';
 import 'package:Vertretung/news/newsPage.dart';
 import 'package:Vertretung/pages/helpPage.dart';
@@ -10,10 +11,12 @@ import 'package:Vertretung/provider/themedata.dart';
 import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/settings/aboutPage.dart';
 import 'package:Vertretung/settings/settingsPage.dart';
+import 'package:Vertretung/substitute/substituteLogic.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +28,7 @@ import 'main/splash.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onBackgroundMessage(_hanndleBackgroundNotification);
   Firebase.initializeApp().then((value) async {
     if (!kIsWeb) {
       await FirebaseCrashlytics.instance
@@ -81,4 +85,20 @@ class MyAppSt extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _hanndleBackgroundNotification(RemoteMessage message) async {
+  List<String> rawSubstituteToday =
+      message.data["rawSubstituteToday"].split("||");
+  List<String> rawSubstituteTomorrow =
+      message.data["rawSubstituteTomorrow"].split("||");
+  String lastChange =
+      SubstituteLogic().formatLastChange(message.data["lastChange"]);
+
+  SharedPref sharedPref = SharedPref();
+  Future.wait([
+    sharedPref.setStringList(Names.substituteToday, rawSubstituteToday),
+    sharedPref.setStringList(Names.substituteTomorrow, rawSubstituteTomorrow),
+    sharedPref.setString(Names.lastChange, lastChange),
+  ]);
 }

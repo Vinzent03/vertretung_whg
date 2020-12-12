@@ -5,6 +5,7 @@ import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/push_notifications.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,6 +24,7 @@ class AuthService {
   void syncSettingsOnSignIn(UserData provider) {
     _auth.authStateChanges().listen((event) {
       if (event != null) {
+        if (!kIsWeb) PushNotificationsManager(provider).init();
         CloudDatabase().syncSettings(provider);
       }
     });

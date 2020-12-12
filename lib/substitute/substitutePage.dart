@@ -20,10 +20,10 @@ class SubstitutePage extends StatefulWidget {
   }
 
   @override
-  SubstitutePageState createState() => SubstitutePageState();
+  _SubstitutePageState createState() => _SubstitutePageState();
 }
 
-class SubstitutePageState extends State<SubstitutePage>
+class _SubstitutePageState extends State<SubstitutePage>
     with TickerProviderStateMixin {
   CloudDatabase cd = CloudDatabase();
   SharedPref sharedPref = SharedPref();
@@ -33,8 +33,6 @@ class SubstitutePageState extends State<SubstitutePage>
   bool finishedLoading = false;
   bool loadingSuccess = true;
 
-  ///The last change of the substitute
-  String lastChange = "Loading";
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
@@ -68,20 +66,16 @@ class SubstitutePageState extends State<SubstitutePage>
           await sharedPref.getStringList(Names.substituteToday);
       List<String> oldRawSubstituteTomorrow =
           await sharedPref.getStringList(Names.substituteTomorrow);
-      setState(() {
-        lastChange = newLastChange;
-      });
       context.read<UserData>().rawSubstituteToday = oldRawSubstituteToday;
       context.read<UserData>().rawSubstituteTomorrow = oldRawSubstituteTomorrow;
+      context.read<UserData>().lastChange = newLastChange;
     } else {
       loadingSuccess = true;
       Scaffold.of(context).hideCurrentSnackBar();
-      setState(() {
-        lastChange = dataResult[0];
-      });
+      context.read<UserData>().lastChange = dataResult[0];
       context.read<UserData>().rawSubstituteToday = dataResult[1];
       context.read<UserData>().rawSubstituteTomorrow = dataResult[2];
-      await sharedPref.setString(Names.lastChange, lastChange);
+      await sharedPref.setString(Names.lastChange, dataResult[0]);
       await sharedPref.setStringList(Names.substituteToday, dataResult[1]);
       await sharedPref.setStringList(Names.substituteTomorrow, dataResult[2]);
     }
@@ -144,8 +138,8 @@ class SubstitutePageState extends State<SubstitutePage>
       child: Builder(builder: (context) {
         return Scaffold(
           appBar: AppBar(
-            title:
-                Text("$lastChange  ${SubstituteLogic().getWeekNumber()}. KW"),
+            title: Text(
+                "${context.watch<UserData>().lastChange}  ${SubstituteLogic().getWeekNumber()}. KW"),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.open_in_browser),
@@ -215,8 +209,6 @@ class SubstitutePageState extends State<SubstitutePage>
                         list: myListToday,
                         controller: _refreshController,
                         reload: () => reloadAll(fromPullToRefresh: true),
-                        isNotUpdated: myListToday.isEmpty &&
-                            lastChange.substring(7) == "00:09",
                       ),
                     if (personalSubstitute)
                       SubstitutePullToRefresh(
@@ -224,24 +216,18 @@ class SubstitutePageState extends State<SubstitutePage>
                         list: myListTomorrow,
                         controller: _refreshController,
                         reload: () => reloadAll(fromPullToRefresh: true),
-                        isNotUpdated: myListTomorrow.isEmpty &&
-                            lastChange.substring(7) == "00:09",
                       ),
                     SubstitutePullToRefresh(
                       key: MyKeys.thirdTab,
                       list: listToday,
                       controller: _refreshController,
                       reload: () => reloadAll(fromPullToRefresh: true),
-                      isNotUpdated: listToday.isEmpty &&
-                          lastChange.substring(7) == "00:09",
                     ),
                     SubstitutePullToRefresh(
                       key: MyKeys.fourthTab,
                       list: listTomorrow,
                       controller: _refreshController,
                       reload: () => reloadAll(fromPullToRefresh: true),
-                      isNotUpdated: listTomorrow.isEmpty &&
-                          lastChange.substring(7) == "00:09",
                     ),
                   ],
                 )

@@ -1,6 +1,8 @@
 import 'package:Vertretung/models/substituteModel.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/substitute/noSubstitute.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'substituteTile.dart';
@@ -9,14 +11,12 @@ class SubstitutePullToRefresh extends StatefulWidget {
   final List<SubstituteModel> list;
   final RefreshController controller;
   final VoidCallback reload;
-  final bool isNotUpdated;
 
   SubstitutePullToRefresh({
     Key key,
     this.list = const [],
     this.controller,
     this.reload,
-    this.isNotUpdated,
   }) : super(key: key);
 
   @override
@@ -67,7 +67,8 @@ class SubstitutePullToRefreshState extends State<SubstitutePullToRefresh>
         child: SmartRefresher(
           controller: widget.controller,
           onRefresh: widget.reload,
-          child: NoSubstitute(widget.isNotUpdated),
+          child: NoSubstitute(widget.list.isEmpty &&
+              context.watch<UserData>().lastChange.substring(7) == "00:09"),
         ),
       );
   }

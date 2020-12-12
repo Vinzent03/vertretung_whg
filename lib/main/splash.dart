@@ -9,7 +9,6 @@ import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/services/dynamicLink.dart';
-import 'package:Vertretung/services/push_notifications.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
@@ -41,12 +40,12 @@ class _SplashState extends State<Splash> {
         await sharedPref.getStringList(Names.substituteToday);
     provider.rawSubstituteTomorrow =
         await sharedPref.getStringList(Names.substituteTomorrow);
+    provider.lastChange = await sharedPref.getString(Names.lastChange);
 
     provider.subjects = await sharedPref.getStringList(Names.subjects);
     provider.subjectsNot = await sharedPref.getStringList(Names.subjectsNot);
   }
 
-  void initNotification() => PushNotificationsManager().init();
   void initDynamicLink() => DynamicLink().handleDynamicLink();
 
   Future<void> checkForUpdate() async {
@@ -114,7 +113,6 @@ class _SplashState extends State<Splash> {
     auth.syncSettingsOnSignIn(Provider.of<UserData>(context, listen: false));
     if (!kIsWeb) {
       initDynamicLink();
-      initNotification();
       checkForUpdate();
     }
     //disable new notification option by default

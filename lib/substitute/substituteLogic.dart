@@ -1,11 +1,12 @@
+import 'dart:convert';
+
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart'; // Contains HTML parsers to generate a Document object
 import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart'; // Contains HTML parsers to generate a Document object
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'dart:convert';
 
 class SubstituteLogic {
   int getWeekNumber() {
@@ -23,10 +24,8 @@ class SubstituteLogic {
       dom.Document todayDocument = parse(utf8.decode(todayResponse.bodyBytes));
       dom.Document tomorrowDocument =
           parse(utf8.decode(tomorrowResponse.bodyBytes));
-      String lastChange = todayDocument.querySelectorAll('h2').first.text;
-      var lastChangeShort = lastChange.substring(17);
-      var lastChangeFinal =
-          lastChangeShort.replaceAll(lastChangeShort.substring(6, 10), "");
+      String unformattedLastChange =
+          todayDocument.querySelectorAll('h2').first.text;
 
       List<dom.Element> vertretungToday = todayDocument.querySelectorAll('td');
       List<dom.Element> vertretungTomorrow =
@@ -40,10 +39,21 @@ class SubstituteLogic {
       vertretungTomorrow.forEach((element) {
         vertretungTomorrowList.add(element.text.trim());
       });
-      return [lastChangeFinal, vertretungTodayList, vertretungTomorrowList];
+      return [
+        formatLastChange(unformattedLastChange),
+        vertretungTodayList,
+        vertretungTomorrowList
+      ];
     } catch (e) {
       print(e);
       return [];
     }
+  }
+
+  String formatLastChange(String unformattedLastChange) {
+    var lastChangeShort = unformattedLastChange.substring(17);
+    var lastChangeFinal =
+        lastChangeShort.replaceAll(lastChangeShort.substring(6, 10), "");
+    return lastChangeFinal;
   }
 }

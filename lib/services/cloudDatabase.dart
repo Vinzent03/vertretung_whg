@@ -37,7 +37,7 @@ class CloudDatabase {
   void updateToken() async {
     String token = await PushNotificationsManager().getToken();
     DocumentReference doc = ref.collection("userdata").doc(uid);
-    if (!kIsWeb) doc.update({"token": token});
+    if (token != null) doc.update({"token": token});
   }
 
   void updateSubjects() async {
