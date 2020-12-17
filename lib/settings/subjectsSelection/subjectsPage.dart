@@ -1,8 +1,11 @@
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
+import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/cloudDatabase.dart';
 import 'package:Vertretung/settings/subjectsSelection/searchPage.dart';
 import 'package:flutter/material.dart';
-import 'package:Vertretung/data/names.dart';
+import 'package:provider/provider.dart';
+
 import '../../models/courseTileModel.dart';
 import 'subjectsTemplate.dart';
 
@@ -74,11 +77,12 @@ class _SubjectsPageState extends State<SubjectsPage> {
         widget.isWhitelist ? Names.subjectsCustom : Names.subjectsNotCustom);
     for (String fach in savedSubjectsCustom) {
       subjectsListCustom.insert(
-          subjectsListCustom.length - 1,
-          CourseTileModel(
-            title: fach,
-            isCustom: true,
-          ));
+        subjectsListCustom.length - 1,
+        CourseTileModel(
+          title: fach,
+          isCustom: true,
+        ),
+      );
     }
     // recover already selected subjects
     List<String> newSubjects = await sharedPref
@@ -127,6 +131,11 @@ class _SubjectsPageState extends State<SubjectsPage> {
     sharedPref.setStringList(
         widget.isWhitelist ? Names.subjects : Names.subjectsNot,
         selectedSubjects);
+    if (widget.isWhitelist) {
+      context.read<UserData>().subjects = selectedSubjects;
+    } else {
+      context.read<UserData>().subjectsNot = selectedSubjects;
+    }
     selectedSubjects.sort();
     if (mounted)
       setState(() {
@@ -174,7 +183,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                 ? IconButton(
                     onPressed: () {
                       setState(() {
-                        selectedSubjects.remove(root.title);
+                        checkItem(root, false);
                         subjectsListCustom
                             .removeWhere((item) => item.title == root.title);
                       });
