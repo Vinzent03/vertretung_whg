@@ -10,14 +10,15 @@ class FriendLogic {
 
   List<SubstituteModel> _getSubstituteOfFriend(
       FriendModel friend, List<String> rawSubstituteList) {
-    Filter filter = Filter(friend.schoolClass, rawSubstituteList);
     List<SubstituteModel> substitute;
     List<SubstituteModel> justCancelledLessons = [];
     if (friend.personalSubstitute) {
-      var list = filter.checkForSubjects(friend.subjects, friend.subjectsNot);
+      var list = Filter.checkPersonalSubstitute(friend.schoolClass,
+          rawSubstituteList, friend.subjects, friend.subjectsNot);
       substitute = list;
     } else {
-      var list = filter.checkForSchoolClass();
+      var list =
+          Filter.checkForSchoolClass(friend.schoolClass, rawSubstituteList);
       substitute = list;
     }
     for (SubstituteModel item in substitute) {

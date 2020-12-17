@@ -36,12 +36,6 @@ class _SubstitutePageState extends State<SubstitutePage>
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  //initialize these list, because to load subjects from localDatabase takes time, and the UI have to be build
-  List<SubstituteModel> myListToday = [];
-  List<SubstituteModel> listToday = [];
-  List<SubstituteModel> myListTomorrow = [];
-  List<SubstituteModel> listTomorrow = [];
-
   Future<void> reloadAll({bool fromPullToRefresh = false}) async {
     SnackBar snack = SnackBar(
       content: Text("Es werden alte Daten verwendet."),
@@ -57,7 +51,6 @@ class _SubstitutePageState extends State<SubstitutePage>
     );
     List<dynamic> dataResult =
         await SubstituteLogic().getData(); //load the data from dsb mobile
-
     if (dataResult.isEmpty) {
       if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
       loadingSuccess = false;
@@ -78,6 +71,8 @@ class _SubstitutePageState extends State<SubstitutePage>
       await sharedPref.setString(Names.lastChange, dataResult[0]);
       await sharedPref.setStringList(Names.substituteToday, dataResult[1]);
       await sharedPref.setStringList(Names.substituteTomorrow, dataResult[2]);
+
+      _updateLastNotification(context.read<UserData>());
     }
     setState(() {
       finishedLoading = true;
@@ -85,40 +80,23 @@ class _SubstitutePageState extends State<SubstitutePage>
     if (fromPullToRefresh) _refreshController.refreshCompleted();
   }
 
-  void reloadFilteredSubstitute(
-      String schoolClass,
-      List<String> subjects,
-      List<String> subjectsNot,
-      List<String> rawSubstituteToday,
-      List<String> rawSubstituteTomorrow) {
-    Filter filterToday = Filter(schoolClass, rawSubstituteToday);
-    Filter filterTomorrow = Filter(schoolClass, rawSubstituteTomorrow);
-    List<dynamic> tempList = (personalSubstitute ? myListToday : listToday);
-    setState(() {
-      myListToday = filterToday.checkForSubjects(subjects, subjectsNot);
-      listToday = filterToday.checkForSchoolClass();
-      myListTomorrow = filterTomorrow.checkForSubjects(subjects, subjectsNot);
-      listTomorrow = filterTomorrow.checkForSchoolClass();
-    });
-    if (tempList.toString() !=
-        (personalSubstitute ? myListToday : listToday)
-            .toString()) //used to decrease Firestore writes.
-      cd.updateLastNotification(personalSubstitute ? myListToday : listToday);
+  void _updateLastNotification(UserData provider) {
+    List<SubstituteModel> myListToday = Filter.checkPersonalSubstitute(
+      provider.schoolClass,
+      provider.rawSubstituteToday,
+      provider.subjects,
+      provider.subjectsNot,
+    );
+    List<SubstituteModel> listToday = Filter.checkForSchoolClass(
+      provider.schoolClass,
+      provider.rawSubstituteToday,
+    );
+    cd.updateLastNotification(personalSubstitute ? myListToday : listToday);
   }
 
   @override
   void initState() {
     reloadAll(fromPullToRefresh: false);
-    context.read<UserData>().addListener(() {
-      if (!mounted) return;
-      UserData provider = context.read<UserData>();
-      reloadFilteredSubstitute(
-          provider.schoolClass,
-          provider.subjects,
-          provider.subjectsNot,
-          provider.rawSubstituteToday,
-          provider.rawSubstituteTomorrow);
-    });
     super.initState();
   }
 
@@ -206,29 +184,45 @@ class _SubstitutePageState extends State<SubstitutePage>
                     if (personalSubstitute)
                       SubstitutePullToRefresh(
                         key: MyKeys.firstTab,
-                        list: myListToday,
                         controller: _refreshController,
                         reload: () => reloadAll(fromPullToRefresh: true),
+                        list: Filter.checkPersonalSubstitute(
+                          context.watch<UserData>().schoolClass,
+                          context.watch<UserData>().rawSubstituteToday,
+                          context.watch<UserData>().subjects,
+                          context.watch<UserData>().subjectsNot,
+                        ),
                       ),
                     if (personalSubstitute)
                       SubstitutePullToRefresh(
                         key: MyKeys.secondTab,
-                        list: myListTomorrow,
                         controller: _refreshController,
                         reload: () => reloadAll(fromPullToRefresh: true),
+                        list: Filter.checkPersonalSubstitute(
+                          context.watch<UserData>().schoolClass,
+                          context.watch<UserData>().rawSubstituteTomorrow,
+                          context.watch<UserData>().subjects,
+                          context.watch<UserData>().subjectsNot,
+                        ),
                       ),
                     SubstitutePullToRefresh(
                       key: MyKeys.thirdTab,
-                      list: listToday,
                       controller: _refreshController,
                       reload: () => reloadAll(fromPullToRefresh: true),
+                      list: Filter.checkForSchoolClass(
+                        context.watch<UserData>().schoolClass,
+                        context.watch<UserData>().rawSubstituteToday,
+                      ),
                     ),
                     SubstitutePullToRefresh(
                       key: MyKeys.fourthTab,
-                      list: listTomorrow,
                       controller: _refreshController,
                       reload: () => reloadAll(fromPullToRefresh: true),
-                    ),
+                      list: Filter.checkForSchoolClass(
+                        context.watch<UserData>().schoolClass,
+                        context.watch<UserData>().rawSubstituteTomorrow,
+                      ),
+                    )
                   ],
                 )
               : Center(

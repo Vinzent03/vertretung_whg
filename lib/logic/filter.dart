@@ -1,115 +1,116 @@
-import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/models/substituteModel.dart';
 import "dart:math";
 
+import 'package:Vertretung/models/substituteModel.dart';
+
 class Filter {
-  SharedPref sharedPref = SharedPref();
-
-  String schoolClass;
-  final List<String> rawList;
-  Filter(this.schoolClass, this.rawList);
-
-  List<SubstituteModel> checkForSchoolClass() {
-    //filter the specific class:
-
-    // 0 bevor the class was found in the list, 1 in the class, 2 out of the class
+  /// Get list containing only the substitute of the given schoolClass
+  static List<SubstituteModel> checkForSchoolClass(
+      String schoolClass, List<String> rawList) {
     List<String> listWithoutClasses = [];
-    int b = 0;
-    schoolClass = schoolClass.toLowerCase();
-    for (String part in rawList) {
-      String stk = part.toLowerCase();
-      if (stk.contains("std.")) {
-        if (b == 1) {
-          listWithoutClasses.add(part);
+    bool inSchoolClass = false;
+    String schoolClassLow = schoolClass.toLowerCase();
+    for (String item in rawList) {
+      String itemLow = item.toLowerCase();
+      // If the item contains `std.` its substitute and not the information about which schoolClass
+      if (itemLow.contains("std.")) {
+        if (inSchoolClass) {
+          listWithoutClasses.add(item);
         }
       } else {
-        if (stk.contains(schoolClass)) {
-          b = 1;
+        if (itemLow.contains(schoolClassLow)) {
+          //Until the next occurrence of a schoolClass, it contains only substitute of the given schoolClass
+          inSchoolClass = true;
         } else {
-          b = 2;
+          // not in substitute of the given schoolClass
+          inSchoolClass = false;
         }
       }
     }
 
-    //just a better formatting of the given text(not especially needed)
-    List<String> betterList = [];
-    for (String st in listWithoutClasses) {
-      if (st.contains("bei +")) {
-        bool textContainsSubject = false;
-        for(String subjectSuffix in ["-GK","-LK","-PK","-ZK"]){
-          if(st.contains(subjectSuffix))textContainsSubject = true;
-        }
-
-        if (textContainsSubject) {
-          String beginn = st.substring(0, st.indexOf("bei +") - 1);
-          st = "$beginn Entfall";
-        } else
-          st = st.replaceFirst("bei +", "Entfall");
-      }
-      betterList.add(st);
-    }
-
-    return mergeList(betterList);
+    return _addSubjectPrefixes(_formatList(listWithoutClasses));
   }
 
-  //check only for the given subjects
-  List<dynamic> checkForSubjects(
-      List<dynamic> subjectsList, List<dynamic> subjectsNotList) {
-    List<SubstituteModel> listWithoutClasses = checkForSchoolClass();
-    List<String> listWithoutLessons = [];
-    if (subjectsList.isEmpty || (subjectsList[0] == "")) {
-      // Wenn man bei der Eingabe alles weg macht
-      subjectsList = [""];
-    }
-    if (subjectsNotList.isEmpty || (subjectsNotList[0] == "")) {
-      subjectsNotList = ["customExample"];
-    }
+  ///Get list containing only the substitute for the schoolClass and the subjects
+  static List<SubstituteModel> checkPersonalSubstitute(String schoolClass,
+      List<String> rawList, List<dynamic> subjects, List<dynamic> subjectsNot) {
+    List<SubstituteModel> substituteWithSchoolClass =
+        checkForSchoolClass(schoolClass, rawList);
+    List<String> resultList = [];
 
-    if (listWithoutClasses.isNotEmpty) {
-      for (SubstituteModel item in listWithoutClasses) {
-        String titleLower = item.title.toLowerCase();
-
-        for (String rawSubject in subjectsList) {
-          String subject;
-          if (rawSubject.isNotEmpty)
-            subject = " " + rawSubject.toLowerCase() + " ";
-          else
-            subject = "";
-          int i = 0;
-          for (String rawSubjectNot in subjectsNotList) {
-            String subjectNot = " " + rawSubjectNot.toLowerCase() + " ";
-            if (titleLower.contains("bei")) {
-              titleLower = titleLower.substring(0, titleLower.indexOf("bei"));
-            }
-            if (titleLower.contains(subject)) {
-              if (i != 2) {
-                i = 1;
-              }
-              if (titleLower.contains(subjectNot)) {
-                i = 2;
-              }
-            }
-          }
-          if (i == 1) {
-            listWithoutLessons.add(item.title);
-          }
+    for (SubstituteModel item in substituteWithSchoolClass) {
+      String substitute = item.title.toLowerCase();
+      if (substitute.contains("bei")) {
+        substitute = substitute.substring(0, substitute.indexOf("bei"));
+      }
+      if (["EF", "Q1", "Q2"].contains(schoolClass)) {
+        if (_isWhitelist(substitute, subjects)) {
+          resultList.add(item.title);
+        }
+      } else {
+        if (!_isBlacklist(substitute, subjectsNot)) {
+          resultList.add(item.title);
         }
       }
     }
-    return mergeList(listWithoutLessons);
+    return _addSubjectPrefixes(resultList);
   }
 }
 
-List<SubstituteModel> mergeList(List<String> list) {
+List<SubstituteModel> _addSubjectPrefixes(List<String> list) {
   List<SubstituteModel> finalList = [];
   for (String item in list) {
-    finalList.add(SubstituteModel(item, getSubjectPrefix(item)));
+    finalList.add(SubstituteModel(item, _getSubjectPrefix(item)));
   }
   return finalList;
 }
 
-//get the name of the subject
-String getSubjectPrefix(String st) {
+bool _isWhitelist(String substitute, List<String> subjects) {
+  bool isWhitelist = false;
+  for (String subject in subjects) {
+    String formattedSubject = " " + subject.toLowerCase() + " ";
+    if (substitute.contains(formattedSubject)) {
+      isWhitelist = true;
+      break;
+    }
+  }
+  return isWhitelist;
+}
+
+bool _isBlacklist(String substitute, List<String> subjectsNot) {
+  bool isBlacklist = false;
+  for (String subject in subjectsNot) {
+    String formattedSubject = " " + subject.toLowerCase() + " ";
+    if (substitute.contains(formattedSubject)) {
+      isBlacklist = true;
+      break;
+    }
+  }
+  return isBlacklist;
+}
+
+///just a better formatting of the given text(not especially needed)
+List<String> _formatList(List<String> list) {
+  List<String> formattedList = [];
+  for (String st in list) {
+    if (st.contains("bei +")) {
+      bool textContainsSubject = false;
+      for (String subjectSuffix in ["-GK", "-LK", "-PK", "-ZK"]) {
+        if (st.contains(subjectSuffix)) textContainsSubject = true;
+      }
+
+      if (textContainsSubject) {
+        String beginn = st.substring(0, st.indexOf("bei +") - 1);
+        st = "$beginn Entfall";
+      } else
+        st = st.replaceFirst("bei +", "Entfall");
+    }
+    formattedList.add(st);
+  }
+  return formattedList;
+}
+
+///get the name of the subject
+String _getSubjectPrefix(String st) {
   //GE-GK1 would be the course
   //GE would be subject
 
@@ -121,7 +122,6 @@ String getSubjectPrefix(String st) {
   int endOfCourse = st.indexOf("-", beginIndex) == -1
       ? 20
       : st.indexOf("-", beginIndex); // if no "-" is provided
-  // int end = endOfSubject < endOfCourse ? endOfSubject : endOfCourse;
   int end = min(endOfSubject, endOfCourse);
 
   return st.substring(beginIndex, end);
