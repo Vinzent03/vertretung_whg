@@ -1,7 +1,7 @@
-import 'package:Vertretung/data/myKeys.dart';
+import 'package:Vertretung/data/my_keys.dart';
 import 'package:Vertretung/data/names.dart';
-import 'package:Vertretung/provider/userData.dart';
-import 'package:Vertretung/substitute/substituteLogic.dart';
+import 'package:Vertretung/provider/user_data.dart';
+import 'package:Vertretung/substitute/substitute_logic.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 

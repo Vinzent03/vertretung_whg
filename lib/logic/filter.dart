@@ -1,6 +1,6 @@
 import "dart:math";
 
-import 'package:Vertretung/models/substituteModel.dart';
+import 'package:Vertretung/models/substitute_tile_model.dart';
 
 class Filter {
   /// Get list containing only the substitute of the given schoolClass
