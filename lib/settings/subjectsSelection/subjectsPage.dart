@@ -24,7 +24,6 @@ class _SubjectsPageState extends State<SubjectsPage> {
   List<CourseTileModel> subjectsListCustom;
   List<String> selectedSubjects = [];
   TextEditingController myController;
-  SharedPref sharedPref = SharedPref();
   SubjectsTemplate template = SubjectsTemplate();
 
   Future<void> showInfoDialog() async {
@@ -73,7 +72,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
     ];
     //recover custom subjects
     template.subjectsTemplate.sort((a, b) => a.title.compareTo(b.title));
-    List<String> savedSubjectsCustom = await sharedPref.getStringList(
+    List<String> savedSubjectsCustom = await SharedPref.getStringList(
         widget.isWhitelist ? Names.subjectsCustom : Names.subjectsNotCustom);
     for (String fach in savedSubjectsCustom) {
       subjectsListCustom.insert(
@@ -85,8 +84,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
       );
     }
     // recover already selected subjects
-    List<String> newSubjects = await sharedPref
-        .getStringList(widget.isWhitelist ? Names.subjects : Names.subjectsNot);
+    List<String> newSubjects = await SharedPref.getStringList(
+        widget.isWhitelist ? Names.subjects : Names.subjectsNot);
     if (newSubjects.isEmpty) await showInfoDialog();
 
     showFormatingDialog();
@@ -271,7 +270,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
     for (CourseTileModel subject in subjectsListCustom) {
       if (subject.title != null) _customSubjectsForSaving.add(subject.title);
     }
-    sharedPref.setStringList(
+    SharedPref.setStringList(
         widget.isWhitelist ? Names.subjectsCustom : Names.subjectsNotCustom,
         _customSubjectsForSaving);
 

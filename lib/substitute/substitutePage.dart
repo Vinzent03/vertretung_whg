@@ -26,7 +26,6 @@ class SubstitutePage extends StatefulWidget {
 class _SubstitutePageState extends State<SubstitutePage>
     with TickerProviderStateMixin {
   CloudDatabase cd = CloudDatabase();
-  SharedPref sharedPref = SharedPref();
 
   ///if the user selected personal substitute(use also subjects in filter)
   bool personalSubstitute = false;
@@ -54,11 +53,11 @@ class _SubstitutePageState extends State<SubstitutePage>
     if (dataResult.isEmpty) {
       if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
       loadingSuccess = false;
-      String newLastChange = await sharedPref.getString(Names.lastChange);
+      String newLastChange = await SharedPref.getString(Names.lastChange);
       List<String> oldRawSubstituteToday =
-          await sharedPref.getStringList(Names.substituteToday);
+          await SharedPref.getStringList(Names.substituteToday);
       List<String> oldRawSubstituteTomorrow =
-          await sharedPref.getStringList(Names.substituteTomorrow);
+          await SharedPref.getStringList(Names.substituteTomorrow);
       context.read<UserData>().rawSubstituteToday = oldRawSubstituteToday;
       context.read<UserData>().rawSubstituteTomorrow = oldRawSubstituteTomorrow;
       context.read<UserData>().lastChange = newLastChange;

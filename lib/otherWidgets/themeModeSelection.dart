@@ -25,7 +25,7 @@ class ThemeModeSelection extends StatelessWidget {
             itemBuilder: (context, index) {
               return FlatButton(
                 onPressed: () {
-                  SharedPref().setInt(Names.themeMode, index);
+                  SharedPref.setInt(Names.themeMode, index);
                   context
                       .read<ThemeSettings>()
                       .setThemeMode(ThemeMode.values[index]);

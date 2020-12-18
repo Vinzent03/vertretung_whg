@@ -31,8 +31,6 @@ class _SettingsPageState extends State<SettingsPage> {
   bool personalSubstitute;
   bool friendsFeature;
 
-  SharedPref sharedPref = SharedPref();
-
   deleteSubjectsDialog() {
     showDialog(
       context: context,
@@ -75,9 +73,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Text("Bestätigen"),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  if ((await sharedPref.getStringList(Names.subjects))
+                  if ((await SharedPref.getStringList(Names.subjects))
                           .isNotEmpty ||
-                      (await sharedPref.getStringList(Names.subjectsNot))
+                      (await SharedPref.getStringList(Names.subjectsNot))
                           .isNotEmpty) {
                     await deleteSubjectsDialog();
                   }
@@ -100,9 +98,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void loadSettings() async {
     bool pNotificationOnChange =
-        await sharedPref.getBool(Names.notificationOnChange);
+        await SharedPref.getBool(Names.notificationOnChange);
     bool pNotificationOnFirstChange =
-        await sharedPref.getBool(Names.notificationOnFirstChange);
+        await SharedPref.getBool(Names.notificationOnFirstChange);
     setState(() {
       notificationOnChange = pNotificationOnChange;
       notificationOnFirstChange = pNotificationOnFirstChange;
@@ -247,7 +245,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       secondary: Icon(Icons.notifications_active),
                       value: notificationOnChange,
                       onChanged: (bool b) {
-                        sharedPref.setBool(Names.notificationOnChange, b);
+                        SharedPref.setBool(Names.notificationOnChange, b);
                         setState(() {
                           notificationOnChange = b;
                         });
@@ -263,7 +261,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       secondary: Icon(Icons.notifications_active),
                       value: notificationOnFirstChange,
                       onChanged: (bool b) {
-                        sharedPref.setBool(Names.notificationOnFirstChange, b);
+                        SharedPref.setBool(Names.notificationOnFirstChange, b);
                         setState(() {
                           notificationOnFirstChange = b;
                         });

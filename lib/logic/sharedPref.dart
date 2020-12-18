@@ -1,52 +1,52 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPref {
-  Future<void> setBool(String name, bool b) async {
+  static Future<void> setBool(String name, bool b) async {
     final prefs = await SharedPreferences.getInstance();
     return await prefs.setBool(name, b);
   }
 
-  Future<bool> getBool(String name) async {
+  static Future<bool> getBool(String name) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(name) ?? true;
   }
 
-  Future<void> setString(String name, String text) async {
+  static Future<void> setString(String name, String text) async {
     final prefs = await SharedPreferences.getInstance();
     return await prefs.setString(name, text);
   }
 
-  Future<String> getString(String name) async {
+  static Future<String> getString(String name) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(name) ?? "Nicht festgelegt";
   }
 
-  Future<void> setStringList(String name, List<String> list) async {
+  static Future<void> setStringList(String name, List<String> list) async {
     final prefs = await SharedPreferences.getInstance();
     return await prefs.setStringList(name, list);
   }
 
-  Future<List<String>> getStringList(String name) async {
+  static Future<List<String>> getStringList(String name) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getStringList(name) ?? [];
   }
 
-  Future<int> getInt(String name) async {
+  static Future<int> getInt(String name) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(name) ?? 0;
   }
 
-  Future<void> setInt(String name, int newInt) async {
+  static Future<void> setInt(String name, int newInt) async {
     final prefs = await SharedPreferences.getInstance();
     return await prefs.setInt(name, newInt);
   }
 
-  Future<bool> checkIfKeyIsSet(String name) async {
+  static Future<bool> checkIfKeyIsSet(String name) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.containsKey(name);
   }
 
-  Future<void> clear() async {
+  static Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
     return await prefs.clear();
   }

@@ -41,7 +41,7 @@ class AuthService {
       await user.delete();
     else
       _auth.signOut();
-    await SharedPref().clear();
+    await SharedPref.clear();
     provider.reset();
   }
 
@@ -89,18 +89,17 @@ class AuthService {
     else
       await signUp(email, password);
     CloudDatabase db = CloudDatabase();
-    SharedPref sharedPref = SharedPref();
     db.updateName(name);
     db.updateUserData(
-      schoolClass: await sharedPref.getString(Names.schoolClass),
-      personalSubstitute: await sharedPref.getBool(Names.personalSubstitute),
+      schoolClass: await SharedPref.getString(Names.schoolClass),
+      personalSubstitute: await SharedPref.getBool(Names.personalSubstitute),
       notificationOnChange: isAnonym,
       notificationOnFirstChange: false,
     );
     db.updateSubjects();
     db.updateCustomSubjects();
-    sharedPref.setBool(Names.notificationOnChange, isAnonym);
-    sharedPref.setBool(Names.notificationOnFirstChange, false);
+    SharedPref.setBool(Names.notificationOnChange, isAnonym);
+    SharedPref.setBool(Names.notificationOnFirstChange, false);
   }
 
   String getEmail() {

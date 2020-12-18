@@ -41,10 +41,9 @@ class CloudDatabase {
   }
 
   void updateSubjects() async {
-    SharedPref sharedPref = SharedPref();
-    List<String> subjects = await sharedPref.getStringList(Names.subjects);
+    List<String> subjects = await SharedPref.getStringList(Names.subjects);
     List<String> subjectsNot =
-        await sharedPref.getStringList(Names.subjectsNot);
+        await SharedPref.getStringList(Names.subjectsNot);
 
     ref.collection("userdata").doc(uid).update(
       {
@@ -55,11 +54,10 @@ class CloudDatabase {
   }
 
   void updateCustomSubjects() async {
-    SharedPref sharedPref = SharedPref();
     List<String> subjectsCustom =
-        await sharedPref.getStringList(Names.subjectsCustom);
+        await SharedPref.getStringList(Names.subjectsCustom);
     List<String> subjectsNotCustom =
-        await sharedPref.getStringList(Names.subjectsNotCustom);
+        await SharedPref.getStringList(Names.subjectsNotCustom);
 
     ref.collection("userdata").doc(uid).update(
       {
@@ -121,12 +119,11 @@ class CloudDatabase {
     bool notificationOnFirstChange =
         userdataDoc.data()[Names.notificationOnFirstChange];
 
-    SharedPref sharedPref = SharedPref();
-    sharedPref.setStringList(Names.subjectsCustom, subjectsCustom);
-    sharedPref.setStringList(Names.subjectsNotCustom, subjectsNotCustom);
-    sharedPref.setStringList(Names.freeLessons, freeLessons);
-    sharedPref.setBool(Names.notificationOnChange, notificationOnChange);
-    sharedPref.setBool(
+    SharedPref.setStringList(Names.subjectsCustom, subjectsCustom);
+    SharedPref.setStringList(Names.subjectsNotCustom, subjectsNotCustom);
+    SharedPref.setStringList(Names.freeLessons, freeLessons);
+    SharedPref.setBool(Names.notificationOnChange, notificationOnChange);
+    SharedPref.setBool(
         Names.notificationOnFirstChange, notificationOnFirstChange);
 
     provider.schoolClass = schoolClass;

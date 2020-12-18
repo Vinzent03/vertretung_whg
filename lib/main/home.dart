@@ -48,8 +48,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     FirebaseAnalytics().setCurrentScreen(screenName: "SubstitutePage");
-    SharedPref()
-        .getBool(Names.friendsFeature)
+    SharedPref.getBool(Names.friendsFeature)
         .then((value) => setState(() => friendsFeature = value));
     super.initState();
   }

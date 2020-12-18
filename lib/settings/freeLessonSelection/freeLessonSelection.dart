@@ -12,11 +12,10 @@ class FreeLessonSelection extends StatefulWidget {
 }
 
 class _FreeLessonSelectionState extends State<FreeLessonSelection> {
-  SharedPref sharedPref = SharedPref();
   List<String> rawNewFreeLessons = [];
   List<LessonModel> template = [];
   loadData() async {
-    rawNewFreeLessons = await sharedPref.getStringList(Names.freeLessons);
+    rawNewFreeLessons = await SharedPref.getStringList(Names.freeLessons);
     for (String item in rawNewFreeLessons) {
       setState(() {
         template[int.parse(item.substring(0, 1))]
@@ -75,7 +74,7 @@ class _FreeLessonSelectionState extends State<FreeLessonSelection> {
     else
       rawNewFreeLessons.remove("${item.day.index}${item.lesson}");
     rawNewFreeLessons.sort();
-    sharedPref.setStringList(Names.freeLessons, rawNewFreeLessons);
+    SharedPref.setStringList(Names.freeLessons, rawNewFreeLessons);
     setState(() {
       item.isChecked = b;
     });

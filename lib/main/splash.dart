@@ -24,26 +24,25 @@ class _SplashState extends State<Splash> {
   bool finishedLoading = false;
   Future<void> initTheme() async {
     ThemeMode themeMode =
-        ThemeMode.values[await SharedPref().getInt(Names.themeMode)];
+        ThemeMode.values[await SharedPref.getInt(Names.themeMode)];
     context.read<ThemeSettings>().setThemeMode(themeMode);
   }
 
   Future<void> initUserSettings() async {
-    SharedPref sharedPref = SharedPref();
     UserData provider = Provider.of<UserData>(context, listen: false);
-    provider.schoolClass = await sharedPref.getString(Names.schoolClass);
+    provider.schoolClass = await SharedPref.getString(Names.schoolClass);
     provider.personalSubstitute =
-        await sharedPref.getBool(Names.personalSubstitute);
-    provider.friendsFeature = await sharedPref.getBool(Names.friendsFeature);
+        await SharedPref.getBool(Names.personalSubstitute);
+    provider.friendsFeature = await SharedPref.getBool(Names.friendsFeature);
 
     provider.rawSubstituteToday =
-        await sharedPref.getStringList(Names.substituteToday);
+        await SharedPref.getStringList(Names.substituteToday);
     provider.rawSubstituteTomorrow =
-        await sharedPref.getStringList(Names.substituteTomorrow);
-    provider.lastChange = await sharedPref.getString(Names.lastChange);
+        await SharedPref.getStringList(Names.substituteTomorrow);
+    provider.lastChange = await SharedPref.getString(Names.lastChange);
 
-    provider.subjects = await sharedPref.getStringList(Names.subjects);
-    provider.subjectsNot = await sharedPref.getStringList(Names.subjectsNot);
+    provider.subjects = await SharedPref.getStringList(Names.subjects);
+    provider.subjectsNot = await SharedPref.getStringList(Names.subjectsNot);
   }
 
   void initDynamicLink() => DynamicLink().handleDynamicLink();
@@ -116,8 +115,8 @@ class _SplashState extends State<Splash> {
       checkForUpdate();
     }
     //disable new notification option by default
-    SharedPref().checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
-      if (!value) SharedPref().setBool(Names.notificationOnFirstChange, false);
+    SharedPref.checkIfKeyIsSet(Names.notificationOnFirstChange).then((value) {
+      if (!value) SharedPref.setBool(Names.notificationOnFirstChange, false);
     });
     await Future.wait(
       [

@@ -14,7 +14,6 @@ class SchoolClassSelection extends StatefulWidget {
 }
 
 class _SchoolClassSelectionState extends State<SchoolClassSelection> {
-  SharedPref sharedPref = SharedPref();
   String levelHint = "1. Wähle eine Stufe";
   String classHint = "2. Wähle eine Klasse";
   String chosenLevel = "5";
@@ -34,7 +33,7 @@ class _SchoolClassSelectionState extends State<SchoolClassSelection> {
     setState(() {
       classHint = _value;
     });
-    String oldSchoolClass = await sharedPref.getString(Names.schoolClass);
+    String oldSchoolClass = await SharedPref.getString(Names.schoolClass);
     context.read<UserData>().schoolClass = _value;
     if (!oldSchoolClass.contains(" "))
       await push.unsubTopic(
