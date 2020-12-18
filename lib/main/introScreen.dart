@@ -1,6 +1,4 @@
 import 'package:Vertretung/authentication/logInPage.dart';
-import 'package:Vertretung/data/names.dart';
-import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/otherWidgets/schoolClassSelection.dart';
 import 'package:Vertretung/provider/themedata.dart';
 import 'package:Vertretung/provider/userData.dart';
@@ -207,8 +205,6 @@ class _IntroScreenState extends State<IntroScreen> {
             alreadyPressed = true;
             ProgressDialog pr =
                 ProgressDialog(context, isDismissible: false, showLogs: false);
-            await SharedPref()
-                .setBool(Names.personalSubstitute, personalSubstitute);
             context.read<UserData>().personalSubstitute = personalSubstitute;
             String name = nameController.text;
             if (name == "") name = "Nicht festgelegt";

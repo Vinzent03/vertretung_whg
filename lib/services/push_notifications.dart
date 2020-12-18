@@ -1,6 +1,5 @@
 import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/data/names.dart';
-import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/substitute/substituteLogic.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -27,12 +26,6 @@ class PushNotificationsManager {
             message.data["rawSubstituteTomorrow"].split("||");
         String lastChange =
             SubstituteLogic().formatLastChange(message.data["lastChange"]);
-
-        SharedPref sharedPref = SharedPref();
-        sharedPref.setStringList(Names.substituteToday, rawSubstituteToday);
-        sharedPref.setStringList(
-            Names.substituteTomorrow, rawSubstituteTomorrow);
-        sharedPref.setString(Names.lastChange, lastChange);
 
         provider.rawSubstituteToday = rawSubstituteToday;
         provider.rawSubstituteTomorrow = rawSubstituteTomorrow;

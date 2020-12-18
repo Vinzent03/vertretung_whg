@@ -122,13 +122,9 @@ class CloudDatabase {
         userdataDoc.data()[Names.notificationOnFirstChange];
 
     SharedPref sharedPref = SharedPref();
-    sharedPref.setString(Names.schoolClass, schoolClass);
-    sharedPref.setStringList(Names.subjects, subjects);
-    sharedPref.setStringList(Names.subjectsNot, subjectsNot);
     sharedPref.setStringList(Names.subjectsCustom, subjectsCustom);
     sharedPref.setStringList(Names.subjectsNotCustom, subjectsNotCustom);
     sharedPref.setStringList(Names.freeLessons, freeLessons);
-    sharedPref.setBool(Names.personalSubstitute, personalSubstitute);
     sharedPref.setBool(Names.notificationOnChange, notificationOnChange);
     sharedPref.setBool(
         Names.notificationOnFirstChange, notificationOnFirstChange);

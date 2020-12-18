@@ -128,9 +128,6 @@ class _SubjectsPageState extends State<SubjectsPage> {
     } else {
       selectedSubjects.add(root.title);
     }
-    sharedPref.setStringList(
-        widget.isWhitelist ? Names.subjects : Names.subjectsNot,
-        selectedSubjects);
     if (widget.isWhitelist) {
       context.read<UserData>().subjects = selectedSubjects;
     } else {

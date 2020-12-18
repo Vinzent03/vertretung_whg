@@ -1,11 +1,11 @@
+import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/data/schoolClasses.dart';
 import 'package:Vertretung/logic/sharedPref.dart';
-import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/models/schoolClassModel.dart';
 import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/push_notifications.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SchoolClassSelection extends StatefulWidget {
@@ -30,13 +30,12 @@ class _SchoolClassSelectionState extends State<SchoolClassSelection> {
   }
 
   void finish(String _value, BuildContext context) async {
-    context.read<UserData>().schoolClass = _value;
     PushNotificationsManager push = PushNotificationsManager();
     setState(() {
       classHint = _value;
     });
     String oldSchoolClass = await sharedPref.getString(Names.schoolClass);
-    sharedPref.setString(Names.schoolClass, _value);
+    context.read<UserData>().schoolClass = _value;
     if (!oldSchoolClass.contains(" "))
       await push.unsubTopic(
           oldSchoolClass); //If schoolClass is not manually set, it is set to "Nicht festgelegt", but that shouldn't be a topic

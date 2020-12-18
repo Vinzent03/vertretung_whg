@@ -2,7 +2,6 @@ import 'package:Vertretung/data/myKeys.dart';
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/friends/addFriendDialog.dart';
 import 'package:Vertretung/friends/friendLogic.dart';
-import 'package:Vertretung/logic/sharedPref.dart';
 import 'package:Vertretung/models/friendModel.dart';
 import 'package:Vertretung/provider/userData.dart';
 import 'package:Vertretung/services/authService.dart';
@@ -123,7 +122,6 @@ class FriendsPageState extends State<FriendsPage> {
                       child: Text("Freundes Funktion deaktivieren"),
                       onPressed: () {
                         context.read<UserData>().friendsFeature = false;
-                        SharedPref().setBool(Names.friendsFeature, false);
                       },
                     ),
                   ],

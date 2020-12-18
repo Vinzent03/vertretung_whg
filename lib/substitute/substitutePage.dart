@@ -68,9 +68,6 @@ class _SubstitutePageState extends State<SubstitutePage>
       context.read<UserData>().lastChange = dataResult[0];
       context.read<UserData>().rawSubstituteToday = dataResult[1];
       context.read<UserData>().rawSubstituteTomorrow = dataResult[2];
-      await sharedPref.setString(Names.lastChange, dataResult[0]);
-      await sharedPref.setStringList(Names.substituteToday, dataResult[1]);
-      await sharedPref.setStringList(Names.substituteTomorrow, dataResult[2]);
 
       _updateLastNotification(context.read<UserData>());
     }

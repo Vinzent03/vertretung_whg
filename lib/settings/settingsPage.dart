@@ -42,8 +42,6 @@ class _SettingsPageState extends State<SettingsPage> {
           RaisedButton(
             child: Text("Bestätigen"),
             onPressed: () async {
-              await sharedPref.setStringList(Names.subjects, []);
-              await sharedPref.setStringList(Names.subjectsNot, []);
               context.read<UserData>().subjects = [];
               context.read<UserData>().subjectsNot = [];
 
@@ -186,7 +184,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     value: personalSubstitute,
                     secondary: Icon(Icons.group),
                     onChanged: (bool b) {
-                      sharedPref.setBool(Names.personalSubstitute, b);
                       context.read<UserData>().personalSubstitute = b;
                       updateUserdata();
                     },
@@ -222,7 +219,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     secondary: Icon(Icons.group),
                     value: friendsFeature,
                     onChanged: (bool b) {
-                      sharedPref.setBool(Names.friendsFeature, b);
                       context.read<UserData>().friendsFeature = b;
                     },
                   ),
