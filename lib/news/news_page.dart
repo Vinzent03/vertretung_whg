@@ -2,91 +2,50 @@ import 'package:Vertretung/models/news_model.dart';
 import 'package:Vertretung/news/details_page.dart';
 import 'package:Vertretung/news/news_transmitter.dart';
 import 'package:Vertretung/otherWidgets/open_container_wrapper.dart';
-import 'package:Vertretung/provider/user_data.dart';
-import 'package:Vertretung/services/auth_service.dart';
-import 'package:Vertretung/services/cloud_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:provider/provider.dart';
 
 import 'edit_news_page.dart';
 import 'news_logic.dart';
 
-class NewsPage extends StatefulWidget {
-  const NewsPage({Key key}) : super(key: key);
-  @override
-  String toStringShort() {
-    return "NewsPage";
-  }
-
-  @override
-  NewsPageState createState() => NewsPageState();
-}
-
 enum actions { delete, edit }
 
-class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
-  bool isAdmin = false;
-  AnimationController _controller;
-  Animation<double> _animation;
-
-  @override
-  void initState() {
-    AuthService().getAdminStatus().then((value) => setState(() {
-          isAdmin = value;
-        }));
-    _controller = AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this, value: 0.1);
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.ease);
-    _controller.forward();
-    super.initState();
-  }
-
-  void reAnimate() {
-    _controller.reset();
-    _controller.forward();
-  }
-
+class NewsPage extends StatelessWidget {
+  final List<NewsModel> news;
+  final bool isAdmin;
+  const NewsPage({
+    Key key,
+    @required this.news,
+    @required this.isAdmin,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Nachrichten"),
-      ),
-      body: StreamBuilder<List<NewsModel>>(
-          stream: CloudDatabase().getNews(
-              context.select((UserData user) => user.schoolClass), isAdmin),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting)
-              return Center(child: CircularProgressIndicator());
-            else if (snapshot.hasError)
-              return Center(
-                child: Text(
-                    "Ein Fehler ist aufgetreten:" + snapshot.error.toString()),
+      body: Builder(builder: (context) {
+        if (news == null) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return ListView.builder(
+            physics: ScrollPhysics(),
+            itemCount: news.length,
+            itemBuilder: (context, index) {
+              return Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15))),
+                elevation: 3,
+                child: OpenContainerWrapper(
+                  openBuilder: (context, action) => DetailsPage(
+                    index: index,
+                    news: news[index],
+                  ),
+                  closedBuilder: (context, action) =>
+                      buildListItem(news[index], index, action, context),
+                ),
               );
-            return ScaleTransition(
-              scale: _animation,
-              child: ListView.builder(
-                physics: ScrollPhysics(),
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15))),
-                    elevation: 3,
-                    child: OpenContainerWrapper(
-                      openBuilder: (context, action) => DetailsPage(
-                        index: index,
-                        news: snapshot.data[index],
-                      ),
-                      closedBuilder: (context, action) =>
-                          buildListItem(snapshot.data[index], index, action),
-                    ),
-                  );
-                },
-              ),
-            );
-          }),
+            },
+          );
+        }
+      }),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
               heroTag: "filter",
@@ -134,7 +93,8 @@ class NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget buildListItem(NewsModel item, int index, Function action) {
+  Widget buildListItem(
+      NewsModel item, int index, Function action, BuildContext context) {
     return ListTile(
       title: Text(
         item.title,

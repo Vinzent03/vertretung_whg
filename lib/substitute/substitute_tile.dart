@@ -21,8 +21,8 @@ class SubstituteListTile extends StatelessWidget {
         color: Colors.blue[700],
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(15))),
+        elevation: 4,
         child: ListTile(
-          onTap: () {},
           title: Text(
             substitute.title,
             style: TextStyle(fontSize: 16),
@@ -34,11 +34,9 @@ class SubstituteListTile extends StatelessWidget {
               ? null
               : IconButton(
                   icon: Icon(Icons.share),
-                  onPressed: () => share(context, true),
+                  onPressed: () => share(context),
                 ),
           subtitle: substitute.names != null ? Text(substitute.names) : null,
-          onLongPress:
-              substitute.names != null ? null : () => share(context, false),
         ),
       ),
     );
@@ -59,11 +57,11 @@ class SubstituteListTile extends StatelessWidget {
       );
   }
 
-  share(BuildContext context, bool fromButton) {
+  share(BuildContext context) {
     FirebaseAnalytics analytics = FirebaseAnalytics();
     analytics.logShare(
       contentType: substitute.names == null ? "SubstitutePage" : "FriendsPage",
-      method: fromButton ? "button pressed" : "hold",
+      method: "button pressed",
       itemId: substitute.subjectPrefix,
     );
     if (kIsWeb) {

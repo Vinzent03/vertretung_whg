@@ -1,8 +1,10 @@
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/shared_pref.dart';
+import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/cloud_database.dart';
 import 'package:Vertretung/settings/freeLessonSelection/lesson_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 enum Weekdays { monday, tuesday, wednesday, thursday, friday }
 
@@ -74,7 +76,7 @@ class _FreeLessonSelectionState extends State<FreeLessonSelection> {
     else
       rawNewFreeLessons.remove("${item.day.index}${item.lesson}");
     rawNewFreeLessons.sort();
-    SharedPref.setStringList(Names.freeLessons, rawNewFreeLessons);
+    context.read<UserData>().freeLessons = rawNewFreeLessons;
     setState(() {
       item.isChecked = b;
     });

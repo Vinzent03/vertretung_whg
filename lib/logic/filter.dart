@@ -32,7 +32,7 @@ class Filter {
 
   ///Get list containing only the substitute for the schoolClass and the subjects
   static List<SubstituteModel> checkPersonalSubstitute(String schoolClass,
-      List<String> rawList, List<dynamic> subjects, List<dynamic> subjectsNot) {
+      List<String> rawList, List<String> subjects, List<String> subjectsNot) {
     List<SubstituteModel> substituteWithSchoolClass =
         checkForSchoolClass(schoolClass, rawList);
     List<String> resultList = [];

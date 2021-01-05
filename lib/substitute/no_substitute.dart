@@ -1,8 +1,8 @@
+import 'package:Vertretung/provider/user_data.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NoSubstitute extends StatefulWidget {
-  final bool isNotUpdated;
-  NoSubstitute(this.isNotUpdated);
   @override
   _NoSubstituteState createState() => _NoSubstituteState();
 }
@@ -10,23 +10,17 @@ class NoSubstitute extends StatefulWidget {
 class _NoSubstituteState extends State<NoSubstitute> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(
-            Icons.business_center,
-            color: Colors.blue,
-            size: 200,
-          ),
-          Text(
-            widget.isNotUpdated
-                ? "Leider keine Vertretung, aber der Plan wurde noch nicht aktualisiert."
-                : "Leider keine Vertretung",
-            style: TextStyle(fontSize: 19),
-            textAlign: TextAlign.center,
-          )
-        ],
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black45),
+          borderRadius: BorderRadius.all(Radius.circular(15))),
+      padding: const EdgeInsets.all(8),
+      alignment: Alignment.center,
+      child: Text(
+        context.watch<UserData>().lastChange.contains("00:09")
+            ? "Leider keine Vertretung, aber der Plan wurde noch nicht aktualisiert"
+            : "Leider keine Vertretung 😔",
+        style: TextStyle(fontSize: 18),
       ),
     );
   }

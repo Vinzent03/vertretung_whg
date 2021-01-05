@@ -3,8 +3,6 @@ import 'package:Vertretung/data/my_keys.dart';
 import 'package:Vertretung/data/wiredash_keys.dart';
 import 'package:Vertretung/friends/friend_list.dart';
 import 'package:Vertretung/logic/shared_pref.dart';
-import 'package:Vertretung/main/intro_screen.dart';
-import 'package:Vertretung/news/news_page.dart';
 import 'package:Vertretung/pages/help_page.dart';
 import 'package:Vertretung/provider/theme_data.dart';
 import 'package:Vertretung/provider/theme_settings.dart';
@@ -75,8 +73,6 @@ class MyAppSt extends StatelessWidget {
         routes: {
           Names.settingsPage: (context) => SettingsPage(),
           Names.helpPage: (context) => HelpPage(),
-          Names.introScreen: (context) => IntroScreen(),
-          Names.newsPage: (context) => NewsPage(),
           Names.aboutPage: (context) => AboutPage(),
           Names.accountPage: (context) => AccountPage(),
           Names.friendsList: (context) => FriendsList(),

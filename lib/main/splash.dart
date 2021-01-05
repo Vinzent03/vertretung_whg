@@ -43,6 +43,8 @@ class _SplashState extends State<Splash> {
 
     provider.subjects = await SharedPref.getStringList(Names.subjects);
     provider.subjectsNot = await SharedPref.getStringList(Names.subjectsNot);
+
+    provider.freeLessons = await SharedPref.getStringList(Names.freeLessons);
   }
 
   void initDynamicLink() => DynamicLink().handleDynamicLink();

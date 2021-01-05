@@ -2,8 +2,6 @@ class Names {
   //Pages
   static const String settingsPage = "/settingsPage";
   static const String helpPage = "/helpPage";
-  static const String introScreen = "/introScreen";
-  static const String newsPage = "/newsPage";
   static const String aboutPage = "/aboutPage";
   static const String accountPage = "/accountPage";
   static const String friendsList = "/friendsList";

@@ -1,5 +1,7 @@
 import 'package:Vertretung/data/names.dart';
+import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/logic/shared_pref.dart';
+import 'package:Vertretung/models/substitute_tile_model.dart';
 import 'package:flutter/material.dart';
 
 class UserData extends ChangeNotifier {
@@ -11,6 +13,7 @@ class UserData extends ChangeNotifier {
   String _lastChange;
   List<String> _subjects;
   List<String> _subjectsNot;
+  List<String> _freeLessons;
 
   String get schoolClass => _schoolClass;
 
@@ -73,6 +76,34 @@ class UserData extends ChangeNotifier {
   set subjectsNot(List<String> list) {
     SharedPref.setStringList(Names.subjectsNot, list);
     _subjectsNot = list;
+    notifyListeners();
+  }
+
+  ///Get substitute of today, handles personalSubstitute too
+  List<SubstituteModel> get substituteToday {
+    if (_personalSubstitute) {
+      return Filter.checkPersonalSubstitute(
+          _schoolClass, _rawSubstituteToday, _subjects, _subjectsNot);
+    } else {
+      return Filter.checkForSchoolClass(_schoolClass, _rawSubstituteToday);
+    }
+  }
+
+  ///Get substitute of tomorrow, handles personalSubstitute too
+  List<SubstituteModel> get substituteTomorrow {
+    if (_personalSubstitute) {
+      return Filter.checkPersonalSubstitute(
+          _schoolClass, _rawSubstituteTomorrow, _subjects, _subjectsNot);
+    } else {
+      return Filter.checkForSchoolClass(_schoolClass, _rawSubstituteTomorrow);
+    }
+  }
+
+  List<String> get freeLessons => _freeLessons;
+
+  set freeLessons(List<String> list) {
+    SharedPref.setStringList(Names.freeLessons, list);
+    _freeLessons = list;
     notifyListeners();
   }
 

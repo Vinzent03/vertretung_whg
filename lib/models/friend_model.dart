@@ -3,8 +3,8 @@ class FriendModel {
   final String name;
   final String schoolClass;
   final bool personalSubstitute;
-  final List<dynamic> subjects;
-  final List<dynamic> subjectsNot;
+  final List<String> subjects;
+  final List<String> subjectsNot;
   final List<dynamic> freeLessons;
   const FriendModel(
     this.uid,

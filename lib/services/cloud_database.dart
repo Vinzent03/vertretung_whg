@@ -1,4 +1,5 @@
 import 'package:Vertretung/data/names.dart';
+import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/logic/shared_pref.dart';
 import 'package:Vertretung/models/friend_model.dart';
 import 'package:Vertretung/models/news_model.dart';
@@ -75,9 +76,23 @@ class CloudDatabase {
     );
   }
 
-  void updateLastNotification(List<SubstituteModel> substitute) async {
+  void updateLastNotification(UserData provider) async {
     List<String> justSubstitute = [];
-    for (SubstituteModel item in substitute) {
+    List<SubstituteModel> list;
+    if (provider.personalSubstitute) {
+      list = Filter.checkPersonalSubstitute(
+        provider.schoolClass,
+        provider.rawSubstituteToday,
+        provider.subjects,
+        provider.subjectsNot,
+      );
+    } else {
+      list = Filter.checkForSchoolClass(
+        provider.schoolClass,
+        provider.rawSubstituteToday,
+      );
+    }
+    for (SubstituteModel item in list) {
       justSubstitute.add(item.title);
     }
     DocumentReference doc = ref.collection("userdata").doc(uid);
@@ -121,7 +136,6 @@ class CloudDatabase {
 
     SharedPref.setStringList(Names.subjectsCustom, subjectsCustom);
     SharedPref.setStringList(Names.subjectsNotCustom, subjectsNotCustom);
-    SharedPref.setStringList(Names.freeLessons, freeLessons);
     SharedPref.setBool(Names.notificationOnChange, notificationOnChange);
     SharedPref.setBool(
         Names.notificationOnFirstChange, notificationOnFirstChange);
@@ -130,6 +144,7 @@ class CloudDatabase {
     provider.subjects = subjects;
     provider.subjectsNot = subjectsNot;
     provider.personalSubstitute = personalSubstitute;
+    provider.freeLessons = freeLessons;
   }
 
   //Updates
@@ -223,9 +238,9 @@ class CloudDatabase {
               e.data()["name"],
               e.data()[Names.schoolClass],
               e.data()[Names.personalSubstitute],
-              e.data()[Names.subjects],
-              e.data()[Names.subjectsNot],
-              e.data()[Names.freeLessons] ?? [],
+              List<String>.from(e.data()[Names.subjects]),
+              List<String>.from(e.data()[Names.subjectsNot]),
+              List<String>.from(e.data()[Names.freeLessons] ?? []),
             ),
           )
           .toList();
