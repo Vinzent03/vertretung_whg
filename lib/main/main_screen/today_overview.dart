@@ -59,72 +59,71 @@ class _TodayOverviewState extends State<TodayOverview> {
       },
       child: widget.loaded
           ? list.isNotEmpty
-              ? Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black45),
-                      borderRadius: BorderRadius.all(Radius.circular(15))),
-                  padding: EdgeInsets.all(8),
-                  alignment: Alignment.center,
-                  child: Column(
-                    children: [
-                      AnimatedList(
-                        physics: NeverScrollableScrollPhysics(),
-                        key: _listKey,
-                        initialItemCount: min(2, list.length),
-                        shrinkWrap: true,
-                        itemBuilder: (BuildContext context, int index,
-                            Animation<double> animation) {
-                          return SizeTransition(
-                            axisAlignment: -1,
-                            axis: Axis.vertical,
-                            sizeFactor: animation,
-                            child: SubstituteListTile(list[index]),
-                          );
-                        },
-                      ),
-                      AnimatedSwitcher(
-                        duration: Duration(milliseconds: 300),
-                        transitionBuilder: (child, animation) => SizeTransition(
-                          sizeFactor: animation,
-                          child: child,
+              ? Card(
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: [
+                        AnimatedList(
+                          physics: NeverScrollableScrollPhysics(),
+                          key: _listKey,
+                          initialItemCount: min(2, list.length),
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index,
+                              Animation<double> animation) {
+                            return SizeTransition(
+                              axisAlignment: -1,
+                              axis: Axis.vertical,
+                              sizeFactor: animation,
+                              child: SubstituteListTile(list[index]),
+                            );
+                          },
                         ),
-                        child: (!expanded && list.length > 2)
-                            ? Column(
-                                children: [
-                                  Divider(
-                                    height: 8,
-                                    endIndent: 110,
-                                    indent: 110,
-                                    thickness: 3,
-                                  ),
-                                  Divider(
-                                    height: 8,
-                                    endIndent: 130,
-                                    indent: 130,
-                                    thickness: 3,
-                                  ),
-                                  Divider(
-                                    height: 8,
-                                    endIndent: 150,
-                                    indent: 150,
-                                    thickness: 3,
-                                  ),
-                                ],
-                              )
-                            : SizedBox(),
-                      ),
-                    ],
+                        AnimatedSwitcher(
+                          duration: Duration(milliseconds: 300),
+                          transitionBuilder: (child, animation) =>
+                              SizeTransition(
+                            sizeFactor: animation,
+                            child: child,
+                          ),
+                          child: (!expanded && list.length > 2)
+                              ? Column(
+                                  children: [
+                                    Divider(
+                                      height: 8,
+                                      endIndent: 110,
+                                      indent: 110,
+                                      thickness: 3,
+                                    ),
+                                    Divider(
+                                      height: 8,
+                                      endIndent: 130,
+                                      indent: 130,
+                                      thickness: 3,
+                                    ),
+                                    Divider(
+                                      height: 8,
+                                      endIndent: 150,
+                                      indent: 150,
+                                      thickness: 3,
+                                    ),
+                                  ],
+                                )
+                              : SizedBox(),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : NoSubstitute()
           : Center(
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black45),
-                    borderRadius: BorderRadius.all(Radius.circular(15))),
-                padding: const EdgeInsets.all(8),
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(),
+              child: Card(
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(),
+                ),
               ),
             ),
     );
@@ -146,9 +145,9 @@ class _TodayOverviewState extends State<TodayOverview> {
     }
   }
 
-  /// Default targetedLength is infinity (show whole list)
+  /// Default targetedLength is 1000 (show whole list)
   void handleListUpdate(List<SubstituteModel> tempList,
-      [double targetedLength = double.infinity]) {
+      [int targetedLength = 1000]) {
     //expand
     if (list.length > tempList.length) {
       for (var i = tempList.length; i < min(targetedLength, list.length); i++) {

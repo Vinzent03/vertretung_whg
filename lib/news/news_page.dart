@@ -30,9 +30,6 @@ class NewsPage extends StatelessWidget {
             itemCount: news.length,
             itemBuilder: (context, index) {
               return Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15))),
-                elevation: 3,
                 child: OpenContainerWrapper(
                   openBuilder: (context, action) => DetailsPage(
                     index: index,

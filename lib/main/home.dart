@@ -8,7 +8,6 @@ import 'package:Vertretung/main/main_screen/school_class_substitute.dart';
 import 'package:Vertretung/models/friend_model.dart';
 import 'package:Vertretung/models/news_model.dart';
 import 'package:Vertretung/news/news_page.dart';
-import 'package:Vertretung/provider/theme_settings.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/services/cloud_database.dart';
@@ -163,10 +162,6 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
-        backgroundColor:
-            context.watch<ThemeSettings>().brightness == Brightness.dark
-                ? Colors.black
-                : Colors.white,
         onTap: swapPage,
         items: [
           BottomNavigationBarItem(

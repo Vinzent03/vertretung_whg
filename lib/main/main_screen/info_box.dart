@@ -22,37 +22,39 @@ class _InfoBoxState extends State<InfoBox> {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      child: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.black45),
-            borderRadius: BorderRadius.all(Radius.circular(15))),
+      child: Card(
         child: InkWell(
           onTap: widget.onPressed,
-          child: Column(
-            children: [
-              AnimatedSwitcher(
-                duration: Duration(milliseconds: 500),
-                child: widget.loaded
-                    ? Text(
-                        widget.list.length.toString(),
-                        key: ValueKey(widget.list.length),
-                        style: TextStyle(fontSize: 50, color: Colors.blue),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(),
-                      ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                child: Text(
-                  widget.title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
+          child: Container(
+            alignment: Alignment.center,
+            child: Column(
+              children: [
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 500),
+                  child: widget.loaded
+                      ? Text(
+                          widget.list.length.toString(),
+                          key: ValueKey(widget.list.length),
+                          style: TextStyle(
+                              fontSize: 50,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w600),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(),
+                        ),
                 ),
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  child: Text(
+                    widget.title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

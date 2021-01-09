@@ -35,21 +35,22 @@ class OverviewPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextHeadline(
-                "Deine Vertretungen Heute: ${context.watch<UserData>().substituteToday.length}"),
+            TextHeadline("Deine Vertretungen Heute: ",
+                context.watch<UserData>().substituteToday.length.toString()),
             TodayOverview(
               today: true,
               loaded: finishedLoading,
             ),
-            TextHeadline(
-                "Deine Vertretungen Morgen: ${context.watch<UserData>().substituteTomorrow.length}"),
+            TextHeadline("Deine Vertretungen Morgen: ",
+                context.watch<UserData>().substituteTomorrow.length.toString()),
             TodayOverview(
               today: false,
               loaded: finishedLoading,
             ),
             if (context.watch<UserData>().personalSubstitute)
               TextHeadline(
-                "${context.watch<UserData>().schoolClass} Vertretungen",
+                "Vertretungen von: ",
+                context.watch<UserData>().schoolClass,
               ),
             if (context.watch<UserData>().personalSubstitute)
               Row(
@@ -63,7 +64,7 @@ class OverviewPage extends StatelessWidget {
                     onPressed: () => swapPage(1),
                   ),
                   SizedBox(
-                    width: padding * 2,
+                    width: padding,
                   ),
                   InfoBox(
                     title: "Morgen",
@@ -88,7 +89,7 @@ class OverviewPage extends StatelessWidget {
                       ),
                     ),
                     title: "Freunde haben frei",
-                    loaded: friendsSettings != null,
+                    loaded: friendsSettings != null && finishedLoading,
                     onPressed: () {
                       if (context.read<UserData>().personalSubstitute) {
                         swapPage(2);
@@ -98,13 +99,13 @@ class OverviewPage extends StatelessWidget {
                     },
                   ),
                   SizedBox(
-                    width: padding * 2,
+                    width: padding,
                   ),
                   InfoBox(
                     list: FriendLogic.friendsFreeWithUser(
                         friendsSettings, context.watch<UserData>()),
                     title: "Haben mit Dir frei",
-                    loaded: friendsSettings != null,
+                    loaded: friendsSettings != null && finishedLoading,
                     onPressed: () {
                       if (context.read<UserData>().personalSubstitute) {
                         swapPage(2);

@@ -1,10 +1,9 @@
 import 'package:Vertretung/friends/add_friend_dialog.dart';
 import 'package:Vertretung/friends/friend_logic.dart';
+import 'package:Vertretung/main/main_screen/two_day_overview.dart';
 import 'package:Vertretung/models/friend_model.dart';
 import 'package:Vertretung/models/substitute_tile_model.dart';
 import 'package:Vertretung/provider/user_data.dart';
-import 'package:Vertretung/substitute/no_substitute.dart';
-import 'package:Vertretung/substitute/substitute_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +14,10 @@ class FriendsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (friendsSettings != null) {
-      final List<SubstituteModel> list = FriendLogic.getFriendsSubstitute(
+      final List<SubstituteModel> today = FriendLogic.getFriendsSubstitute(
           friendsSettings, context.watch<UserData>().rawSubstituteToday);
+      final List<SubstituteModel> tomorrow = FriendLogic.getFriendsSubstitute(
+          friendsSettings, context.watch<UserData>().rawSubstituteTomorrow);
 
       if (friendsSettings.isEmpty) {
         return Center(
@@ -43,15 +44,16 @@ class FriendsPage extends StatelessWidget {
           ],
         ));
       } else {
-        if (list.isNotEmpty) {
-          return ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (BuildContext context, int index) =>
-                SubstituteListTile(list[index]),
-          );
-        } else {
-          return NoSubstitute();
-        }
+        //fixes bug with centering the widget in transition
+        return Column(
+          children: [
+            TwoDayOverview(
+              today: today,
+              tomorrow: tomorrow,
+              fromFriendsPage: true,
+            ),
+          ],
+        );
       }
     } else {
       return Center(

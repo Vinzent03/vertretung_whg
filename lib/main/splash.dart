@@ -140,7 +140,7 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[800],
+      backgroundColor: Theme.of(context).primaryColor,
       body: finishedLoading
           ? StreamBuilder(
               stream: auth.user,

@@ -10,17 +10,16 @@ class NoSubstitute extends StatefulWidget {
 class _NoSubstituteState extends State<NoSubstitute> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.black45),
-          borderRadius: BorderRadius.all(Radius.circular(15))),
-      padding: const EdgeInsets.all(8),
-      alignment: Alignment.center,
-      child: Text(
-        context.watch<UserData>().lastChange.contains("00:09")
-            ? "Leider keine Vertretung, aber der Plan wurde noch nicht aktualisiert"
-            : "Leider keine Vertretung 😔",
-        style: TextStyle(fontSize: 18),
+    return Card(
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        alignment: Alignment.center,
+        child: Text(
+          context.watch<UserData>().lastChange.contains("00:09")
+              ? "Leider keine Vertretung, aber der Plan wurde noch nicht aktualisiert"
+              : "Leider keine Vertretung 😔",
+          style: TextStyle(fontSize: 18),
+        ),
       ),
     );
   }

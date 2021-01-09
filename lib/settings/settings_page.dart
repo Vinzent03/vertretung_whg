@@ -147,34 +147,35 @@ class _SettingsPageState extends State<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Card(
-                elevation: 3,
-                color: Colors.blue[500],
+                color: Theme.of(context).primaryColor,
                 child: ListTile(
                   title: Text(
                     "Dein Account",
+                    style: TextStyle(color: Colors.white),
                   ),
-                  leading: Icon(Icons.donut_large),
+                  leading: Icon(
+                    Icons.donut_large,
+                    color: Colors.white,
+                  ),
                   onTap: () => Navigator.pushNamed(context, Names.accountPage),
                 )),
             Card(
-                elevation: 3,
                 child: ListTile(
-                  leading: Icon(Icons.school),
-                  title: Text(
-                    "Klasse/Stufe",
-                    style: TextStyle(fontSize: 17),
-                  ),
-                  onTap: () => selectSchoolClassDialog(context),
-                  trailing: FlatButton(
-                    child: Text(
-                      context.watch<UserData>().schoolClass,
-                      style: TextStyle(fontSize: 17),
-                    ),
-                    onPressed: () => selectSchoolClassDialog(context),
-                  ),
-                )),
+              leading: Icon(Icons.school),
+              title: Text(
+                "Klasse/Stufe",
+                style: TextStyle(fontSize: 17),
+              ),
+              onTap: () => selectSchoolClassDialog(context),
+              trailing: FlatButton(
+                child: Text(
+                  context.watch<UserData>().schoolClass,
+                  style: TextStyle(fontSize: 17),
+                ),
+                onPressed: () => selectSchoolClassDialog(context),
+              ),
+            )),
             Card(
-              elevation: 3,
               child: Column(
                 children: <Widget>[
                   SwitchListTile(
@@ -206,7 +207,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             Card(
-              elevation: 3,
               child: Column(
                 children: <Widget>[
                   SwitchListTile(
@@ -235,7 +235,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             Card(
-              elevation: 3,
               child: Column(
                 children: <Widget>[
                   ThemeModeSelection(
@@ -276,7 +275,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             Card(
-              elevation: 3,
               child: Column(
                 children: <Widget>[
                   ListTile(
