@@ -29,43 +29,47 @@ class LogInWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 20,
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text("Email:"),
-        ),
-        TextFormField(
-          autofillHints: [AutofillHints.email],
-          controller: emailController,
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text("Passwort:"),
-        ),
-        TextFormField(
-          obscureText: true,
-          autofillHints: [AutofillHints.password],
-          controller: passwordController,
-          onFieldSubmitted: (String st) => logIn(context),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        RaisedButton(child: Text("Anmelden"), onPressed: () => logIn(context)),
-        FlatButton(
-          child: Text("Passwort vergessen"),
-          onPressed: () async {
-            await AuthService().resetPassword(emailController.text);
-          },
-        )
-      ],
+    return AutofillGroup(
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 20,
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Email:"),
+          ),
+          TextFormField(
+            autofillHints: [AutofillHints.email],
+            controller: emailController,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Passwort:"),
+          ),
+          TextFormField(
+            obscureText: true,
+            autofillHints: [AutofillHints.password],
+            controller: passwordController,
+            onFieldSubmitted: (String st) => logIn(context),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          RaisedButton(
+              child: Text("Anmelden"), onPressed: () => logIn(context)),
+          FlatButton(
+            child: Text("Passwort vergessen"),
+            onPressed: () async {
+              await AuthService().resetPassword(emailController.text);
+            },
+          )
+        ],
+      ),
     );
   }
 }
