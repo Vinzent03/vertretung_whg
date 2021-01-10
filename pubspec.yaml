@@ -43,7 +43,6 @@ dependencies:
   progress_dialog: ^1.2.4
   wiredash: ^0.4.0
   dialog_context: ^0.1.1
-  flushbar: ^1.10.4
   animations: ^1.1.2
   flutter_markdown: ^0.5.0
   stream_transform: ^1.2.0

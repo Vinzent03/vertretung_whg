@@ -58,7 +58,7 @@ class RegistrationWidget extends StatelessWidget {
                 ProgressDialog(context, isDismissible: false, showLogs: false);
             String err;
             if (passwordController.text != passwordConfirmController.text)
-              return Scaffold.of(context).showSnackBar(SnackBar(
+              return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text("Die beiden Passwörter sind nicht identisch."),
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: Colors.red,
@@ -74,7 +74,7 @@ class RegistrationWidget extends StatelessWidget {
                   content: Text(e),
                   backgroundColor: Colors.red,
                 );
-                Scaffold.of(context).showSnackBar(snack);
+                ScaffoldMessenger.of(context).showSnackBar(snack);
               });
               await pr.hide();
             } else {
@@ -87,7 +87,7 @@ class RegistrationWidget extends StatelessWidget {
                 content: Text(err),
                 backgroundColor: Colors.red,
               );
-              Scaffold.of(context).showSnackBar(snack);
+              ScaffoldMessenger.of(context).showSnackBar(snack);
             } else {
               Navigator.popUntil(
                   context, ModalRoute.withName(Navigator.defaultRouteName));

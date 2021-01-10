@@ -139,24 +139,23 @@ class _SplashState extends State<Splash> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      body: finishedLoading
-          ? StreamBuilder(
-              stream: auth.user,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting)
-                  return buildLoadScreen();
-                if (snapshot.hasData)
-                  return Home();
-                else if (kIsWeb)
-                  return WebPageLogIn(isLogIn: true);
-                else
-                  return IntroScreen();
-              },
-            )
-          : buildLoadScreen(),
-    );
+    if (finishedLoading) {
+      return StreamBuilder(
+        stream: auth.user,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return buildLoadScreen();
+          if (snapshot.hasData)
+            return Home();
+          else if (kIsWeb)
+            return WebPageLogIn(isLogIn: true);
+          else
+            return IntroScreen();
+        },
+      );
+    } else {
+      return buildLoadScreen();
+    }
   }
 
   Widget buildLoadScreen() {

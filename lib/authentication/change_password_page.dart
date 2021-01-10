@@ -57,7 +57,8 @@ class ChangePasswordPage extends StatelessWidget {
                           AuthService auth = AuthService();
                           if (newPasswordController.text !=
                               newPasswordConfirmController.text)
-                            return Scaffold.of(context).showSnackBar(SnackBar(
+                            return ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(
                               content: Text(
                                   "Die beiden neuen Passwörter sind nicht identisch."),
                               behavior: SnackBarBehavior.floating,
@@ -66,7 +67,8 @@ class ChangePasswordPage extends StatelessWidget {
                           String authRes = await auth
                               .reAuthenticate(oldPasswordController.text);
                           if (authRes != null) {
-                            return Scaffold.of(context).showSnackBar(SnackBar(
+                            return ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(
                               content: Text(authRes),
                               backgroundColor: Colors.red,
                             ));
@@ -75,7 +77,8 @@ class ChangePasswordPage extends StatelessWidget {
                               oldPassword: oldPasswordController.text,
                               newPassword: newPasswordController.text);
                           if (changePasswordRes != null)
-                            return Scaffold.of(context).showSnackBar(SnackBar(
+                            return ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(
                               content: Text(changePasswordRes),
                               backgroundColor: Colors.red,
                             ));

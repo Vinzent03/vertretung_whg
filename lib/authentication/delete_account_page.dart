@@ -59,7 +59,8 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                                 .reAuthenticate(passwordController.text);
                             if (authRes != null) {
                               await pr.hide();
-                              return Scaffold.of(context).showSnackBar(SnackBar(
+                              return ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
                                 content: Text(authRes),
                                 backgroundColor: Colors.red,
                               ));

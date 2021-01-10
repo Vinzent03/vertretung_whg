@@ -1,7 +1,6 @@
 import 'package:Vertretung/models/news_model.dart';
 import 'package:Vertretung/news/details_page.dart';
 import 'package:Vertretung/services/cloud_functions.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -21,24 +20,24 @@ class NewsLogic {
       case "SUCCESS":
         return true;
       case "ERROR_NOT_ADMIN":
-        Flushbar(
-          message: result["message"],
-          duration: Duration(seconds: 2),
-        )..show(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(result["message"]),
+          backgroundColor: Colors.red,
+        ));
         return false;
       case "DEADLINE_EXCEEDED":
-        Flushbar(
-          message: "Das hat zu lange gedauert. Versuche es später erneut.",
-          duration: Duration(seconds: 5),
-        )..show(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content:
+              Text("Das hat zu lange gedauert. Versuche es später erneut."),
+        ));
         return false;
       default:
-        Flushbar(
-          message: "Ein unerwarteter Fehler ist aufgetreten: \"" +
-              result["code"] +
-              "\"",
-          duration: Duration(seconds: 30),
-        )..show(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Ein unerwarteter Fehler ist aufgetreten: \"${result["code"]}\""),
+          duration: Duration(seconds: 20),
+          backgroundColor: Colors.red,
+        ));
         return false;
     }
   }

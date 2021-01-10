@@ -51,11 +51,12 @@ class _AccountPageState extends State<AccountPage> {
                         backgroundColor: Colors.red,
                       );
 
-                      Scaffold.of(scaffoldContext).showSnackBar(snack);
+                      ScaffoldMessenger.of(scaffoldContext).showSnackBar(snack);
                       await Future.delayed(
                         Duration(seconds: 4),
                       ); //Erst nach den 4 Sekunden wird die Snackbar geschlossen. Keine Ahnung warum das extra nötig ist.
-                      Scaffold.of(scaffoldContext).removeCurrentSnackBar();
+                      ScaffoldMessenger.of(scaffoldContext)
+                          .removeCurrentSnackBar();
                     }
                   }),
             ],

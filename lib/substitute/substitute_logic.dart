@@ -65,7 +65,7 @@ class SubstituteLogic {
       action: SnackBarAction(
         label: "Ausblenden",
         onPressed: () {
-          Scaffold.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
           loadingSuccess = true; // make snackbar able to reshow
         },
       ),
@@ -73,7 +73,7 @@ class SubstituteLogic {
     List<dynamic> dataResult =
         await SubstituteLogic().getData(); //load the data from dsb mobile
     if (dataResult.isEmpty) {
-      if (loadingSuccess) Scaffold.of(context).showSnackBar(snack);
+      if (loadingSuccess) ScaffoldMessenger.of(context).showSnackBar(snack);
       loadingSuccess = false;
       String newLastChange = await SharedPref.getString(Names.lastChange);
       List<String> oldRawSubstituteToday =
@@ -85,7 +85,7 @@ class SubstituteLogic {
       context.read<UserData>().lastChange = newLastChange;
     } else {
       loadingSuccess = true;
-      Scaffold.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       context.read<UserData>().lastChange = dataResult[0];
       context.read<UserData>().rawSubstituteToday = dataResult[1];
       context.read<UserData>().rawSubstituteTomorrow = dataResult[2];

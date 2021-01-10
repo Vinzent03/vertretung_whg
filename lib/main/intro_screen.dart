@@ -4,7 +4,6 @@ import 'package:Vertretung/provider/theme_data.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/settings/subjectsSelection/subjects_page.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -25,9 +24,11 @@ class _IntroScreenState extends State<IntroScreen> {
 
   ///Whether to use whitelist or blacklist
   bool isAdvancedLevel = false;
-  bool alreadyShowedSchoolClassFlushBar = false;
+  bool alreadyShowedSchoolClassSnackBar = false;
   TextStyle titleStyle = TextStyle(
-      color: Colors.blue[800], fontSize: 35, fontWeight: FontWeight.w600);
+      color: lightTheme.primaryColor,
+      fontSize: 35,
+      fontWeight: FontWeight.w600);
   EdgeInsets titlePadding = EdgeInsets.symmetric(vertical: 100);
 
   @override
@@ -179,7 +180,8 @@ class _IntroScreenState extends State<IntroScreen> {
           ),
         ],
         dotsFlex: 3,
-        dotsDecorator: DotsDecorator(activeColor: Colors.blue[800]),
+        dotsDecorator:
+            DotsDecorator(activeColor: Theme.of(context).primaryColor),
         next: Icon(Icons.arrow_forward),
         showNextButton: true,
         done: Text("Fertig"),
@@ -187,13 +189,15 @@ class _IntroScreenState extends State<IntroScreen> {
           //get schoolClass to show different personalSubstitute content
           String schoolClass = context.read<UserData>().schoolClass;
           if (i > 2 &&
-              !alreadyShowedSchoolClassFlushBar &&
+              !alreadyShowedSchoolClassSnackBar &&
               schoolClass == "Nicht festgelegt") {
-            alreadyShowedSchoolClassFlushBar = true;
-            Flushbar(
-              message: "Möchtest Du wirklich keine Stufe/Klasse festlegegen?",
-              duration: Duration(seconds: 5),
-            ).show(context);
+            alreadyShowedSchoolClassSnackBar = true;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                    "Möchtest Du wirklich keine Stufe/Klasse festlegegen?"),
+              ),
+            );
           }
 
           setState(() {
@@ -217,11 +221,11 @@ class _IntroScreenState extends State<IntroScreen> {
                   .catchError((e) async {
                 await pr.hide();
                 alreadyPressed = false;
-                Flushbar(
-                  message: "Ein Fehler ist aufgetreten: $e",
-                  backgroundColor: Colors.red,
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Ein Fehler ist aufgetreten: $e"),
                   duration: Duration(seconds: 5),
-                ).show(context);
+                  backgroundColor: Colors.red,
+                ));
               });
               pr.hide();
             }

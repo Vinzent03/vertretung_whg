@@ -85,7 +85,7 @@ class SubstituteListTile extends StatelessWidget {
     if (kIsWeb) {
       Clipboard.setData(ClipboardData(
           text: "Wir haben Vertretung und zwar: ${substitute.title}"));
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Text zur Zwischenablage hinzugefügt.",
         ),

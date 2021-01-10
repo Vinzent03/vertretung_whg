@@ -20,7 +20,7 @@ class LogInWidget extends StatelessWidget {
         content: Text(err),
         backgroundColor: Colors.red,
       );
-      Scaffold.of(context).showSnackBar(snack);
+      ScaffoldMessenger.of(context).showSnackBar(snack);
     } else {
       await pr.hide();
       if (!kIsWeb) Navigator.pop(context);

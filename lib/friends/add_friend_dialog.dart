@@ -1,6 +1,5 @@
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/services/cloud_functions.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -111,10 +110,9 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
               switch (result["code"]) {
                 case "SUCCESS":
                   Navigator.pop(context);
-                  Flushbar(
-                    message: "Als Freund hinzugefügt.",
-                    duration: Duration(seconds: 2),
-                  )..show(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Als Freund hinzugefügt."),
+                  ));
                   break;
                 case "EXCEPTION_ALREADY_FRIEND":
                   message = result["message"];
@@ -128,20 +126,19 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
                   break;
                 case "DEADLINE_EXCEEDED":
                   Navigator.pop(context);
-                  Flushbar(
-                    message:
-                        "Das hat zu lange gedauert. Versuche es später erneut.",
-                    duration: Duration(seconds: 2),
-                  )..show(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        "Das hat zu lange gedauert. Versuche es später erneut."),
+                  ));
                   break;
                 default:
                   Navigator.pop(context);
-                  Flushbar(
-                    message: "Ein unerwarteter Fehler ist aufgetreten: \"" +
-                        result["code"] +
-                        "\"",
-                    duration: Duration(seconds: 30),
-                  )..show(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        "Ein unerwarteter Fehler ist aufgetreten: \"${result["code"]}\""),
+                    duration: Duration(seconds: 20),
+                    backgroundColor: Colors.red,
+                  ));
               }
             }
           },

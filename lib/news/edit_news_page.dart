@@ -131,7 +131,7 @@ class EditNewsPageState extends State<EditNewsPage> {
 
   confirm(BuildContext context) async {
     if (titleController.text == "")
-      return Scaffold.of(context).showSnackBar(SnackBar(
+      return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Bitte gib einen Titel an"),
       ));
 
@@ -157,14 +157,14 @@ class EditNewsPageState extends State<EditNewsPage> {
     }
 
     await pr.hide();
-    Scaffold.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     switch (result["code"]) {
       case "SUCCESS":
         Navigator.pop(context);
         break;
       case "ERROR_NOT_ADMIN":
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result["message"]),
             duration: Duration(minutes: 1),
@@ -172,7 +172,7 @@ class EditNewsPageState extends State<EditNewsPage> {
         );
         break;
       case "DEADLINE_EXCEEDED":
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
                 Text("Das hat zu lange gedauert. Versuche es später erneut."),
@@ -181,7 +181,7 @@ class EditNewsPageState extends State<EditNewsPage> {
         );
         break;
       default:
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Ein unerwarteter Fehler ist aufgetreten: \"" +
                 result["code"] +
