@@ -73,17 +73,22 @@ class FriendLogic {
   }
 
   static List<SubstituteModel> _getFreeLessonsOfFriend(
-      List<String> friendFreeLessons) {
+      List<String> friendFreeLessons, bool compareToToday) {
     List<SubstituteModel> freeLessons = [];
-    DateTime now = DateTime.now();
+    DateTime dayToCompare;
+    if (compareToToday) {
+      dayToCompare = DateTime.now();
+    } else {
+      dayToCompare = DateTime.now().add(Duration(days: 1));
+    }
     //cycle through free lesson entries
     for (int i = 0; i < friendFreeLessons.length; i++) {
       String entry = friendFreeLessons[i];
       int lesson = int.parse(entry.substring(1, 2));
       int weekday = int.parse(entry.substring(0, 1));
       //use only free lessons of current weekday
-      if (weekday != now.weekday - 1) continue;
-      if (_isLessonOver(lesson, now)) continue;
+      if (weekday != dayToCompare.weekday - 1) continue;
+      if (_isLessonOver(lesson, dayToCompare) && compareToToday) continue;
       if (freeLessons.isNotEmpty) {
         if (freeLessons.last.title.contains((lesson - 1).toString())) {
           //change lesson range
@@ -111,13 +116,13 @@ class FriendLogic {
 
   /// includes substitute and free lessons
   static List<SubstituteModel> getFriendsSubstitute(
-      List<FriendModel> friends, List<String> rawSubstituteToday) {
+      List<FriendModel> friends, List<String> rawList, bool compareToToday) {
     List<SubstituteModel> friendsSubstitute = [];
 
     for (FriendModel friend in friends) {
       List<SubstituteModel> substituteAndFreeLessons =
-          _getSubstituteOfFriend(friend, rawSubstituteToday) +
-              _getFreeLessonsOfFriend(friend.freeLessons);
+          _getSubstituteOfFriend(friend, rawList) +
+              _getFreeLessonsOfFriend(friend.freeLessons, compareToToday);
       for (SubstituteModel substitute in substituteAndFreeLessons) {
         if (friendsSubstitute.map((e) => e.title).contains(substitute.title)) {
           //instead of showing a substitute doubled add the name to the existing one
@@ -158,9 +163,9 @@ class FriendLogic {
     List<SubstituteModel> userFreeTime = provider.substituteToday
         .where((element) => element.title.contains("Entfall"))
         .toList();
-    userFreeTime.addAll(_getFreeLessonsOfFriend(provider.freeLessons));
-    List<SubstituteModel> friendsSubstitute =
-        getFriendsSubstitute(friendsSettings, provider.rawSubstituteToday);
+    userFreeTime.addAll(_getFreeLessonsOfFriend(provider.freeLessons, true));
+    List<SubstituteModel> friendsSubstitute = getFriendsSubstitute(
+        friendsSettings, provider.rawSubstituteToday, true);
 
     for (var friendSubstitute in friendsSubstitute) {
       List<int> friendLessons = lessonRange(friendSubstitute.title);
@@ -181,6 +186,7 @@ class FriendLogic {
     return friendsWithFreetime(equalSubstitute);
   }
 
+  /// returns a List with the names of friends who have free time
   static List<String> friendsWithFreetime(
       List<SubstituteModel> friendsSubstitute) {
     List<String> friends = [];

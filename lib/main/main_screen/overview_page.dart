@@ -86,6 +86,7 @@ class OverviewPage extends StatelessWidget {
                       FriendLogic.getFriendsSubstitute(
                         friendsSettings ?? [],
                         context.watch<UserData>().rawSubstituteToday,
+                        true,
                       ),
                     ),
                     title: "Freunde haben frei",

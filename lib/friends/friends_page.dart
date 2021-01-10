@@ -15,9 +15,11 @@ class FriendsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (friendsSettings != null) {
       final List<SubstituteModel> today = FriendLogic.getFriendsSubstitute(
-          friendsSettings, context.watch<UserData>().rawSubstituteToday);
+          friendsSettings, context.watch<UserData>().rawSubstituteToday, true);
       final List<SubstituteModel> tomorrow = FriendLogic.getFriendsSubstitute(
-          friendsSettings, context.watch<UserData>().rawSubstituteTomorrow);
+          friendsSettings,
+          context.watch<UserData>().rawSubstituteTomorrow,
+          false);
 
       if (friendsSettings.isEmpty) {
         return Center(
