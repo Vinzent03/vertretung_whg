@@ -3,6 +3,7 @@ import 'package:Vertretung/friends/add_friend_dialog.dart';
 import 'package:Vertretung/friends/friend_logic.dart';
 import 'package:Vertretung/friends/friends_page.dart';
 import 'package:Vertretung/logic/filter.dart';
+import 'package:Vertretung/logic/shared_pref.dart';
 import 'package:Vertretung/main/main_screen/overview_page.dart';
 import 'package:Vertretung/main/main_screen/school_class_substitute.dart';
 import 'package:Vertretung/models/friend_model.dart';
@@ -11,6 +12,7 @@ import 'package:Vertretung/news/news_page.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/services/cloud_database.dart';
+import 'package:Vertretung/settings/subjectsSelection/subjects_page.dart';
 import 'package:Vertretung/substitute/substitute_logic.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +49,8 @@ class _HomeState extends State<Home> {
         setState(() => isAdmin = value);
       }
     });
+    checkSubjects();
+
     super.initState();
   }
 
@@ -251,4 +255,105 @@ class _HomeState extends State<Home> {
           ],
         ),
       );
+
+  /// If the user has personal substitute turned on, but his subject list is empty, he gets a SnackBar
+  void checkSubjects() async {
+    await Future.delayed(Duration(seconds: 5));
+    UserData userData = context.read<UserData>();
+
+    if (userData.personalSubstitute) {
+      if (["EF", "Q1", "Q2"].contains(userData.schoolClass)) {
+        if (userData.subjects.isEmpty) {
+          showEmptySubjectsSnackBar(true);
+        }
+      } else if (userData.subjectsNot.isEmpty) {
+        showEmptySubjectsSnackBar(false);
+      }
+    }
+  }
+
+  void showEmptySubjectsSnackBar(bool isWhitelist) {
+    Duration duration = Duration(seconds: 10);
+    SnackBar snackBar = SnackBar(
+      content: Text("Deine Fächerliste ist leer."),
+      action: SnackBarAction(
+        label: "Problem lösen",
+        onPressed: () => showAddSubjectsDialog(isWhitelist),
+      ),
+      duration: duration,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void showAddSubjectsDialog(bool isWhitelist) {
+    String message;
+    if (isWhitelist) {
+      message =
+          "Am besten fügst Du Deine Fächer hinzu. So siehst Du nur Vertretung, die für Dich wichtig ist. Wenn Du die personalisierte Vertretung nicht nutzen willst, deaktiviere sie.";
+    } else {
+      message =
+          "Am besten fügst Du die Fächer Deiner Mitschüler ein, die Du nicht hast. So siehst Du nur Vertretung, die für Dich wichtig ist. Wenn Du die personalisierte Vertretung nicht nutzen willst, deaktiviere sie.";
+    }
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Fächer eingeben"),
+        content: Text(message),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+              confirmDeactivatePersonalSubstitute();
+            },
+            textColor: Colors.red,
+            child: Text("Deaktivieren"),
+          ),
+          RaisedButton(
+            child: Text("Fächer eingeben"),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        SubjectsPage(isWhitelist: isWhitelist)),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void confirmDeactivatePersonalSubstitute() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Bist Du Dir sicher?"),
+        content: Text(
+            "Personalisierte Vertretung ist die Hauptfunktion dieser App. Es geht auch sehr gut ohne, aber mit bietet sie noch mehr Nutzen."),
+        actions: [
+          RaisedButton(
+            onPressed: () async {
+              UserData userData = context.read<UserData>();
+              userData.personalSubstitute = false;
+              Navigator.pop(context);
+              bool notificationOnChange =
+                  await SharedPref.getBool(Names.notificationOnChange);
+              bool notificationOnFirstChange =
+                  await SharedPref.getBool(Names.notificationOnFirstChange);
+              CloudDatabase().updateUserData(
+                personalSubstitute: false,
+                schoolClass: userData.schoolClass,
+                notificationOnChange: notificationOnChange,
+                notificationOnFirstChange: notificationOnFirstChange,
+              );
+            },
+            color: Colors.red,
+            child: Text("Deaktivieren"),
+          ),
+        ],
+      ),
+    );
+  }
 }
