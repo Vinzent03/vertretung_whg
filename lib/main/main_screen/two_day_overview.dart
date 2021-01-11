@@ -1,7 +1,9 @@
 import 'package:Vertretung/models/substitute_tile_model.dart';
+import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/substitute/no_substitute.dart';
 import 'package:Vertretung/substitute/substitute_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'text_headline.dart';
 
@@ -26,7 +28,8 @@ class TwoDayOverview extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextHeadline("Heute: ", today.length.toString()),
+            TextHeadline("${context.watch<UserData>().formattedDayNames[0]}: ",
+                today.length.toString()),
             if (today.isEmpty)
               NoSubstitute()
             else
@@ -38,7 +41,8 @@ class TwoDayOverview extends StatelessWidget {
                   return SubstituteListTile(today[index], false);
                 },
               ),
-            TextHeadline("Morgen: ", tomorrow.length.toString()),
+            TextHeadline("${context.watch<UserData>().formattedDayNames[1]}: ",
+                tomorrow.length.toString()),
             if (tomorrow.isEmpty)
               NoSubstitute()
             else

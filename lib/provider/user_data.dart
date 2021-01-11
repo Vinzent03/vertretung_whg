@@ -11,6 +11,7 @@ class UserData extends ChangeNotifier {
   List<String> _rawSubstituteToday;
   List<String> _rawSubstituteTomorrow;
   String _lastChange;
+  List<String> _dayNames;
   List<String> _subjects;
   List<String> _subjectsNot;
   List<String> _freeLessons;
@@ -60,6 +61,41 @@ class UserData extends ChangeNotifier {
   set lastChange(String st) {
     SharedPref.setString(Names.lastChange, st);
     _lastChange = st;
+    notifyListeners();
+  }
+
+  /// If the data of today is for the current day it returns 'Heute', if not it returns the name of the weekday.
+  /// Set today false to check for tomorrow.
+  List<String> get formattedDayNames {
+    List<String> weekdays = [
+      "Montag",
+      "Dienstag",
+      "Mittwoch",
+      "Donnerstag",
+      "Freitag",
+      "Samstag",
+      "Sonntag"
+    ];
+
+    String today = weekdays[DateTime.now().weekday - 1];
+    String tomorrow =
+        weekdays[DateTime.now().add(Duration(days: 1)).weekday - 1];
+    List<String> resultList = ["Heute", "Morgen"];
+    if (_dayNames.isEmpty) {
+      return resultList;
+    }
+    if (today != _dayNames[0]) {
+      resultList[0] = _dayNames[0];
+    }
+    if (tomorrow != _dayNames[1]) {
+      resultList[1] = _dayNames[1];
+    }
+    return resultList;
+  }
+
+  set dayNames(List<String> list) {
+    SharedPref.setStringList(Names.dayNames, list);
+    _dayNames = list;
     notifyListeners();
   }
 

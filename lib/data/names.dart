@@ -52,6 +52,8 @@ class Names {
   ///The last change of the substitute
   static const String lastChange = "lastChange";
 
+  static const String dayNames = "dayNames";
+
   ///If the friendsFeature is turned on
   static const String friendsFeature = "friendsFeature";
 }

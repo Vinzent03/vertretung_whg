@@ -35,13 +35,15 @@ class OverviewPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextHeadline("Deine Vertretungen Heute: ",
+            TextHeadline(
+                "Deine Vertretungen ${context.watch<UserData>().formattedDayNames[0]}: ",
                 context.watch<UserData>().substituteToday.length.toString()),
             TodayOverview(
               today: true,
               loaded: finishedLoading,
             ),
-            TextHeadline("Deine Vertretungen Morgen: ",
+            TextHeadline(
+                "Deine Vertretungen ${context.watch<UserData>().formattedDayNames[1]}: ",
                 context.watch<UserData>().substituteTomorrow.length.toString()),
             TodayOverview(
               today: false,
@@ -56,7 +58,7 @@ class OverviewPage extends StatelessWidget {
               Row(
                 children: [
                   InfoBox(
-                    title: "Heute",
+                    title: "${context.watch<UserData>().formattedDayNames[0]}",
                     list: Filter.checkForSchoolClass(
                         context.watch<UserData>().schoolClass,
                         context.watch<UserData>().rawSubstituteToday),
@@ -67,7 +69,7 @@ class OverviewPage extends StatelessWidget {
                     width: padding,
                   ),
                   InfoBox(
-                    title: "Morgen",
+                    title: "${context.watch<UserData>().formattedDayNames[1]}",
                     list: Filter.checkForSchoolClass(
                         context.watch<UserData>().schoolClass,
                         context.watch<UserData>().rawSubstituteTomorrow),

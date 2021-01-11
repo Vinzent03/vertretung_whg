@@ -40,6 +40,7 @@ class _SplashState extends State<Splash> {
     provider.rawSubstituteTomorrow =
         await SharedPref.getStringList(Names.substituteTomorrow);
     provider.lastChange = await SharedPref.getString(Names.lastChange);
+    provider.dayNames = await SharedPref.getStringList(Names.dayNames);
 
     provider.subjects = await SharedPref.getStringList(Names.subjects);
     provider.subjectsNot = await SharedPref.getStringList(Names.subjectsNot);

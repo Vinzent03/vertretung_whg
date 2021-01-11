@@ -25,7 +25,7 @@ class PushNotificationsManager {
         List<String> rawSubstituteTomorrow =
             message.data["rawSubstituteTomorrow"].split("||");
         String lastChange =
-            SubstituteLogic().formatLastChange(message.data["lastChange"]);
+            SubstituteLogic.formatLastChange(message.data["lastChange"]);
 
         provider.rawSubstituteToday = rawSubstituteToday;
         provider.rawSubstituteTomorrow = rawSubstituteTomorrow;

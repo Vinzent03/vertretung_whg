@@ -15,14 +15,14 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SubstituteLogic {
   bool loadingSuccess = true;
-  int getWeekNumber() {
+  static int getWeekNumber() {
     DateTime date = DateTime.now();
     int dayOfYear = int.parse(DateFormat("D").format(date));
     return ((dayOfYear - date.weekday + 10) / 7).floor();
   }
 
   //replace this for your own situation
-  Future<List<dynamic>> getData() async {
+  Future<List<dynamic>> _getData() async {
     try {
       if (kIsWeb) return await CloudDatabase().getSubstitute();
       var todayResponse = await http.get(Names.substituteLinkToday);
@@ -47,6 +47,7 @@ class SubstituteLogic {
       });
       return [
         formatLastChange(unformattedLastChange),
+        _getDayNames(todayDocument, tomorrowDocument),
         vertretungTodayList,
         vertretungTomorrowList
       ];
@@ -71,7 +72,7 @@ class SubstituteLogic {
       ),
     );
     List<dynamic> dataResult =
-        await SubstituteLogic().getData(); //load the data from dsb mobile
+        await SubstituteLogic()._getData(); //load the data from dsb mobile
     if (dataResult.isEmpty) {
       if (loadingSuccess) ScaffoldMessenger.of(context).showSnackBar(snack);
       loadingSuccess = false;
@@ -87,18 +88,40 @@ class SubstituteLogic {
       loadingSuccess = true;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       context.read<UserData>().lastChange = dataResult[0];
-      context.read<UserData>().rawSubstituteToday = dataResult[1];
-      context.read<UserData>().rawSubstituteTomorrow = dataResult[2];
+      context.read<UserData>().dayNames = dataResult[1];
+      context.read<UserData>().rawSubstituteToday = dataResult[2];
+      context.read<UserData>().rawSubstituteTomorrow = dataResult[3];
 
       CloudDatabase().updateLastNotification(context.read<UserData>());
     }
     refreshController.refreshCompleted();
   }
 
-  String formatLastChange(String unformattedLastChange) {
+  static String formatLastChange(String unformattedLastChange) {
     var lastChangeShort = unformattedLastChange.substring(17);
     var lastChangeFinal =
         lastChangeShort.replaceAll(lastChangeShort.substring(6, 10), "");
     return lastChangeFinal;
+  }
+
+  List<String> _getDayNames(
+      dom.Document todayDocument, dom.Document tomorrowDocument) {
+    List<dom.Element> dayNameToday =
+        todayDocument.getElementsByClassName("dayHeader");
+    List<dom.Element> dayNameTomorrow =
+        tomorrowDocument.getElementsByClassName("dayHeader");
+    if (dayNameToday.isEmpty) {
+      dayNameToday = todayDocument.querySelectorAll("legend");
+    }
+    if (dayNameTomorrow.isEmpty) {
+      dayNameTomorrow = tomorrowDocument.querySelectorAll("legend");
+    }
+    List<String> dayNames = [
+      dayNameToday.first.text,
+      dayNameTomorrow.first.text
+    ];
+    List<String> dayNamesFormatted =
+        dayNames.map((e) => e.substring(e.indexOf(",") + 2)).toList();
+    return dayNamesFormatted;
   }
 }

@@ -80,7 +80,7 @@ class _HomeState extends State<Home> {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Übersicht ${substituteLogic.getWeekNumber()}.KW"),
+              Text("Übersicht ${SubstituteLogic.getWeekNumber()}.KW"),
               Text(
                 "Letzte Änderung: ${context.watch<UserData>().lastChange}",
                 style: TextStyle(fontSize: 16),

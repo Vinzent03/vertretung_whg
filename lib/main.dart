@@ -89,7 +89,7 @@ Future<void> _hanndleBackgroundNotification(RemoteMessage message) async {
   List<String> rawSubstituteTomorrow =
       message.data["rawSubstituteTomorrow"].split("||");
   String lastChange =
-      SubstituteLogic().formatLastChange(message.data["lastChange"]);
+      SubstituteLogic.formatLastChange(message.data["lastChange"]);
 
   Future.wait([
     SharedPref.setStringList(Names.substituteToday, rawSubstituteToday),

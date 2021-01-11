@@ -256,8 +256,9 @@ class CloudDatabase {
     String lastChange = data.data()["lastChange"];
     return [
       lastChange.substring(17, 23) + lastChange.substring(27),
+      List<String>.from(data.data()[Names.dayNames]),
       List<String>.from(data.data()["substituteToday"]),
-      List<String>.from(data.data()["substituteTomorrow"])
+      List<String>.from(data.data()["substituteTomorrow"]),
     ];
   }
 }
