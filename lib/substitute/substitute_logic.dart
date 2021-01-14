@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:Vertretung/data/names.dart';
-import 'package:Vertretung/logic/shared_pref.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/cloud_database.dart';
 import 'package:flutter/foundation.dart';
@@ -76,14 +75,6 @@ class SubstituteLogic {
     if (dataResult.isEmpty) {
       if (loadingSuccess) ScaffoldMessenger.of(context).showSnackBar(snack);
       loadingSuccess = false;
-      String newLastChange = await SharedPref.getString(Names.lastChange);
-      List<String> oldRawSubstituteToday =
-          await SharedPref.getStringList(Names.substituteToday);
-      List<String> oldRawSubstituteTomorrow =
-          await SharedPref.getStringList(Names.substituteTomorrow);
-      context.read<UserData>().rawSubstituteToday = oldRawSubstituteToday;
-      context.read<UserData>().rawSubstituteTomorrow = oldRawSubstituteTomorrow;
-      context.read<UserData>().lastChange = newLastChange;
     } else {
       loadingSuccess = true;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();

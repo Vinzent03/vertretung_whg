@@ -31,7 +31,8 @@ class AuthService {
   }
 
   Stream<User> get user {
-    return _auth.authStateChanges();
+    return _auth
+        .userChanges(); // fixes https://github.com/FirebaseExtended/flutterfire/issues/4348
   }
 
   Future<void> signOut(UserData provider, {bool deleteAccount = false}) async {

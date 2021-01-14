@@ -170,11 +170,11 @@ class _AccountPageState extends State<AccountPage> {
                     ),
                   ),
                 Card(
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                   child: isAnon
                       ? ListTile(
                           title: RaisedButton(
-                              color: Colors.blue,
+                              color: Theme.of(context).primaryColor,
                               elevation: 0,
                               child: Text("Account mit Email verbinden"),
                               onPressed: () async {
@@ -191,7 +191,7 @@ class _AccountPageState extends State<AccountPage> {
                         )
                       : ListTile(
                           title: RaisedButton(
-                              color: Colors.blue,
+                              color: Theme.of(context).primaryColor,
                               elevation: 0,
                               child: Text("Abmelden"),
                               onPressed: () async {

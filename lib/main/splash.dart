@@ -160,31 +160,34 @@ class _SplashState extends State<Splash> {
   }
 
   Widget buildLoadScreen() {
-    return Stack(
-      children: <Widget>[
-        Center(
-          child: Image.asset(
-            "assets/icons/icon.png",
-            height: 150,
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              height: 500,
+    return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      body: Stack(
+        children: <Widget>[
+          Center(
+            child: Image.asset(
+              "assets/icons/icon.png",
+              height: 150,
             ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                "Vertretung",
-                style: TextStyle(fontSize: 30, color: Colors.white),
-                textAlign: TextAlign.center,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 500,
               ),
-            )
-          ],
-        ),
-      ],
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Vertretung",
+                  style: TextStyle(fontSize: 30, color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

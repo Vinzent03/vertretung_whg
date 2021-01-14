@@ -250,7 +250,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                 title: Text(
                   "Custom",
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

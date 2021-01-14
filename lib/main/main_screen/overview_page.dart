@@ -11,7 +11,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class OverviewPage extends StatelessWidget {
   final List<FriendModel> friendsSettings;
-  final double padding = 10;
+  final double padding = 8;
   final bool finishedLoading;
   final Function swapPage;
   final Function refresh;

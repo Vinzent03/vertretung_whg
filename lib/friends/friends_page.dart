@@ -47,14 +47,10 @@ class FriendsPage extends StatelessWidget {
         ));
       } else {
         //fixes bug with centering the widget in transition
-        return Column(
-          children: [
-            TwoDayOverview(
-              today: today,
-              tomorrow: tomorrow,
-              fromFriendsPage: true,
-            ),
-          ],
+        return TwoDayOverview(
+          today: today,
+          tomorrow: tomorrow,
+          fromFriendsPage: true,
         );
       }
     } else {
