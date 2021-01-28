@@ -31,62 +31,6 @@ class _SettingsPageState extends State<SettingsPage> {
   bool personalSubstitute;
   bool friendsFeature;
 
-  deleteSubjectsDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Möchtest Du deine bisher eingegeben Fächer löschen?"),
-        actions: [
-          RaisedButton(
-            child: Text("Bestätigen"),
-            onPressed: () async {
-              context.read<UserData>().subjects = [];
-              context.read<UserData>().subjectsNot = [];
-
-              CloudDatabase().updateSubjects();
-              Navigator.pop(context);
-            },
-          ),
-          FlatButton(
-            child: Text("Abbrechen"),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<String> selectSchoolClassDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15))),
-            title: Text("Bitte wähle Deine Stufe/Klasse"),
-            content: SchoolClassSelection(),
-            actions: <Widget>[
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7))),
-                child: Text("Bestätigen"),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  if ((await SharedPref.getStringList(Names.subjects))
-                          .isNotEmpty ||
-                      (await SharedPref.getStringList(Names.subjectsNot))
-                          .isNotEmpty) {
-                    await deleteSubjectsDialog();
-                  }
-                  updateUserdata();
-                },
-              ),
-            ],
-          );
-        });
-  }
-
   void updateUserdata() {
     manager.updateUserData(
       personalSubstitute: context.read<UserData>().personalSubstitute,
@@ -147,41 +91,29 @@ class _SettingsPageState extends State<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Card(
-                color: Theme.of(context).primaryColor,
-                child: ListTile(
-                  title: Text(
-                    "Dein Account",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  leading: Icon(
-                    Icons.donut_large,
-                    color: Colors.white,
-                  ),
-                  onTap: () => Navigator.pushNamed(context, Names.accountPage),
-                )),
-            Card(
-                child: ListTile(
-              leading: Icon(Icons.school),
-              title: Text(
-                "Klasse/Stufe",
-                style: TextStyle(fontSize: 17),
-              ),
-              onTap: () => selectSchoolClassDialog(context),
-              trailing: FlatButton(
-                child: Text(
-                  context.watch<UserData>().schoolClass,
-                  style: TextStyle(fontSize: 17),
+              color: Theme.of(context).primaryColor,
+              child: ListTile(
+                title: Text(
+                  "Dein Account",
+                  style: TextStyle(color: Colors.white),
                 ),
-                onPressed: () => selectSchoolClassDialog(context),
+                leading: Icon(
+                  Icons.donut_large,
+                  color: Colors.white,
+                ),
+                onTap: () => Navigator.pushNamed(context, Names.accountPage),
               ),
-            )),
+            ),
+            Card(
+              child: SchoolClassSelection(updateUserdata: updateUserdata),
+            ),
             Card(
               child: Column(
                 children: <Widget>[
                   SwitchListTile(
                     title: Text("Personalisierte Vertretung"),
                     value: personalSubstitute,
-                    secondary: Icon(Icons.group),
+                    secondary: Icon(Icons.star),
                     onChanged: (bool b) {
                       context.read<UserData>().personalSubstitute = b;
                       updateUserdata();
@@ -211,7 +143,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 children: <Widget>[
                   SwitchListTile(
                     title: Text(
-                      "Freundes Funktion",
+                      "Freunde-Funktion",
                       style: TextStyle(fontSize: 17),
                     ),
                     secondary: Icon(Icons.group),

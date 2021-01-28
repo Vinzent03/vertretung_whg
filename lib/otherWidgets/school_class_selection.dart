@@ -1,6 +1,5 @@
-import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/data/school_classes.dart';
-import 'package:Vertretung/logic/shared_pref.dart';
+import 'package:Vertretung/main/intro_screen.dart';
 import 'package:Vertretung/models/school_class_model.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/push_notifications.dart';
@@ -9,89 +8,122 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SchoolClassSelection extends StatefulWidget {
+  /// Only given in [SettingsPage] . In [IntroScreen] this is emitted.
+  final Function updateUserdata;
+  final bool highlight;
+
+  const SchoolClassSelection({
+    this.updateUserdata,
+    this.highlight = false,
+  });
   @override
   _SchoolClassSelectionState createState() => _SchoolClassSelectionState();
 }
 
 class _SchoolClassSelectionState extends State<SchoolClassSelection> {
-  String levelHint = "1. Wähle eine Stufe";
-  String classHint = "2. Wähle eine Klasse";
-  String chosenLevel = "5";
-  bool disabledDropdown = true;
   List<SchoolClassModel> schoolClasses = SchoolClasses().schoolClasses;
-
-  void valueChanged(String _value) {
-    setState(() {
-      chosenLevel = _value;
-      levelHint = _value;
-      disabledDropdown = false;
-    });
+  String grade = "";
+  void selectedGrade(String newGrade) {
+    Navigator.pop(context);
+    setState(() => grade = newGrade);
+    showSchoolClassSelection();
   }
 
-  void finish(String _value, BuildContext context) async {
+  void finish(String newSchoolClass, BuildContext context) async {
+    Navigator.pop(context);
     PushNotificationsManager push = PushNotificationsManager();
-    setState(() {
-      classHint = _value;
-    });
-    String oldSchoolClass = await SharedPref.getString(Names.schoolClass);
-    context.read<UserData>().schoolClass = _value;
-    if (!oldSchoolClass.contains(" "))
-      await push.unsubTopic(
-          oldSchoolClass); //If schoolClass is not manually set, it is set to "Nicht festgelegt", but that shouldn't be a topic
-    push.subTopic(_value);
-    FirebaseAnalytics().setUserProperty(name: "schoolClass", value: _value);
+    String oldSchoolClass = context.read<UserData>().schoolClass;
+
+    context.read<UserData>().schoolClass = newSchoolClass;
+    if (widget.updateUserdata == null) {
+      // Enable personal substitute for advanced level by default
+      context.read<UserData>().personalSubstitute =
+          ["EF", "Q1", "Q2"].contains(newSchoolClass);
+    } else {
+      widget.updateUserdata();
+    }
+    if (!oldSchoolClass.contains(" ")) {
+      //If schoolClass is not manually set, it is set to "Nicht festgelegt", but that shouldn't be a topic
+      await push.unsubTopic(oldSchoolClass);
+    }
+    push.subTopic(newSchoolClass);
+    FirebaseAnalytics()
+        .setUserProperty(name: "schoolClass", value: newSchoolClass);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        DropdownButton<String>(
-          hint: Text(
-            levelHint,
-            style: TextStyle(
-              fontSize: 20,
-            ),
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 800),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: widget.highlight ? Colors.red : Colors.transparent,
+            width: 4,
           ),
-          items: schoolClasses
-              .map(
-                (item) => DropdownMenuItem<String>(
-                  value: item.title,
-                  child: Text(
-                    item.title,
-                  ),
-                ),
-              )
-              .toList(),
-          onChanged: (_value) => valueChanged(_value),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
-        DropdownButton<String>(
-          hint: Text(
-            classHint,
-            style: TextStyle(fontSize: 18),
-          ),
-          disabledHint: Text(
-            classHint,
-            style: TextStyle(
-              fontSize: 18,
-            ),
-          ),
-          items: schoolClasses
-              .firstWhere((element) => element.title == chosenLevel)
-              .children
-              .map(
-                (e) => DropdownMenuItem<String>(
-                  value: e.title,
-                  child: Text(e.title),
-                ),
-              )
-              .toList(),
-          onChanged:
-              disabledDropdown ? null : (_value) => finish(_value, context),
+        key: ValueKey(widget.highlight),
+        child: ListTile(
+          title: Text(context.watch<UserData>().schoolClass),
+          leading: Icon(Icons.group),
+          onTap: showGradeSelection,
+          trailing: buildTrailingWidget(),
         ),
-      ],
+      ),
+    );
+  }
+
+  buildTrailingWidget() {
+    if (widget.updateUserdata == null) {
+      if (context.watch<UserData>().schoolClass == "Nicht festgelegt") {
+        return Text("Klasse wählen");
+      }
+      return Icon(
+        Icons.check,
+        color: Colors.green,
+      );
+    } else {
+      return Text("Klasse wählen");
+    }
+  }
+
+  showGradeSelection() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => ListView.builder(
+        itemCount: schoolClasses.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(schoolClasses[index].title),
+            onTap: () => selectedGrade(schoolClasses[index].title),
+          );
+        },
+        shrinkWrap: true,
+      ),
+    );
+  }
+
+  showSchoolClassSelection() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => ListView.builder(
+        itemCount: schoolClasses
+            .firstWhere((element) => element.title == grade)
+            .children
+            .length,
+        itemBuilder: (context, index) {
+          String title = schoolClasses
+              .firstWhere((element) => element.title == grade)
+              .children[index]
+              .title;
+          return ListTile(
+            title: Text(title),
+            onTap: () => finish(title, context),
+          );
+        },
+        shrinkWrap: true,
+      ),
     );
   }
 }
