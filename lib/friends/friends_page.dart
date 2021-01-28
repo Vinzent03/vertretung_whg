@@ -26,10 +26,6 @@ class FriendsPage extends StatelessWidget {
             child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              "Schade, Du hast wohl keine Freunde",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
             RaisedButton(
               child: Text("Füge Freunde hinzu!"),
               onPressed: () {
@@ -38,7 +34,7 @@ class FriendsPage extends StatelessWidget {
               },
             ),
             RaisedButton(
-              child: Text("Freundes Funktion deaktivieren"),
+              child: Text("Freunde-Funktion deaktivieren"),
               onPressed: () {
                 context.read<UserData>().friendsFeature = false;
               },

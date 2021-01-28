@@ -3,5 +3,6 @@ class NewsModel {
   String text;
   String title;
   final String lastEdited;
-  NewsModel(this.id, this.title, this.text, this.lastEdited);
+  final List<String> schoolClass;
+  NewsModel(this.id, this.title, this.text, this.lastEdited, this.schoolClass);
 }

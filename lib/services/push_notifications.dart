@@ -1,7 +1,6 @@
 import 'package:Vertretung/data/my_keys.dart';
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/provider/user_data.dart';
-import 'package:Vertretung/substitute/substitute_logic.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
@@ -24,12 +23,13 @@ class PushNotificationsManager {
             message.data["rawSubstituteToday"].split("||");
         List<String> rawSubstituteTomorrow =
             message.data["rawSubstituteTomorrow"].split("||");
-        String lastChange =
-            SubstituteLogic.formatLastChange(message.data["lastChange"]);
+        String lastChange = message.data["lastChange"];
+        List<String> dayNames = message.data["dayNames"].split("||");
 
         provider.rawSubstituteToday = rawSubstituteToday;
         provider.rawSubstituteTomorrow = rawSubstituteTomorrow;
         provider.lastChange = lastChange;
+        provider.dayNames = dayNames;
       }
     });
     _messaging.subscribeToTopic("all");

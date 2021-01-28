@@ -28,10 +28,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int currentIndex = 0;
   bool isAdmin = false;
-  bool loadedAdminStatus = false;
   String schoolClass;
   List<FriendModel> friendsSettings = [];
-  List<NewsModel> news;
+  List<NewsModel> rawNews = [];
   bool substituteLoaded = false;
   final SubstituteLogic substituteLogic = SubstituteLogic();
   final RefreshController refreshController = RefreshController();
@@ -39,15 +38,13 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     CloudDatabase().getFriendsSettings().listen((event) {
-      if (mounted) {
-        setState(() => friendsSettings = event);
-      }
+      if (mounted) setState(() => friendsSettings = event);
     });
     AuthService().getAdminStatus().then((value) {
-      if (mounted) {
-        loadedAdminStatus = true;
-        setState(() => isAdmin = value);
-      }
+      if (mounted) setState(() => isAdmin = value);
+    });
+    CloudDatabase().getNews().listen((newNews) {
+      if (mounted) setState(() => rawNews = newNews);
     });
     checkSubjects();
 
@@ -56,14 +53,8 @@ class _HomeState extends State<Home> {
 
   @override
   void didChangeDependencies() {
-    UserData provider = Provider.of<UserData>(context);
-    if (provider.schoolClass != schoolClass || loadedAdminStatus) {
-      if (loadedAdminStatus) loadedAdminStatus = false;
-      schoolClass = provider.schoolClass;
-      CloudDatabase().getNews(schoolClass, isAdmin).listen((event) {
-        setState(() => news = event);
-      });
-    }
+    schoolClass = context.read<UserData>().schoolClass;
+
     if (!substituteLoaded)
       substituteLogic
           .reloadSubstitute(context, refreshController)
@@ -74,6 +65,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final bool friendsFeature = context.watch<UserData>().friendsFeature;
+    final List<NewsModel> news = rawNews
+        .where(
+            (element) => element.schoolClass.contains(schoolClass) || isAdmin)
+        .toList();
     return Scaffold(
       appBar: [
         AppBar(
@@ -259,6 +254,7 @@ class _HomeState extends State<Home> {
   /// If the user has personal substitute turned on, but his subject list is empty, he gets a SnackBar
   void checkSubjects() async {
     await Future.delayed(Duration(seconds: 5));
+    if (!mounted) return;
     UserData userData = context.read<UserData>();
 
     if (userData.personalSubstitute) {

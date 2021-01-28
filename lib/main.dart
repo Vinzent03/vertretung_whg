@@ -26,7 +26,7 @@ import 'main/splash.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseMessaging.onBackgroundMessage(_hanndleBackgroundNotification);
+  FirebaseMessaging.onBackgroundMessage(_handleBackgroundNotification);
   Firebase.initializeApp().then((value) async {
     if (!kIsWeb) {
       await FirebaseCrashlytics.instance
@@ -83,17 +83,18 @@ class MyAppSt extends StatelessWidget {
   }
 }
 
-Future<void> _hanndleBackgroundNotification(RemoteMessage message) async {
+Future<void> _handleBackgroundNotification(RemoteMessage message) async {
   List<String> rawSubstituteToday =
       message.data["rawSubstituteToday"].split("||");
   List<String> rawSubstituteTomorrow =
       message.data["rawSubstituteTomorrow"].split("||");
   String lastChange =
       SubstituteLogic.formatLastChange(message.data["lastChange"]);
-
+  List<String> dayNames = message.data["dayNames"].split("||");
   Future.wait([
     SharedPref.setStringList(Names.substituteToday, rawSubstituteToday),
     SharedPref.setStringList(Names.substituteTomorrow, rawSubstituteTomorrow),
     SharedPref.setString(Names.lastChange, lastChange),
+    SharedPref.setStringList(Names.dayNames, dayNames)
   ]);
 }

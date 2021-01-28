@@ -187,7 +187,7 @@ class CloudDatabase {
   }
 
   //News
-  Stream<List<NewsModel>> getNews(String schoolClass, bool isAdmin) {
+  Stream<List<NewsModel>> getNews() {
     List<QueryDocumentSnapshot> sort(QuerySnapshot event) {
       List<QueryDocumentSnapshot> list = event.docs;
       list.sort((a, b) => (a.data()["created"] as Timestamp)
@@ -195,16 +195,15 @@ class CloudDatabase {
       return list.reversed.toList();
     }
 
-    Stream<QuerySnapshot> snap;
-    if (isAdmin)
-      snap = ref.collection("news").snapshots();
-    else
-      snap = ref
-          .collection("news")
-          .where("schoolClasses", arrayContains: schoolClass)
-          .snapshots();
+    Stream<QuerySnapshot> snap = ref.collection("news").snapshots();
     return snap.map((event) => (sort(event))
-        .map((e) => NewsModel(e.id, e["title"], e["text"], e["lastEdited"]))
+        .map((e) => NewsModel(
+              e.id,
+              e["title"],
+              e["text"],
+              e["lastEdited"],
+              List<String>.from(e["schoolClasses"]),
+            ))
         .toList());
   }
 
@@ -253,9 +252,8 @@ class CloudDatabase {
   ///only used for web app
   Future<List<dynamic>> getSubstitute() async {
     DocumentSnapshot data = await ref.collection("details").doc("webapp").get();
-    String lastChange = data.data()["lastChange"];
     return [
-      lastChange.substring(17, 23) + lastChange.substring(27),
+      data.data()["lastChange"] as String,
       List<String>.from(data.data()[Names.dayNames]),
       List<String>.from(data.data()["substituteToday"]),
       List<String>.from(data.data()["substituteTomorrow"]),

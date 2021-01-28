@@ -19,47 +19,39 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  animations: ^1.1.2
+  cloud_firestore: ^0.16.0
+  cloud_functions: ^0.9.0
+  cupertino_icons: ^0.1.2
+  dialog_context: ^0.1.1
+  firebase_analytics: ^7.0.1
+  firebase_auth: ^0.20.0+1
+  firebase_core: ^0.7.0
+  firebase_crashlytics: ^0.4.0+1
+  firebase_dynamic_links: ^0.7.0+1
+  firebase_in_app_messaging: ^0.3.0+1
+  firebase_messaging: ^8.0.0-dev.14
+  flutter_markdown: ^0.5.0
   html: ^0.14.0+3
   http: ^0.12.0
-  shared_preferences: ^0.5.6+3
   intl: ^0.16.1
-  share: ^0.6.3+6
-  package_info: ^0.4.0+16
-
-  firebase_core: ^0.5.0
-  firebase_messaging: "^8.0.0-dev.10"
-  cloud_firestore: ^0.14.0+2
-  firebase_analytics: ^6.0.0
-  firebase_in_app_messaging: ^0.2.0+1
-  firebase_auth: ^0.18.0+1
-  cloud_functions: ^0.7.1
-  firebase_crashlytics: ^0.2.1
-  firebase_dynamic_links: ^0.6.0
-
-  url_launcher: ^5.4.2
   introduction_screen: ^1.0.9
+  package_info: ^0.4.0+16
+  progress_dialog: ^1.2.4
   provider: ^4.0.5
   pull_to_refresh: ^1.5.7
-  progress_dialog: ^1.2.4
-  wiredash: ^0.4.0
-  dialog_context: ^0.1.1
-  animations: ^1.1.2
-  flutter_markdown: ^0.5.0
+  share: ^0.6.3+6
+  shared_preferences: ^0.5.6+3
   stream_transform: ^1.2.0
-  
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style assets.icons.
-  cupertino_icons: ^0.1.2
+  url_launcher: ^5.4.2
+  wiredash: ^0.3.0 # https://github.com/wiredashio/wiredash-sdk/pull/109
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
- 
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
 
@@ -72,13 +64,10 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
-    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
