@@ -24,14 +24,5 @@ jobs:
           mv hiddenData/key.properties android/
           mv hiddenData/Vertretung.jks android/
           mv hiddenData/google-services.json android/app/
-          mv hiddenData/wiredashKeys.dart lib/data/
+          mv hiddenData/wiredash_keys.dart lib/data/
       - run: flutter build apk
-      - name: Get current date
-        id: date
-        run: echo "::set-output name=date::$(date +'%d-%m')"
-      - name: rename output apk
-        run: mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Vertretung-${{ steps.date.outputs.date }}.apk
-
-      - uses: actions/upload-artifact@v2
-        with:
-          path: "build/app/outputs/apk/release/*.apk"

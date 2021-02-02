@@ -24,7 +24,7 @@ jobs:
           mv hiddenData/key.properties android/
           mv hiddenData/Vertretung.jks android/
           mv hiddenData/google-services.json android/app/
-          mv hiddenData/wiredashKeys.dart lib/data/
+          mv hiddenData/wiredash_keys.dart lib/data/
       - run: flutter build apk
       - name: Get tag
         id: tag
