@@ -44,7 +44,7 @@ dependencies:
   shared_preferences: ^0.5.6+3
   stream_transform: ^1.2.0
   url_launcher: ^5.4.2
-  wiredash: ^0.3.0 # https://github.com/wiredashio/wiredash-sdk/pull/109
+  wiredash: ^0.5.0
 
 dev_dependencies:
   flutter_test:
