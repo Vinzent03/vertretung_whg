@@ -54,7 +54,7 @@ class RegistrationWidget extends StatelessWidget {
           SizedBox(
             height: 20,
           ),
-          RaisedButton(
+          ElevatedButton(
             child:
                 Text(kIsWeb ? "Registrieren" : "Account mit Email verbinden"),
             onPressed: () async {

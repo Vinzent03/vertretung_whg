@@ -53,11 +53,11 @@ class _NewsSchoolClassesSelectionState
         child: ButtonBar(
           buttonPadding: EdgeInsets.symmetric(horizontal: 15),
           children: [
-            FlatButton(
+            TextButton(
               child: Text("Alle abwählen"),
               onPressed: () => changeEveryItem(false),
             ),
-            FlatButton(
+            TextButton(
               child: Text("Alle auswählen"),
               onPressed: () => changeEveryItem(true),
             ),

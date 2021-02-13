@@ -60,9 +60,9 @@ class LogInWidget extends StatelessWidget {
           SizedBox(
             height: 20,
           ),
-          RaisedButton(
+          ElevatedButton(
               child: Text("Anmelden"), onPressed: () => logIn(context)),
-          FlatButton(
+          TextButton(
             child: Text("Passwort vergessen"),
             onPressed: () async {
               await AuthService().resetPassword(emailController.text);

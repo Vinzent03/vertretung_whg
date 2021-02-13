@@ -52,8 +52,10 @@ class _WebPageLogInState extends State<WebPageLogIn> {
                       widget.isLogIn
                           ? LogInWidget()
                           : RegistrationWidget(name: name),
-                      RaisedButton(
-                        color: Colors.red,
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.red)),
                         child: Text(widget.isLogIn
                             ? "Zum Registrieren"
                             : "Zum Anmelden"),

@@ -93,11 +93,11 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
         ],
       ),
       actions: <Widget>[
-        FlatButton(
-          child: Text("abbrechen"),
+        TextButton(
+          child: Text("Abbrechen"),
           onPressed: () => Navigator.pop(context),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("Bestätigen"),
           // ignore: missing_return
           onPressed: () async {

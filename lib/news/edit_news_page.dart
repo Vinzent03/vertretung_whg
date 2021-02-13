@@ -114,7 +114,7 @@ class EditNewsPageState extends State<EditNewsPage> {
                   },
                 ),
               Center(
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: getSelectedSchoolClasses().isNotEmpty ||
                           widget.transmitter.isEditAction
                       ? () => confirm(context)
@@ -198,11 +198,11 @@ class EditNewsPageState extends State<EditNewsPage> {
       builder: (context) => AlertDialog(
         title: Text("Möchtest du wirklich eine Benachrichtigung senden?"),
         actions: [
-          FlatButton(
+          TextButton(
             child: Text("Abbrechen"),
             onPressed: () => Navigator.pop(context),
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("Bestätigen"),
             onPressed: () {
               setState(() => sendNotification = true);

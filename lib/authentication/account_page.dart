@@ -26,16 +26,16 @@ class _AccountPageState extends State<AccountPage> {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15))),
-            title: Text("Gib deinen neuen Namen ein"),
+            title: Text("Gib Deinen neuen Namen ein"),
             content: TextField(
               controller: controller,
             ),
             actions: <Widget>[
-              FlatButton(
-                child: Text("abbrechen"),
+              TextButton(
+                child: Text("Abbrechen"),
                 onPressed: () => Navigator.pop(context),
               ),
-              RaisedButton(
+              ElevatedButton(
                   child: Text("Bestätigen"),
                   onPressed: () async {
                     if (controller.text.length >= 2) {
@@ -49,14 +49,10 @@ class _AccountPageState extends State<AccountPage> {
                         content: Text("Bitte wähle einen längeren Namen"),
                         behavior: SnackBarBehavior.floating,
                         backgroundColor: Colors.red,
+                        duration: Duration(seconds: 4),
                       );
 
                       ScaffoldMessenger.of(scaffoldContext).showSnackBar(snack);
-                      await Future.delayed(
-                        Duration(seconds: 4),
-                      ); //Erst nach den 4 Sekunden wird die Snackbar geschlossen. Keine Ahnung warum das extra nötig ist.
-                      ScaffoldMessenger.of(scaffoldContext)
-                          .removeCurrentSnackBar();
                     }
                   }),
             ],
@@ -85,9 +81,10 @@ class _AccountPageState extends State<AccountPage> {
         content: Text(
             "Möchtest du dein Account wirklich löschen?\nDies kann nicht rückgängig gemacht werden!"),
         actions: [
-          RaisedButton(
+          TextButton(
             child: Text("Bestätigen"),
-            color: Colors.red,
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.red)),
             onPressed: () async {
               await authService
                   .signOut(Provider.of<UserData>(context, listen: false));
@@ -111,6 +108,12 @@ class _AccountPageState extends State<AccountPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Dein Account"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {},
+          )
+        ],
       ),
       body: Builder(
         builder: (context) {
@@ -140,7 +143,7 @@ class _AccountPageState extends State<AccountPage> {
                     children: <Widget>[
                       ListTile(
                         leading: Icon(Icons.email),
-                        title: Text("Anmelde Methode:"),
+                        title: Text("Anmeldemethode:"),
                         subtitle: isAnon ? null : Text(email),
                         trailing: Padding(
                           padding: EdgeInsets.only(right: 10),
@@ -169,62 +172,57 @@ class _AccountPageState extends State<AccountPage> {
                           "Zum Anmelden bitte erst Abmelden bzw. Konto löschen wenn du Anonym bist"),
                     ),
                   ),
-                Card(
-                  color: Theme.of(context).primaryColor,
-                  child: isAnon
-                      ? ListTile(
-                          title: RaisedButton(
-                              color: Theme.of(context).primaryColor,
-                              elevation: 0,
-                              child: Text("Account mit Email verbinden"),
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        LogInPage(
-                                            authType: AuthTypes.registration),
-                                  ),
-                                );
-                                reload();
-                              }),
-                        )
-                      : ListTile(
-                          title: RaisedButton(
-                              color: Theme.of(context).primaryColor,
-                              elevation: 0,
-                              child: Text("Abmelden"),
-                              onPressed: () async {
-                                await authService.signOut(Provider.of<UserData>(
-                                    context,
-                                    listen: false));
-                                Navigator.popUntil(
-                                    context,
-                                    ModalRoute.withName(
-                                        Navigator.defaultRouteName));
-                              }),
+                isAnon
+                    ? ListTile(
+                        title: TextButton(
+                            style: ButtonStyle(
+                                elevation: MaterialStateProperty.all(0)),
+                            child: Text("Account mit Email verbinden"),
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => LogInPage(
+                                      authType: AuthTypes.registration),
+                                ),
+                              );
+                              reload();
+                            }),
+                      )
+                    : ListTile(
+                        title: ElevatedButton(
+                          style: ButtonStyle(
+                              elevation: MaterialStateProperty.all(0)),
+                          child: Text("Abmelden"),
+                          onPressed: () async {
+                            await authService.signOut(
+                                Provider.of<UserData>(context, listen: false));
+                            Navigator.popUntil(
+                                context,
+                                ModalRoute.withName(
+                                    Navigator.defaultRouteName));
+                          },
                         ),
-                ),
-                Card(
-                  color: Colors.red,
-                  child: ListTile(
-                    title: RaisedButton(
-                      color: Colors.red,
-                      elevation: 0,
-                      child: Text("Konto löschen"),
-                      onPressed: () async {
-                        if (authService.isAnon())
-                          deleteAccountAlert();
-                        else
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  DeleteAccountPage(),
-                            ),
-                          );
-                      },
+                      ),
+                ListTile(
+                  title: TextButton(
+                    child: Text(
+                      "Konto löschen",
                     ),
+                    style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all(Colors.red)),
+                    onPressed: () async {
+                      if (authService.isAnon())
+                        deleteAccountAlert();
+                      else
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                DeleteAccountPage(),
+                          ),
+                        );
+                    },
                   ),
                 )
               ],

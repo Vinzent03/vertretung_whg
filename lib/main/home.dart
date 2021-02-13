@@ -296,15 +296,16 @@ class _HomeState extends State<Home> {
         title: Text("Fächer eingeben"),
         content: Text(message),
         actions: [
-          FlatButton(
+          OutlinedButton(
             onPressed: () {
               Navigator.pop(context);
               confirmDeactivatePersonalSubstitute();
             },
-            textColor: Colors.red,
+            style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.red)),
             child: Text("Deaktivieren"),
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("Fächer eingeben"),
             onPressed: () {
               Navigator.pop(context);
@@ -329,7 +330,7 @@ class _HomeState extends State<Home> {
         content: Text(
             "Personalisierte Vertretung ist die Hauptfunktion dieser App. Es geht auch sehr gut ohne, aber mit bietet sie noch mehr Nutzen."),
         actions: [
-          RaisedButton(
+          ElevatedButton(
             onPressed: () async {
               UserData userData = context.read<UserData>();
               userData.personalSubstitute = false;
@@ -345,7 +346,8 @@ class _HomeState extends State<Home> {
                 notificationOnFirstChange: notificationOnFirstChange,
               );
             },
-            color: Colors.red,
+            style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.red)),
             child: Text("Deaktivieren"),
           ),
         ],

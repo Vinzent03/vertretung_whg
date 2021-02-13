@@ -23,7 +23,7 @@ class ThemeModeSelection extends StatelessWidget {
             itemCount: modes.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return FlatButton(
+              return TextButton(
                 onPressed: () {
                   SharedPref.setInt(Names.themeMode, index);
                   context
@@ -48,7 +48,7 @@ class ThemeModeSelection extends StatelessWidget {
     return ListTile(
       leading: Icon(Icons.color_lens),
       title: Text("Theme"),
-      trailing: FlatButton(
+      trailing: TextButton(
         child: Text(modes[selectedThemeMode.index]),
         onPressed: () => showSelection(context),
       ),

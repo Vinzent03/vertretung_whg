@@ -17,7 +17,7 @@ class _NoSubstituteState extends State<NoSubstitute> {
         child: Text(
           context.watch<UserData>().lastChange.contains("00:09")
               ? "Leider keine Vertretung, aber der Plan wurde noch nicht aktualisiert!"
-              : "Leider keine Vertretung 😔",
+              : "Leider keine Vertretung",
           style: TextStyle(fontSize: 18),
           textAlign: TextAlign.center,
         ),

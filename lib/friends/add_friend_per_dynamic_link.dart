@@ -39,11 +39,11 @@ class _AddFriendPerDynamicLinkState extends State<AddFriendPerDynamicLink> {
               value: addFriendToYourself,
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text("Abbrechen"),
                 onPressed: () => Navigator.pop(context),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Bestätigen"),
                 onPressed: () {
                   Functions().addFriend(widget.friendUid, addFriendToYourself);
@@ -58,7 +58,7 @@ class _AddFriendPerDynamicLinkState extends State<AddFriendPerDynamicLink> {
             title: Text(
                 "Dies ist dein eigener Link. Du kannst dich nicht selbst als Freund hinzufügen."),
             actions: <Widget>[
-              RaisedButton(
+              ElevatedButton(
                 child: Text("OK"),
                 onPressed: () => Navigator.pop(context),
               ),

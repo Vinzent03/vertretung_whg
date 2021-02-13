@@ -60,7 +60,7 @@ class _IntroScreenState extends State<IntroScreen>
             image: Center(child: Image.asset("assets/icons/icon.png")),
             title: "Vertretung",
             body: "Der bessere Vertretungsplan!",
-            footer: FlatButton(
+            footer: TextButton(
               child: Text("Du hast schon ein Account?"),
               onPressed: () => Navigator.push(
                 context,
@@ -237,7 +237,7 @@ class _IntroScreenState extends State<IntroScreen>
                 ),
               ],
             ),
-            footer: FlatButton(
+            footer: TextButton(
               child: Text("Zu Firebase"),
               onPressed: () => launch("https://firebase.google.com/"),
             ),
@@ -307,12 +307,13 @@ class _IntroScreenState extends State<IntroScreen>
     final icon = Icon(Icons.check, color: Colors.green);
     if (showIgnoreEmptySubjectsButton &&
         context.watch<UserData>().personalSubstitute) {
-      return RaisedButton(
+      return ElevatedButton(
         onPressed: () {
           setState(() => ignoreEmptySubjects = true);
           setState(() => showIgnoreEmptySubjectsButton = false);
         },
-        color: Colors.red,
+        style:
+            ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red)),
         child: Text(
           "Später eingeben",
           style: TextStyle(color: Colors.white),

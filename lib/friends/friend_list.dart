@@ -17,11 +17,11 @@ class _FriendsListState extends State<FriendsList> {
             title: Text(
                 "Möchtest Du ${friend.name} wirklich von Deiner Freundesliste entfernen?"),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text("Abbrechen"),
                 onPressed: () => Navigator.pop(context),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Bestätigen"),
                 onPressed: () {
                   CloudDatabase().removeFriend(friend.uid);

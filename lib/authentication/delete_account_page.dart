@@ -47,9 +47,11 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                         height: 20,
                       ),
                       ListTile(
-                        title: RaisedButton(
+                        title: ElevatedButton(
                           child: Text("Konto löschen"),
-                          color: Colors.red,
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.red)),
                           onPressed: () async {
                             AuthService auth = AuthService();
                             ProgressDialog pr = ProgressDialog(context,

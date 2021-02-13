@@ -70,11 +70,11 @@ class _SplashState extends State<Splash> {
                 title: Text(message[0]),
                 content: Text(message[1]),
                 actions: <Widget>[
-                  RaisedButton(
+                  TextButton(
                     child: Text("Changelog"),
                     onPressed: () => launch(links["changelog"]),
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Download"),
                     onPressed: () => launch(links["download"]),
                   )
@@ -92,15 +92,15 @@ class _SplashState extends State<Splash> {
               title: Text(message[0]),
               content: Text(message[1]),
               actions: <Widget>[
-                FlatButton(
-                  child: Text("abbrechen"),
+                TextButton(
+                  child: Text("Abbrechen"),
                   onPressed: () => Navigator.pop(context),
                 ),
-                RaisedButton(
+                OutlinedButton(
                   child: Text("Changelog"),
                   onPressed: () => launch(links["changelog"]),
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text("Download"),
                   onPressed: () => launch(links["download"]),
                 ),

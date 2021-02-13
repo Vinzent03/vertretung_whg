@@ -39,7 +39,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
       builder: (context) => AlertDialog(
         content: Text(text),
         actions: [
-          RaisedButton(
+          TextButton(
             child: Text("OK"),
             onPressed: () => Navigator.pop(context),
           )
@@ -55,7 +55,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
         title: Text(
             "Fächer müssen exakt wie auf dem normalen Vertretungsplan geschrieben werden. (z.B. M-LK1)"),
         actions: [
-          RaisedButton(
+          TextButton(
             child: Text("OK"),
             onPressed: () => Navigator.pop(context),
           )

@@ -11,7 +11,7 @@ class ChangePasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Password ändern"),
+        title: Text("Passwort ändern"),
       ),
       body: Builder(builder: (context) {
         return Center(
@@ -51,7 +51,7 @@ class ChangePasswordPage extends StatelessWidget {
                       height: 20,
                     ),
                     ListTile(
-                      title: RaisedButton(
+                      title: ElevatedButton(
                         child: Text("Bestätigen"),
                         onPressed: () async {
                           AuthService auth = AuthService();

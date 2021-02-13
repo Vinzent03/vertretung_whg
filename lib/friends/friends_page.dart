@@ -26,18 +26,20 @@ class FriendsPage extends StatelessWidget {
             child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RaisedButton(
+            ElevatedButton(
               child: Text("Füge Freunde hinzu!"),
               onPressed: () {
                 showDialog(
                     context: context, builder: (context) => AddFriendDialog());
               },
             ),
-            RaisedButton(
+            OutlinedButton(
               child: Text("Freunde-Funktion deaktivieren"),
               onPressed: () {
                 context.read<UserData>().friendsFeature = false;
               },
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(Colors.red)),
             ),
           ],
         ));
