@@ -8,51 +8,39 @@ class ThemeModeSelection extends StatelessWidget {
   final ThemeMode selectedThemeMode;
   ThemeModeSelection(this.selectedThemeMode);
 
-  final List<String> modes = ["System", "Heller Modus", "Dunkler Modus"];
-
-  showSelection(context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15))),
-        title: Text("Wähle den Modus."),
-        content: Container(
-          width: 50,
-          child: ListView.builder(
-            itemCount: modes.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return TextButton(
-                onPressed: () {
-                  SharedPref.setInt(Names.themeMode, index);
-                  context
-                      .read<ThemeSettings>()
-                      .setThemeMode(ThemeMode.values[index]);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  modes[index],
-                  style: TextStyle(fontSize: 17),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
+  final List<String> modes = ["System Modus", "Heller Modus", "Dunkler Modus"];
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(Icons.color_lens),
       title: Text("Theme"),
-      trailing: TextButton(
-        child: Text(modes[selectedThemeMode.index]),
-        onPressed: () => showSelection(context),
-      ),
+      trailing: Text(modes[selectedThemeMode.index]),
       onTap: () => showSelection(context),
+    );
+  }
+
+  showSelection(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: modes.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(modes[index]),
+              onTap: () {
+                SharedPref.setInt(Names.themeMode, index);
+                context
+                    .read<ThemeSettings>()
+                    .setThemeMode(ThemeMode.values[index]);
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
+      },
     );
   }
 }
