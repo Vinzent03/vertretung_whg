@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
@@ -9,13 +8,12 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  String version = "web";
+  String version = "Loading";
 
   @override
   void initState() {
-    if (!kIsWeb)
-      PackageInfo.fromPlatform()
-          .then((onValue) => setState(() => version = onValue.version));
+    PackageInfo.fromPlatform()
+        .then((onValue) => setState(() => version = onValue.version));
     super.initState();
   }
 
@@ -65,14 +63,14 @@ class _AboutPageState extends State<AboutPage> {
                       scale: 15,
                     ),
                     title: Text("Wir sind auf GitHub!"),
-                    onTap: () => launch(
-                        "https://github.com/Vinzent03/vertretung_whg"),
+                    onTap: () =>
+                        launch("https://github.com/Vinzent03/vertretung_whg"),
                     trailing: IconButton(
                       icon: Image.asset(
                         "assets/images/GitHub.png",
                       ),
-                      onPressed: () => launch(
-                          "https://github.com/Vinzent03/vertretung_whg"),
+                      onPressed: () =>
+                          launch("https://github.com/Vinzent03/vertretung_whg"),
                     ),
                   ),
                 ),

@@ -11,7 +11,7 @@ import 'package:Vertretung/settings/freeLessonSelection/free_lesson_selection.da
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import "package:wiredash/wiredash.dart";
@@ -219,9 +219,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: Text("Feedback"),
                     onTap: () async {
                       Wiredash.of(context).setBuildProperties(
-                          buildVersion: kIsWeb
-                              ? "web"
-                              : (await PackageInfo.fromPlatform()).version);
+                          buildVersion:
+                              (await PackageInfo.fromPlatform()).version);
                       Wiredash.of(context)
                           .setUserProperties(userId: AuthService().getUserId());
                       Wiredash.of(context).show();
