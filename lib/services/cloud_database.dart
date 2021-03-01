@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:stream_transform/stream_transform.dart';
 
-enum updateCodes { availableNormal, availableForce, notAvailable }
+enum UpdateCodes { availableNormal, availableForce, notAvailable }
 
 class CloudDatabase {
   final FirebaseFirestore ref = FirebaseFirestore.instance;
@@ -148,7 +148,7 @@ class CloudDatabase {
   }
 
   //Updates
-  Future<updateCodes> getUpdate() async {
+  Future<UpdateCodes> getUpdate() async {
     PackageInfo pa = await PackageInfo.fromPlatform();
     String version = pa.version;
     bool updateAvailable = true;
@@ -160,23 +160,24 @@ class CloudDatabase {
       forceUpdate = snap.data()["forceUpdate"];
       if (updateAvailable) {
         if (forceUpdate) {
-          return updateCodes.availableForce;
+          return UpdateCodes.availableForce;
         } else {
-          return updateCodes.availableNormal;
+          return UpdateCodes.availableNormal;
         }
       } else {
-        return updateCodes.notAvailable;
+        return UpdateCodes.notAvailable;
       }
     } catch (e) {
-      return updateCodes.notAvailable;
+      return UpdateCodes.notAvailable;
     }
   }
 
   Future<Map<String, String>> getUpdateLinks() async {
     DocumentSnapshot snap = await ref.collection("details").doc("links").get();
     return {
-      "download": snap.data()["downloadLink"],
-      "changelog": snap.data()["changelogLink"]
+      "website": snap.data()["downloadLink"],
+      "changelog": snap.data()["changelogLink"],
+      "download": snap.data()["apkDownload"],
     };
   }
 

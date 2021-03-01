@@ -4,6 +4,7 @@ import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/logic/shared_pref.dart';
 import 'package:Vertretung/main/home.dart';
 import 'package:Vertretung/main/intro_screen.dart';
+import 'package:Vertretung/main/update_dialog.dart';
 import 'package:Vertretung/provider/theme_settings.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
@@ -12,7 +13,6 @@ import 'package:Vertretung/services/dynamic_link.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -52,62 +52,23 @@ class _SplashState extends State<Splash> {
 
   Future<void> checkForUpdate() async {
     CloudDatabase cd = CloudDatabase();
-    updateCodes updateSituation = await cd.getUpdate();
+    UpdateCodes updateSituation = await cd.getUpdate();
 
-    if (updateCodes.availableNormal == updateSituation ||
-        updateCodes.availableForce == updateSituation) {
+    if (UpdateCodes.availableNormal == updateSituation ||
+        UpdateCodes.availableForce == updateSituation) {
       Map<String, String> links = await cd.getUpdateLinks();
       List<dynamic> message = await cd.getUpdateMessage();
-      if (updateCodes.availableForce == updateSituation)
-        showDialog(
-          context: MyKeys.navigatorKey.currentState.overlay.context,
-          barrierDismissible: false,
-          builder: (context) {
-            return WillPopScope(
-              // ignore: missing_return
-              onWillPop: () {},
-              child: AlertDialog(
-                title: Text(message[0]),
-                content: Text(message[1]),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text("Changelog"),
-                    onPressed: () => launch(links["changelog"]),
-                  ),
-                  ElevatedButton(
-                    child: Text("Download"),
-                    onPressed: () => launch(links["download"]),
-                  )
-                ],
-              ),
-            );
-          },
-        );
-      else
-        showDialog(
-          context: MyKeys.navigatorKey.currentState.overlay.context,
-          barrierDismissible: true,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(message[0]),
-              content: Text(message[1]),
-              actions: <Widget>[
-                TextButton(
-                  child: Text("Abbrechen"),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                OutlinedButton(
-                  child: Text("Changelog"),
-                  onPressed: () => launch(links["changelog"]),
-                ),
-                ElevatedButton(
-                  child: Text("Download"),
-                  onPressed: () => launch(links["download"]),
-                ),
-              ],
-            );
-          },
-        );
+      showDialog(
+        context: MyKeys.navigatorKey.currentState.overlay.context,
+        builder: (_) => UpdateDialog(
+          title: message[0],
+          description: message[1],
+          changelogLink: links["changelog"],
+          websiteLink: links["website"],
+          downloadLink: links["download"],
+          isForce: updateSituation == UpdateCodes.availableForce,
+        ),
+      );
     }
   }
 
