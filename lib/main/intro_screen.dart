@@ -82,7 +82,7 @@ class _IntroScreenState extends State<IntroScreen>
               children: [
                 Padding(
                   padding: const EdgeInsets.all(30),
-                  child: Image.asset("assets/images/checklist.png"),
+                  child: Image.asset("assets/images/intro_checklist.png"),
                 ),
                 Text(
                   "Mit personalisierter Vertretung siehst Du durch die Eingabe von Fächern nur Vertretung, die Dich betrifft. Somit wirst Du nicht mehr von der Vertretung anderer Kurse gestört.",
@@ -102,7 +102,7 @@ class _IntroScreenState extends State<IntroScreen>
               children: [
                 Padding(
                   padding: const EdgeInsets.all(30),
-                  child: Image.asset("assets/images/notification.png"),
+                  child: Image.asset("assets/images/intro_notification.png"),
                 ),
                 Text(
                   "Mit Benachrichtigungen weißt Du immer Bescheid, wenn es neue Änderungen gibt! Auch wenn die App geschlossen ist.",
@@ -122,7 +122,7 @@ class _IntroScreenState extends State<IntroScreen>
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: Image.asset("assets/images/friends.png"),
+                  child: Image.asset("assets/images/intro_friends.png"),
                 ),
                 Text(
                   'Wenn Du Freunde hinzufügst, siehst Du, wann Deine Freunde Entfall haben. So weißt Du immer, wann Du Dich mit ihnen treffen kannst.',
