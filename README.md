@@ -20,36 +20,31 @@ This app is specially designed for Werner Heisenberg Gymnasium Germany, but can 
 # Screenshots
 
 <img
-    src = Images/IntroScreen.png
-    alt= "IntroScreen"
+    src = images/intro_screen.jpg
     width = 150>
 <img
-    src = Images/VertretungPageLightMode.png
-    alt= "IntroScreen"
+    src = images/home_light.jpg
     width = 150>
 <img
-    src = Images/FriendPageLightMode.png
-    alt= "IntroScreen"
+    src = images/home_dark.jpg
     width = 150>
 <img
-    src = Images/SettingsPageLightMode.png
-    alt= "IntroScreen"
+    src = images/school_class_light.jpg
     width = 150>
 <img
-    src = Images/VertretungPageDarkMode.png
-    alt= "IntroScreen"
+    src = images/school_class_dark.jpg
     width = 150>
 <img
-    src = Images/FriendPageDarkMode.png
-    alt= "IntroScreen"
+    src = images/friends_light.jpg
     width = 150>
 <img
-    src = Images/NewsPageDarkMode.png
-    alt= "IntroScreen"
+    src = images/friends_dark.jpg
     width = 150>
 <img
-    src = Images/SettingsPageDarkMode.png
-    alt= "IntroScreen"
+    src = images/settings_light.jpg
+    width = 150>
+<img
+    src = images/settings_dark.jpg
     width = 150>
 
 # Features
