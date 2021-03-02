@@ -23,44 +23,35 @@ class TwoDayOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (today.isNotEmpty || tomorrow.isNotEmpty)
-      return Column(
+      return ListView(
+        padding: EdgeInsets.fromLTRB(padding, 0, padding, padding),
         children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(padding, 0, padding, padding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextHeadline(
-                    "${context.watch<UserData>().formattedDayNames[0]}: ",
-                    today.length.toString()),
-                if (today.isEmpty)
-                  NoSubstitute()
-                else
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: today.length,
-                    itemBuilder: (context, index) {
-                      return SubstituteListTile(today[index], false);
-                    },
-                  ),
-                TextHeadline(
-                    "${context.watch<UserData>().formattedDayNames[1]}: ",
-                    tomorrow.length.toString()),
-                if (tomorrow.isEmpty)
-                  NoSubstitute()
-                else
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: tomorrow.length,
-                    itemBuilder: (context, index) {
-                      return SubstituteListTile(tomorrow[index], false);
-                    },
-                  )
-              ],
+          TextHeadline("${context.watch<UserData>().formattedDayNames[0]}: ",
+              today.length.toString()),
+          if (today.isEmpty)
+            NoSubstitute()
+          else
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: today.length,
+              itemBuilder: (context, index) {
+                return SubstituteListTile(today[index], false);
+              },
             ),
-          ),
+          TextHeadline("${context.watch<UserData>().formattedDayNames[1]}: ",
+              tomorrow.length.toString()),
+          if (tomorrow.isEmpty)
+            NoSubstitute()
+          else
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: tomorrow.length,
+              itemBuilder: (context, index) {
+                return SubstituteListTile(tomorrow[index], false);
+              },
+            )
         ],
       );
     else {
