@@ -16,7 +16,7 @@ jobs:
           java-version: "8.x"
       - uses: subosito/flutter-action@v1
         with:
-          channel: "dev"
+          channel: "beta"
       - run: flutter pub get
       - run: |
           git clone https://.:${{ secrets.TOKEN}}@github.com/Vinzent03/hiddenData
