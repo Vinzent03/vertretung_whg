@@ -46,6 +46,7 @@ dependencies:
   wiredash: ^0.5.0
   flutter_downloader: ^1.5.2
   path_provider: ^1.6.27
+  url_strategy: ^0.2.0
 
 dev_dependencies:
   flutter_test:

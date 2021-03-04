@@ -18,6 +18,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_strategy/url_strategy.dart';
 import "package:wiredash/wiredash.dart";
 
 import 'authentication/change_password_page.dart';
@@ -27,6 +28,7 @@ import 'main/splash.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_handleBackgroundNotification);
+  setPathUrlStrategy();
   Firebase.initializeApp().then((value) async {
     if (!kIsWeb) {
       await FirebaseCrashlytics.instance
