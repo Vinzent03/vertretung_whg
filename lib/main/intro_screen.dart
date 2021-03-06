@@ -1,4 +1,5 @@
 import 'package:Vertretung/authentication/login_page.dart';
+import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/otherWidgets/school_class_selection.dart';
 import 'package:Vertretung/provider/theme_data.dart';
 import 'package:Vertretung/provider/user_data.dart';
@@ -7,7 +8,6 @@ import 'package:Vertretung/settings/subjectsSelection/subjects_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -281,16 +281,15 @@ class _IntroScreenState extends State<IntroScreen>
   void onDone() async {
     if (!alreadyPressed) {
       alreadyPressed = true;
-      ProgressDialog pr =
-          ProgressDialog(context, isDismissible: false, showLogs: false);
+      LoadingDialog ld = LoadingDialog(context);
       String name = nameController.text;
       if (name == "") name = "Nicht festgelegt";
       if (kIsWeb) {
         Navigator.pop(context, name);
       } else {
-        await pr.show();
+        ld.show();
         await AuthService().setupAccount(true, name).catchError((e) async {
-          await pr.hide();
+          ld.hide();
           alreadyPressed = false;
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("Ein Fehler ist aufgetreten: $e"),
@@ -298,7 +297,7 @@ class _IntroScreenState extends State<IntroScreen>
             backgroundColor: Colors.red,
           ));
         });
-        pr.hide();
+        ld.hide();
       }
     }
   }

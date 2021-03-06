@@ -1,20 +1,19 @@
 import 'package:Vertretung/models/news_model.dart';
 import 'package:Vertretung/news/details_page.dart';
+import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/services/cloud_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 import 'edit_news_page.dart';
 import 'news_transmitter.dart';
 
 class NewsLogic {
   Future<bool> deleteNews(BuildContext context, String id) async {
-    ProgressDialog pr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
-    await pr.show();
+    LoadingDialog ld = LoadingDialog(context);
+    ld.show();
 
     var result = await Functions().deleteNews(id);
-    await pr.hide();
+    ld.hide();
 
     switch (result["code"]) {
       case "SUCCESS":

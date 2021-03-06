@@ -1,7 +1,7 @@
+import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 
 class DeleteAccountPage extends StatefulWidget {
@@ -54,13 +54,12 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                                   MaterialStateProperty.all(Colors.red)),
                           onPressed: () async {
                             AuthService auth = AuthService();
-                            ProgressDialog pr = ProgressDialog(context,
-                                isDismissible: false, showLogs: false);
-                            await pr.show();
+                            LoadingDialog ld = LoadingDialog(context);
+                            ld.show();
                             String authRes = await auth
                                 .reAuthenticate(passwordController.text);
                             if (authRes != null) {
-                              await pr.hide();
+                              ld.hide();
                               return ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
                                 content: Text(authRes),
@@ -71,7 +70,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                               Provider.of<UserData>(context, listen: false),
                               deleteAccount: true,
                             );
-                            await pr.hide();
+                            ld.hide();
                             Navigator.popUntil(
                                 context,
                                 ModalRoute.withName(

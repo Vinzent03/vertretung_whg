@@ -2,9 +2,9 @@ import 'package:Vertretung/data/school_classes.dart';
 import 'package:Vertretung/models/school_class_model.dart';
 import 'package:Vertretung/news/news_school_classes_selection.dart';
 import 'package:Vertretung/news/news_transmitter.dart';
+import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/services/cloud_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 ///Used to edit and add news
 class EditNewsPage extends StatefulWidget {
@@ -135,9 +135,8 @@ class EditNewsPageState extends State<EditNewsPage> {
         content: Text("Bitte gib einen Titel an"),
       ));
 
-    ProgressDialog pr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
-    await pr.show();
+    LoadingDialog ld = LoadingDialog(context);
+    ld.show();
 
     var result;
     if (transmitter.isEditAction) {
@@ -156,7 +155,7 @@ class EditNewsPageState extends State<EditNewsPage> {
       );
     }
 
-    await pr.hide();
+    ld.hide();
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     switch (result["code"]) {

@@ -1,9 +1,9 @@
+import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/services/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class AddFriendDialog extends StatefulWidget {
   @override
@@ -19,10 +19,10 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
   String uid;
   bool error = false;
   bool addFriendToYourself = true;
-  ProgressDialog pr;
+  LoadingDialog ld;
   @override
   void didChangeDependencies() {
-    pr = ProgressDialog(context, isDismissible: false, showLogs: false);
+    ld = LoadingDialog(context);
     super.didChangeDependencies();
   }
 
@@ -103,10 +103,10 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
           onPressed: () async {
             error = false;
             if (_validateInputs()) {
-              await pr.show();
+              ld.show();
               var result = await Functions()
                   .addFriend(controller.text, addFriendToYourself);
-              await pr.hide();
+              ld.hide();
               switch (result["code"]) {
                 case "SUCCESS":
                   Navigator.pop(context);

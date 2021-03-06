@@ -36,7 +36,6 @@ dependencies:
   intl: ^0.16.1
   introduction_screen: ^1.0.9
   package_info_plus: ^0.6.4  
-  progress_dialog: ^1.2.4
   provider: ^4.0.5
   share: ^0.6.3+6
   shared_preferences: ^0.5.6+3

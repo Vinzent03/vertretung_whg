@@ -1,12 +1,12 @@
 import 'package:Vertretung/logic/filter.dart';
 import 'package:Vertretung/models/friend_model.dart';
 import 'package:Vertretung/models/substitute_tile_model.dart';
+import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/services/cloud_database.dart';
 import 'package:Vertretung/services/dynamic_link.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:share/share.dart';
 
 class FriendLogic {
@@ -201,13 +201,12 @@ class FriendLogic {
   }
 
   static void shareFriendsToken(BuildContext context) async {
-    ProgressDialog pr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
-    await pr.show();
+    LoadingDialog ld = LoadingDialog(context);
+    ld.show();
     String uid = AuthService().getUserId();
     String link = await DynamicLink().createLink();
     String name = await CloudDatabase().getName();
-    await pr.hide();
+    ld.hide();
     Share.share("Hier ist der Freundestoken von $name: '" +
         uid.substring(0, 5) +
         "' Dieser muss nun unter 'als Freund eintagen' eingegeben werden. Oder einfach auf diesen Link klicken(nur Android): $link");

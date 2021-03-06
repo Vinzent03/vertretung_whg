@@ -1,7 +1,7 @@
+import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class LogInWidget extends StatelessWidget {
   LogInWidget({Key key}) : super(key: key);
@@ -9,20 +9,19 @@ class LogInWidget extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
 
   void logIn(context) async {
-    ProgressDialog pr =
-        ProgressDialog(context, isDismissible: false, showLogs: false);
-    await pr.show();
+    LoadingDialog ld = LoadingDialog(context);
+    ld.show();
     String err = await AuthService().signInEmail(
         email: emailController.text, password: passwordController.text);
     if (err != null) {
-      await pr.hide();
+      ld.hide();
       final SnackBar snack = SnackBar(
         content: Text(err),
         backgroundColor: Colors.red,
       );
       ScaffoldMessenger.of(context).showSnackBar(snack);
     } else {
-      await pr.hide();
+      ld.hide();
       if (!kIsWeb) Navigator.pop(context);
     }
   }

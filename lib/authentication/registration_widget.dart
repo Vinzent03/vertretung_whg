@@ -58,8 +58,7 @@ class RegistrationWidget extends StatelessWidget {
             child:
                 Text(kIsWeb ? "Registrieren" : "Account mit Email verbinden"),
             onPressed: () async {
-              ProgressDialog pr = ProgressDialog(context,
-                  isDismissible: false, showLogs: false);
+              LoadingDialog ld = LoadingDialog(context);
               String err;
               if (passwordController.text != passwordConfirmController.text)
                 return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -67,24 +66,24 @@ class RegistrationWidget extends StatelessWidget {
                   behavior: SnackBarBehavior.floating,
                   backgroundColor: Colors.red,
                 ));
-              await pr.show();
+              ld.show();
               if (kIsWeb) {
                 await AuthService()
                     .setupAccount(false, name, emailController.text,
                         passwordController.text)
                     .catchError((e) async {
-                  await pr.hide();
+                  ld.hide();
                   final SnackBar snack = SnackBar(
                     content: Text(e),
                     backgroundColor: Colors.red,
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snack);
                 });
-                await pr.hide();
+                ld.hide();
               } else {
                 err = await AuthService().linkAccountWithEmail(
                     emailController.text, passwordController.text);
-                await pr.hide();
+                ld.hide();
               }
               if (err != null) {
                 final SnackBar snack = SnackBar(
