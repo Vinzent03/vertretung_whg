@@ -50,6 +50,7 @@ class RegistrationWidget extends StatelessWidget {
           TextFormField(
             obscureText: true,
             controller: passwordConfirmController,
+            autofillHints: [AutofillHints.newPassword],
           ),
           SizedBox(
             height: 20,
