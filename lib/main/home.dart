@@ -17,7 +17,6 @@ import 'package:Vertretung/substitute/substitute_logic.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
@@ -33,7 +32,6 @@ class _HomeState extends State<Home> {
   List<NewsModel> rawNews = [];
   bool substituteLoaded = false;
   final SubstituteLogic substituteLogic = SubstituteLogic();
-  final RefreshController refreshController = RefreshController();
 
   @override
   void initState() {
@@ -57,7 +55,7 @@ class _HomeState extends State<Home> {
 
     if (!substituteLoaded)
       substituteLogic
-          .reloadSubstitute(context, refreshController)
+          .reloadSubstitute(context)
           .then((value) => substituteLoaded = true);
     super.didChangeDependencies();
   }
@@ -133,9 +131,7 @@ class _HomeState extends State<Home> {
             friendsSettings: friendsSettings,
             finishedLoading: substituteLoaded,
             swapPage: swapPage,
-            refresh: () =>
-                substituteLogic.reloadSubstitute(context, refreshController),
-            refreshController: refreshController,
+            refresh: () => substituteLogic.reloadSubstitute(context),
           ),
           if (context.watch<UserData>().personalSubstitute)
             SchoolClassSubstitute(
@@ -147,9 +143,7 @@ class _HomeState extends State<Home> {
                 context.watch<UserData>().schoolClass,
                 context.watch<UserData>().rawSubstituteTomorrow,
               ),
-              refresh: () =>
-                  substituteLogic.reloadSubstitute(context, refreshController),
-              refreshController: refreshController,
+              refresh: () => substituteLogic.reloadSubstitute(context),
             ),
           if (friendsFeature) FriendsPage(friendsSettings: friendsSettings),
           NewsPage(

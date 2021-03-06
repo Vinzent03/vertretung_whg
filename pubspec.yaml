@@ -38,7 +38,6 @@ dependencies:
   package_info_plus: ^0.6.4  
   progress_dialog: ^1.2.4
   provider: ^4.0.5
-  pull_to_refresh: ^1.5.7
   share: ^0.6.3+6
   shared_preferences: ^0.5.6+3
   stream_transform: ^2.0.0

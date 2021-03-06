@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/provider/user_data.dart';
@@ -10,7 +11,6 @@ import 'package:html/parser.dart'; // Contains HTML parsers to generate a Docume
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SubstituteLogic {
   bool loadingSuccess = true;
@@ -50,14 +50,13 @@ class SubstituteLogic {
         vertretungTodayList,
         vertretungTomorrowList
       ];
-    } catch (e) {
+    } on SocketException catch (e) {
       print(e);
       return [];
     }
   }
 
-  Future<void> reloadSubstitute(
-      BuildContext context, RefreshController refreshController) async {
+  Future<void> reloadSubstitute(BuildContext context) async {
     SnackBar snack = SnackBar(
       content: Text("Es werden alte Daten verwendet."),
       duration: Duration(days: 1),
@@ -85,7 +84,6 @@ class SubstituteLogic {
 
       CloudDatabase().updateLastNotification(context.read<UserData>());
     }
-    refreshController.refreshCompleted();
   }
 
   static String formatLastChange(String unformattedLastChange) {
