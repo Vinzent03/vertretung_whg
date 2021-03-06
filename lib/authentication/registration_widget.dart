@@ -1,8 +1,8 @@
+import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class RegistrationWidget extends StatelessWidget {
   final String name;
