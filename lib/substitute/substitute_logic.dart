@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Vertretung/data/names.dart';
+import 'package:Vertretung/data/links.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/cloud_database.dart';
 import 'package:flutter/foundation.dart';
@@ -24,9 +24,9 @@ class SubstituteLogic {
   Future<List<dynamic>> _getData() async {
     try {
       if (kIsWeb) return await CloudDatabase().getSubstitute();
-      var todayResponse = await http.get(Uri.parse(Names.substituteLinkToday));
+      var todayResponse = await http.get(Uri.parse(Links.substituteLinkToday));
       var tomorrowResponse =
-          await http.get(Uri.parse(Names.substituteLinkTomorrow));
+          await http.get(Uri.parse(Links.substituteLinkTomorrow));
       dom.Document todayDocument = parse(utf8.decode(todayResponse.bodyBytes));
       dom.Document tomorrowDocument =
           parse(utf8.decode(tomorrowResponse.bodyBytes));

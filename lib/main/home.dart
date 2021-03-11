@@ -1,3 +1,4 @@
+import 'package:Vertretung/data/links.dart';
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/friends/add_friend_dialog.dart';
 import 'package:Vertretung/friends/friend_logic.dart';
@@ -232,14 +233,14 @@ class _HomeState extends State<Home> {
                 leading: Icon(Icons.today),
                 onTap: () {
                   Navigator.pop(context);
-                  launch(Names.substituteLinkToday);
+                  launch(Links.substituteLinkToday);
                 }),
             ListTile(
                 title: Text("Morgen"),
                 leading: Icon(Icons.today),
                 onTap: () {
                   Navigator.pop(context);
-                  launch(Names.substituteLinkTomorrow);
+                  launch(Links.substituteLinkTomorrow);
                 }),
           ],
         ),

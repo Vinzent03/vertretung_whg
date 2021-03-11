@@ -43,3 +43,4 @@ android/Vertretung.jks
 lib/data/wiredash_keys.dart
 android/app/google-services.json
 web/firebaseConfig.js
+lib/data/links.dart

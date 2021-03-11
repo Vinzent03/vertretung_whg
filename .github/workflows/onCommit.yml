@@ -25,4 +25,5 @@ jobs:
           mv hiddenData/Vertretung.jks android/
           mv hiddenData/google-services.json android/app/
           mv hiddenData/wiredash_keys.dart lib/data/
+          mv hiddenData/links.dart lib/data/
       - run: flutter build apk

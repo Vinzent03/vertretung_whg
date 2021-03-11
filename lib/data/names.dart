@@ -7,12 +7,6 @@ class Names {
   static const String friendsList = "/friendsList";
   static const String changePasswordPage = "/changePasswordPage";
 
-  static const String substituteLinkToday =
-      "https://app.dsbcontrol.de/data/15fddc3b-5b2e-4339-847b-66d2e291b04a/ebfdb6c0-e2c4-4da1-ab90-ffc51b684903/ebfdb6c0-e2c4-4da1-ab90-ffc51b684903.html";
-
-  static const String substituteLinkTomorrow =
-      "https://app.dsbcontrol.de/data/15fddc3b-5b2e-4339-847b-66d2e291b04a/12dcaead-309b-4fc6-904e-5e0bfc1f20b3/12dcaead-309b-4fc6-904e-5e0bfc1f20b3.html";
-
   //variables
   static const String schoolClass = "schoolClass";
 
