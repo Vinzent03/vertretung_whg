@@ -24,8 +24,9 @@ class SubstituteLogic {
   Future<List<dynamic>> _getData() async {
     try {
       if (kIsWeb) return await CloudDatabase().getSubstitute();
-      var todayResponse = await http.get(Names.substituteLinkToday);
-      var tomorrowResponse = await http.get(Names.substituteLinkTomorrow);
+      var todayResponse = await http.get(Uri.parse(Names.substituteLinkToday));
+      var tomorrowResponse =
+          await http.get(Uri.parse(Names.substituteLinkTomorrow));
       dom.Document todayDocument = parse(utf8.decode(todayResponse.bodyBytes));
       dom.Document tomorrowDocument =
           parse(utf8.decode(tomorrowResponse.bodyBytes));
