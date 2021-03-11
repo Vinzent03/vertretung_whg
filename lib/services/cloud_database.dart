@@ -150,23 +150,19 @@ class CloudDatabase {
   //Updates
   Future<UpdateCodes> getUpdate() async {
     PackageInfo pa = await PackageInfo.fromPlatform();
-    String version = pa.version;
-    bool updateAvailable = true;
-    bool forceUpdate;
+    int version = int.parse(pa.buildNumber);
     try {
       DocumentSnapshot snap =
           await ref.collection("details").doc("versions").get();
-      updateAvailable = snap.data()["newVersion"] != version;
-      forceUpdate = snap.data()["forceUpdate"];
-      if (updateAvailable) {
-        if (forceUpdate) {
-          return UpdateCodes.availableForce;
-        } else {
-          return UpdateCodes.availableNormal;
-        }
-      } else {
+
+      int deprecatedVersion = snap.data()["deprecatedVersion"];
+      int recommendedVersion = snap.data()["recommendedVersion"];
+
+      if (deprecatedVersion >= version) return UpdateCodes.availableForce;
+      if (recommendedVersion > version)
+        return UpdateCodes.availableNormal;
+      else
         return UpdateCodes.notAvailable;
-      }
     } catch (e) {
       return UpdateCodes.notAvailable;
     }
