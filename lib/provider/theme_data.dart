@@ -34,4 +34,7 @@ final lightTheme = ThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
   ),
   toggleableActiveColor: _primary,
+  appBarTheme: AppBarTheme(
+    color: _primary,
+  ),
 );
