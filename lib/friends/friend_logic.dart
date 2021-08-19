@@ -6,7 +6,9 @@ import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/services/cloud_database.dart';
 import 'package:Vertretung/services/dynamic_link.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:share/share.dart';
 
 class FriendLogic {
@@ -204,11 +206,21 @@ class FriendLogic {
     LoadingDialog ld = LoadingDialog(context);
     ld.show();
     String uid = AuthService().getUserId();
-    String link = await DynamicLink().createLink();
     String name = await CloudDatabase().getName();
-    ld.hide();
-    Share.share("Hier ist der Freundestoken von $name: '" +
-        uid.substring(0, 5) +
-        "' Dieser muss nun unter 'als Freund eintagen' eingegeben werden. Oder einfach auf diesen Link klicken(nur Android): $link");
+    if (kIsWeb) {
+      ld.hide();
+      Clipboard.setData(ClipboardData(
+          text: "Hier ist der Freundestoken von $name: '" +
+              uid.substring(0, 5) +
+              "' Dieser muss nun unter 'als Freund eintagen' eingegeben werden"));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Freundestoken Nachricht kopiert. ")));
+    } else {
+      String link = await DynamicLink().createLink();
+      ld.hide();
+      Share.share("Hier ist der Freundestoken von $name: '" +
+          uid.substring(0, 5) +
+          "' Dieser muss nun unter 'als Freund eintagen' eingegeben werden. Oder einfach auf diesen Link klicken(nur Android): $link");
+    }
   }
 }
