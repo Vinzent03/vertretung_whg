@@ -107,12 +107,13 @@ class CloudDatabase {
   }
 
   Future<String> getName() async {
-    DocumentSnapshot snap = await ref.collection("userdata").doc(uid).get();
+    DocumentSnapshot<Map<String, dynamic>> snap =
+        await ref.collection("userdata").doc(uid).get();
     return snap.data()["name"] ?? "No internet connection";
   }
 
   Future<void> syncSettings(UserData provider) async {
-    DocumentSnapshot userdataDoc =
+    DocumentSnapshot<Map<String, dynamic>> userdataDoc =
         await ref.collection("userdata").doc(uid).get();
 
     updateToken();
@@ -152,7 +153,7 @@ class CloudDatabase {
     PackageInfo pa = await PackageInfo.fromPlatform();
     int version = int.parse(pa.buildNumber);
     try {
-      DocumentSnapshot snap =
+      DocumentSnapshot<Map<String, dynamic>> snap =
           await ref.collection("details").doc("versions").get();
 
       int deprecatedVersion = snap.data()["deprecatedVersion"];
@@ -169,7 +170,8 @@ class CloudDatabase {
   }
 
   Future<Map<String, String>> getUpdateLinks() async {
-    DocumentSnapshot snap = await ref.collection("details").doc("links").get();
+    DocumentSnapshot<Map<String, dynamic>> snap =
+        await ref.collection("details").doc("links").get();
     return {
       "website": snap.data()["downloadLink"],
       "changelog": snap.data()["changelogLink"],
@@ -178,7 +180,7 @@ class CloudDatabase {
   }
 
   Future<List<dynamic>> getUpdateMessage() async {
-    DocumentSnapshot snap =
+    DocumentSnapshot<Map<String, dynamic>> snap =
         await ref.collection("details").doc("versions").get();
     return snap.data()["message"];
   }
@@ -186,7 +188,7 @@ class CloudDatabase {
   //News
   Stream<List<NewsModel>> getNews() {
     List<QueryDocumentSnapshot> sort(QuerySnapshot event) {
-      List<QueryDocumentSnapshot> list = event.docs;
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> list = event.docs;
       list.sort((a, b) => (a.data()["created"] as Timestamp)
           .compareTo((b.data()["created"] as Timestamp)));
       return list.reversed.toList();
@@ -207,7 +209,7 @@ class CloudDatabase {
   // friends
   Future<void> removeFriend(String frienduid) async {
     DocumentReference doc = ref.collection("userdata").doc(uid);
-    DocumentSnapshot snap = await doc.get();
+    DocumentSnapshot<Map<String, dynamic>> snap = await doc.get();
     List<dynamic> friends = List<String>.from(snap.data()["friends"]);
     friends.remove(frienduid);
     return await doc.update({"friends": friends});
@@ -248,7 +250,8 @@ class CloudDatabase {
 
   ///only used for web app
   Future<List<dynamic>> getSubstitute() async {
-    DocumentSnapshot data = await ref.collection("details").doc("webapp").get();
+    DocumentSnapshot<Map<String, dynamic>> data =
+        await ref.collection("details").doc("webapp").get();
     return [
       data.data()["lastChange"] as String,
       List<String>.from(data.data()[Names.dayNames]),
