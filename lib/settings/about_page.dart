@@ -49,7 +49,8 @@ class _AboutPageState extends State<AboutPage> {
                           icon: Image.asset(
                             "assets/images/Discord-Logo-Color.png",
                           ),
-                          onPressed: () => launch("https://discord.gg/X6gdJZg"),
+                          onPressed: () =>
+                              launch("https://discord.gg/xmTcUhP3Xn"),
                         ),
                       ),
                     ],
