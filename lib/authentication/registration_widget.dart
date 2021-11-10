@@ -2,13 +2,20 @@ import 'package:Vertretung/otherWidgets/loading_dialog.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-class RegistrationWidget extends StatelessWidget {
+class RegistrationWidget extends StatefulWidget {
   final String name;
   RegistrationWidget({Key key, this.name}) : super(key: key);
+
+  @override
+  State<RegistrationWidget> createState() => _RegistrationWidgetState();
+}
+
+class _RegistrationWidgetState extends State<RegistrationWidget> {
   TextEditingController emailController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+
   TextEditingController passwordConfirmController = TextEditingController();
 
   @override
@@ -70,7 +77,7 @@ class RegistrationWidget extends StatelessWidget {
               ld.show();
               if (kIsWeb) {
                 await AuthService()
-                    .setupAccount(false, name, emailController.text,
+                    .setupAccount(false, widget.name, emailController.text,
                         passwordController.text)
                     .catchError((e) async {
                   ld.hide();

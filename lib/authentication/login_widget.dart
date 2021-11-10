@@ -3,9 +3,16 @@ import 'package:Vertretung/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class LogInWidget extends StatelessWidget {
+class LogInWidget extends StatefulWidget {
   LogInWidget({Key key}) : super(key: key);
+
+  @override
+  State<LogInWidget> createState() => _LogInWidgetState();
+}
+
+class _LogInWidgetState extends State<LogInWidget> {
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
 
   void logIn(context) async {
