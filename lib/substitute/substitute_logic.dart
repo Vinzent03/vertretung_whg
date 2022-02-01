@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:Vertretung/data/links.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/cloud_database.dart';
+import 'package:Vertretung/services/remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
@@ -21,12 +20,15 @@ class SubstituteLogic {
   }
 
   //replace this for your own situation
-  Future<List<dynamic>> _getData() async {
+  Future<List<dynamic>> _getData(String schoolClass) async {
     try {
+      await RemoteConfigService.refresh();
+
       if (kIsWeb) return await CloudDatabase().getSubstitute();
-      var todayResponse = await http.get(Uri.parse(Links.substituteLinkToday));
-      var tomorrowResponse =
-          await http.get(Uri.parse(Links.substituteLinkTomorrow));
+      final todayResponse = await http
+          .get(Uri.parse(RemoteConfigService.getLinks(schoolClass).today));
+      final tomorrowResponse = await http
+          .get(Uri.parse(RemoteConfigService.getLinks(schoolClass).tomorrow));
       dom.Document todayDocument = parse(utf8.decode(todayResponse.bodyBytes));
       dom.Document tomorrowDocument =
           parse(utf8.decode(tomorrowResponse.bodyBytes));
@@ -51,7 +53,7 @@ class SubstituteLogic {
         vertretungTodayList,
         vertretungTomorrowList
       ];
-    } on SocketException catch (e) {
+    } catch (e) {
       print(e);
       return [];
     }
@@ -70,8 +72,9 @@ class SubstituteLogic {
         },
       ),
     );
-    List<dynamic> dataResult =
-        await SubstituteLogic()._getData(); //load the data from dsb mobile
+
+    List<dynamic> dataResult = await SubstituteLogic()._getData(
+        context.read<UserData>().schoolClass); //load the data from dsb mobile
     if (dataResult.isEmpty) {
       if (loadingSuccess) ScaffoldMessenger.of(context).showSnackBar(snack);
       loadingSuccess = false;

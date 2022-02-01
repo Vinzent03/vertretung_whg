@@ -28,6 +28,7 @@ dependencies:
   firebase_crashlytics: ^2.2.0
   firebase_dynamic_links: ^2.0.8
   firebase_messaging: ^10.0.5
+  firebase_remote_config: ^2.0.0
   flutter_markdown: ^0.6.0
   html: ^0.15.0
   http: ^0.13.0

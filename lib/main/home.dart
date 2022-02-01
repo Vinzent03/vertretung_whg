@@ -1,4 +1,3 @@
-import 'package:Vertretung/data/links.dart';
 import 'package:Vertretung/data/names.dart';
 import 'package:Vertretung/friends/add_friend_dialog.dart';
 import 'package:Vertretung/friends/friend_logic.dart';
@@ -13,6 +12,7 @@ import 'package:Vertretung/news/news_page.dart';
 import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/services/cloud_database.dart';
+import 'package:Vertretung/services/remote_config.dart';
 import 'package:Vertretung/settings/subjectsSelection/subjects_page.dart';
 import 'package:Vertretung/substitute/substitute_logic.dart';
 import 'package:animations/animations.dart';
@@ -233,14 +233,18 @@ class _HomeState extends State<Home> {
                 leading: Icon(Icons.today),
                 onTap: () {
                   Navigator.pop(context);
-                  launch(Links.substituteLinkToday);
+                  launch(RemoteConfigService.getLinks(
+                          context.read<UserData>().schoolClass)
+                      .today);
                 }),
             ListTile(
                 title: Text("Morgen"),
                 leading: Icon(Icons.today),
                 onTap: () {
                   Navigator.pop(context);
-                  launch(Links.substituteLinkTomorrow);
+                  launch(RemoteConfigService.getLinks(
+                          context.read<UserData>().schoolClass)
+                      .tomorrow);
                 }),
           ],
         ),

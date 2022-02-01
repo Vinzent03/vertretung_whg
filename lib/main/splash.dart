@@ -10,6 +10,7 @@ import 'package:Vertretung/provider/user_data.dart';
 import 'package:Vertretung/services/auth_service.dart';
 import 'package:Vertretung/services/cloud_database.dart';
 import 'package:Vertretung/services/dynamic_link.dart';
+import 'package:Vertretung/services/remote_config.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
@@ -86,6 +87,7 @@ class _SplashState extends State<Splash> {
       [
         initTheme(),
         initUserSettings(),
+        RemoteConfigService.init(),
       ],
     );
     setState(() {
