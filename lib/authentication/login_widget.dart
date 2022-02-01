@@ -37,6 +37,7 @@ class _LogInWidgetState extends State<LogInWidget> {
   Widget build(BuildContext context) {
     return AutofillGroup(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           SizedBox(
             height: 20,
