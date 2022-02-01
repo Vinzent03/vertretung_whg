@@ -77,7 +77,9 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
             key: _formKey,
             child: TextFormField(
               controller: controller,
-              autovalidate: _autoValidate,
+              autovalidateMode: _autoValidate
+                  ? AutovalidateMode.always
+                  : AutovalidateMode.disabled,
               validator: isValid,
             ),
           ),
