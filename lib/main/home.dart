@@ -57,7 +57,7 @@ class _HomeState extends State<Home> {
     if (!substituteLoaded)
       substituteLogic
           .reloadSubstitute(context)
-          .then((value) => substituteLoaded = true);
+          .then((value) => setState(() => substituteLoaded = true));
     super.didChangeDependencies();
   }
 
