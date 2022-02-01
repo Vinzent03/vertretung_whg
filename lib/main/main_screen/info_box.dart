@@ -23,8 +23,9 @@ class _InfoBoxState extends State<InfoBox> {
   Widget build(BuildContext context) {
     return Flexible(
       child: Card(
-        child: InkWell(
+        child: GestureDetector(
           onTap: widget.onPressed,
+          behavior: HitTestBehavior.translucent,
           child: Container(
             alignment: Alignment.center,
             child: Column(
