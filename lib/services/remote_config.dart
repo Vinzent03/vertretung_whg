@@ -42,6 +42,10 @@ abstract class RemoteConfigService {
       today: today,
     );
   }
+
+  static bool useWebSubstituteOnMobile() {
+    return _remoteConfig.getBool("use_web_substitute_on_mobile");
+  }
 }
 
 class LinksData {

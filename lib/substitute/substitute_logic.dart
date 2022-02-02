@@ -20,11 +20,12 @@ class SubstituteLogic {
   }
 
   //replace this for your own situation
-  Future<List<dynamic>> _getData(String schoolClass) async {
+  Future<List<dynamic>> _getData(String schoolClass, bool useWebData) async {
     try {
       await RemoteConfigService.refresh();
 
-      if (kIsWeb) return await CloudDatabase().getSubstitute();
+      if (useWebData || kIsWeb) return await CloudDatabase().getSubstitute();
+      print("TEU");
       final todayResponse = await http
           .get(Uri.parse(RemoteConfigService.getLinks(schoolClass).today));
       final tomorrowResponse = await http
@@ -74,7 +75,9 @@ class SubstituteLogic {
     );
 
     List<dynamic> dataResult = await SubstituteLogic()._getData(
-        context.read<UserData>().schoolClass); //load the data from dsb mobile
+      context.read<UserData>().schoolClass,
+      RemoteConfigService.useWebSubstituteOnMobile(),
+    ); //load the data from dsb mobile
     if (dataResult.isEmpty) {
       if (loadingSuccess) ScaffoldMessenger.of(context).showSnackBar(snack);
       loadingSuccess = false;
