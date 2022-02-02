@@ -182,10 +182,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void swapPage(int index) {
-    print(index);
-    setState(() => currentIndex = index);
-  }
+  void swapPage(int index) => setState(() => currentIndex = index);
 
   void showFriendsPageOptionsBottomSheet(context) => showModalBottomSheet(
         context: context,

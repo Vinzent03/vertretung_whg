@@ -11,7 +11,6 @@ class LogInPage extends StatelessWidget {
   const LogInPage({Key key, @required this.authType}) : super(key: key);
 
   Widget build(BuildContext context) {
-    print(authType);
     return Scaffold(
       appBar: AppBar(
         title: Text(
