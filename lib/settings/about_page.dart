@@ -87,8 +87,8 @@ class _AboutPageState extends State<AboutPage> {
                       icon: Image.asset(
                         "assets/images/Twitter-Icon.png",
                       ),
-                      onPressed: () =>
-                          launchUrl(Uri.parse("https://twitter.com/Vinadon_")),
+                      onPressed: () => launchUrl(
+                          Uri.parse("https://twitter.com/Vinzent03_")),
                     ),
                   ),
                 ),
