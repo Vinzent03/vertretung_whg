@@ -62,7 +62,9 @@ class MyAppSt extends StatelessWidget {
       //replace with your own keys from wiredash.io or remove the Wiredash Widget
       secret: WiredashKeys.secret,
       projectId: WiredashKeys.id,
-
+      options: WiredashOptionsData(
+        locale: Locale('de', 'DE'),
+      ),
       child: MaterialApp(
         navigatorKey: MyKeys.navigatorKey,
         navigatorObservers: [
