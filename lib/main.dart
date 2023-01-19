@@ -58,7 +58,6 @@ class MyAppSt extends StatelessWidget {
     return Wiredash(
       theme: WiredashThemeData(
           brightness: context.watch<ThemeSettings>().brightness),
-      navigatorKey: MyKeys.navigatorKey,
 
       //replace with your own keys from wiredash.io or remove the Wiredash Widget
       secret: WiredashKeys.secret,
