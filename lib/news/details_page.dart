@@ -67,7 +67,7 @@ class _DetailsPageState extends State<DetailsPage> {
               SizedBox(height: 10),
               MarkdownBody(
                 data: widget.news.text,
-                onTapLink: (text, href, title) => launch(href),
+                onTapLink: (text, href, title) => launchUrl(Uri.parse(href)),
                 shrinkWrap: true,
                 selectable: true,
               )

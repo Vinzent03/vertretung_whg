@@ -233,18 +233,18 @@ class _HomeState extends State<Home> {
                 leading: Icon(Icons.today),
                 onTap: () {
                   Navigator.pop(context);
-                  launch(RemoteConfigService.getLinks(
+                  launchUrl(Uri.parse(RemoteConfigService.getLinks(
                           context.read<UserData>().schoolClass)
-                      .today);
+                      .today));
                 }),
             ListTile(
                 title: Text("Morgen"),
                 leading: Icon(Icons.today),
                 onTap: () {
                   Navigator.pop(context);
-                  launch(RemoteConfigService.getLinks(
+                  launchUrl(Uri.parse(RemoteConfigService.getLinks(
                           context.read<UserData>().schoolClass)
-                      .tomorrow);
+                      .tomorrow));
                 }),
           ],
         ),

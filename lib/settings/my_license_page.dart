@@ -32,7 +32,7 @@ class MyLicensePage extends StatelessWidget {
               title: MarkdownBody(
                 data:
                     "Icon made by [profile/3335](https://www.freeicons.io/profile/3335) from [freeicons](https://www.freeicons.io)",
-                onTapLink: (text, href, title) => launch(href),
+                onTapLink: (text, href, title) => launchUrl(Uri.parse(href)),
               ),
               leading: Card(
                 child: Image.asset(

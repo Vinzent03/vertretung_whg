@@ -230,7 +230,7 @@ class _IntroScreenState extends State<IntroScreen> {
         ),
         footer: TextButton(
           child: Text("Zu Firebase"),
-          onPressed: () => launch("https://firebase.google.com/"),
+          onPressed: () => launchUrl(Uri.parse("https://firebase.google.com/")),
         ),
       )
     ];

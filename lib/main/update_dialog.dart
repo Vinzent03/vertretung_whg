@@ -76,7 +76,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                       child: Text("Abbrechen"),
                     ),
                     OutlinedButton(
-                      onPressed: () => launch(widget.websiteLink),
+                      onPressed: () => launchUrl(Uri.parse(widget.websiteLink)),
                       child: Text("Über Website herunterladen"),
                       style: ButtonStyle(
                           foregroundColor:
@@ -100,7 +100,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
                       ),
                     OutlinedButton(
                       child: Text("Changelog"),
-                      onPressed: () => launch(widget.changelogLink),
+                      onPressed: () =>
+                          launchUrl(Uri.parse(widget.changelogLink)),
                     ),
                     ElevatedButton(
                       child: Text("Download"),

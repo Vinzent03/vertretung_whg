@@ -49,8 +49,8 @@ class _AboutPageState extends State<AboutPage> {
                           icon: Image.asset(
                             "assets/images/Discord-Logo-Color.png",
                           ),
-                          onPressed: () =>
-                              launch("https://discord.gg/xmTcUhP3Xn"),
+                          onPressed: () => launchUrl(
+                              Uri.parse("https://discord.gg/xmTcUhP3Xn")),
                         ),
                       ),
                     ],
@@ -64,14 +64,14 @@ class _AboutPageState extends State<AboutPage> {
                       scale: 15,
                     ),
                     title: Text("Wir sind auf GitHub!"),
-                    onTap: () =>
-                        launch("https://github.com/Vinzent03/vertretung_whg"),
+                    onTap: () => launchUrl(Uri.parse(
+                        "https://github.com/Vinzent03/vertretung_whg")),
                     trailing: IconButton(
                       icon: Image.asset(
                         "assets/images/GitHub.png",
                       ),
-                      onPressed: () =>
-                          launch("https://github.com/Vinzent03/vertretung_whg"),
+                      onPressed: () => launchUrl(Uri.parse(
+                          "https://github.com/Vinzent03/vertretung_whg")),
                     ),
                   ),
                 ),
@@ -87,7 +87,8 @@ class _AboutPageState extends State<AboutPage> {
                       icon: Image.asset(
                         "assets/images/Twitter-Icon.png",
                       ),
-                      onPressed: () => launch("https://twitter.com/Vinadon_"),
+                      onPressed: () =>
+                          launchUrl(Uri.parse("https://twitter.com/Vinadon_")),
                     ),
                   ),
                 ),
