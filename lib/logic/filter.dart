@@ -113,16 +113,18 @@ List<String> _formatList(List<String> list) {
 String _getSubjectPrefix(String st) {
   //GE-GK1 would be the course
   //GE would be subject
-
-  int beginIndex = st.indexOf("Std. ") + 5;
-  if (st.substring(beginIndex, beginIndex + 7).contains("Entfall")) return "";
-  int endOfSubject = st.indexOf(" ", beginIndex) == -1
-      ? st.length
-      : st.indexOf(" ", beginIndex); //if the subject stands at the end
-  int endOfCourse = st.indexOf("-", beginIndex) == -1
-      ? 20
-      : st.indexOf("-", beginIndex); // if no "-" is provided
-  int end = min(endOfSubject, endOfCourse);
-
-  return st.substring(beginIndex, end);
+  try {
+    int beginIndex = st.indexOf("Std. ") + 5;
+    if (st.substring(beginIndex, beginIndex + 7).contains("Entfall")) return "";
+    int endOfSubject = st.indexOf(" ", beginIndex) == -1
+        ? st.length
+        : st.indexOf(" ", beginIndex); //if the subject stands at the end
+    int endOfCourse = st.indexOf("-", beginIndex) == -1
+        ? 20
+        : st.indexOf("-", beginIndex); // if no "-" is provided
+    int end = min(endOfSubject, endOfCourse);
+    return st.substring(beginIndex, end);
+  } on RangeError {
+    return "";
+  }
 }
