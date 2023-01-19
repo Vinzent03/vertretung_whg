@@ -47,7 +47,7 @@ class _SchoolClassSelectionState extends State<SchoolClassSelection> {
       await push.unsubTopic(oldSchoolClass);
     }
     push.subTopic(newSchoolClass);
-    FirebaseAnalytics()
+    FirebaseAnalytics.instance
         .setUserProperty(name: "schoolClass", value: newSchoolClass);
   }
 

@@ -76,7 +76,7 @@ class SubstituteListTile extends StatelessWidget {
   }
 
   share(BuildContext context) {
-    FirebaseAnalytics analytics = FirebaseAnalytics();
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     analytics.logShare(
       contentType: substitute.names == null ? "SubstitutePage" : "FriendsPage",
       method: "button pressed",

@@ -57,7 +57,7 @@ class AuthService {
         EmailAuthProvider.credential(email: email, password: password);
     try {
       await user.linkWithCredential(credential);
-      FirebaseAnalytics().logSignUp(signUpMethod: "email");
+      FirebaseAnalytics.instance.logSignUp(signUpMethod: "email");
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "weak-password":
@@ -110,7 +110,7 @@ class AuthService {
   Future<String> signInEmail({String email, String password}) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      FirebaseAnalytics().logLogin(loginMethod: "email");
+      FirebaseAnalytics.instance.logLogin(loginMethod: "email");
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "invalid-email":

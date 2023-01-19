@@ -13,11 +13,11 @@ class DynamicLink {
     if (data != null) _handleDeepLink(data, true);
 
     //if app gets to foreground because auf that link
-    FirebaseDynamicLinks.instance.onLink(
-      onSuccess: (PendingDynamicLinkData dynamicLinkData) async {
+    FirebaseDynamicLinks.instance.onLink.listen(
+      (PendingDynamicLinkData dynamicLinkData) async {
         _handleDeepLink(dynamicLinkData, false);
       },
-      onError: (OnLinkErrorException e) {
+      onError: (e) {
         print("Error: ${e.message}");
       },
     );
@@ -51,7 +51,8 @@ class DynamicLink {
         fallbackUrl: Uri.parse("https://info-vertretung-whg.web.app"),
       ),
     );
-    final ShortDynamicLink shortDynamicUrl = await parameters.buildShortLink();
+    final ShortDynamicLink shortDynamicUrl =
+        await FirebaseDynamicLinks.instance.buildShortLink(parameters);
     return shortDynamicUrl.shortUrl.toString();
   }
 }

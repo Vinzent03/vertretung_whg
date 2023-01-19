@@ -1,6 +1,7 @@
 import 'package:Vertretung/authentication/account_page.dart';
 import 'package:Vertretung/data/my_keys.dart';
 import 'package:Vertretung/data/wiredash_keys.dart';
+import 'package:Vertretung/firebase_options.dart';
 import 'package:Vertretung/friends/friend_list.dart';
 import 'package:Vertretung/logic/shared_pref.dart';
 import 'package:Vertretung/pages/help_page.dart';
@@ -11,7 +12,6 @@ import 'package:Vertretung/settings/about_page.dart';
 import 'package:Vertretung/settings/settings_page.dart';
 import 'package:Vertretung/substitute/substitute_logic.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -29,7 +29,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_handleBackgroundNotification);
   setPathUrlStrategy();
-  Firebase.initializeApp().then((value) async {
+  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+      .then((value) async {
     if (!kIsWeb) {
       await FirebaseCrashlytics.instance
           .setCrashlyticsCollectionEnabled(!kDebugMode);
@@ -66,7 +67,7 @@ class MyAppSt extends StatelessWidget {
       child: MaterialApp(
         navigatorKey: MyKeys.navigatorKey,
         navigatorObservers: [
-          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
+          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
         ],
         theme: lightTheme,
         darkTheme: darkTheme,
