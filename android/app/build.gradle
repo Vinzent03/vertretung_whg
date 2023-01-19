@@ -66,6 +66,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    namespace 'com.vinzent.vertretung'
 }
 
 
