@@ -10,10 +10,9 @@ import 'package:Vertretung/services/cloud_database.dart';
 import 'package:Vertretung/settings/freeLessonSelection/free_lesson_selection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import "package:wiredash/wiredash.dart";
 
 import 'my_license_page.dart';
