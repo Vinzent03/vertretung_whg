@@ -1,6 +1,6 @@
 {
     "name": "Vertretung",
-    "short_name": "vertretung",
+    "short_name": "Vertretung",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
@@ -10,7 +10,7 @@
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icon.png",
+            "src": "favicon.png",
             "sizes": "192x192",
             "type": "image/png"
         }
